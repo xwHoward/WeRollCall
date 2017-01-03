@@ -1,0 +1,46 @@
+/* pages/user/user.wxss */
+.panel{
+    text-align: center;
+    box-sizing: border-box;
+    width: 600rpx;
+    height: 800rpx;
+    border-radius: 40rpx;
+    background-color: #fff;
+    padding: 150rpx 50rpx;
+    margin: 0 auto;
+    position: relative;
+    top: 200rpx;
+}
+.panel .photo{
+    position: absolute;
+    top: -100rpx;
+    left: 200rpx;
+    width: 200rpx;
+    height:  200rpx;
+    border: 2px solid #fff;
+    border-radius: 50%;
+}
+
+.userType{
+    display: block;
+    position: absolute;
+    color: #3e4a51;
+    top: 68rpx;
+    left: 400rpx;
+    font-size: 32rpx;
+}
+.nickname{
+    margin-bottom: 50rpx;
+}
+.user-info{
+    width: 400rpx;
+    color: #3e4a51;
+    margin-left: 100rpx;
+    font-size: 32rpx;
+    height: 50rpx;
+    line-height: 50rpx;
+    text-align: left;
+}
+.user-info .user-info-item{
+    margin-left: 50rpx;
+}

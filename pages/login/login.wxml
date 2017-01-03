@@ -1,0 +1,20 @@
+<view class="container">
+    <view class="line-shadow"></view>
+    <view class="panel">
+        <text class="banner">小点名
+        大学生考勤新方式</text>
+        <view class="section">
+            <view class="section__title">我是</view>
+            <picker bindchange="bindPickerChange" mode="selector" value="{{index}}" range="{{userType}}">
+                <view class="picker">{{userType[index]}}</view>
+            </picker>
+        </view>
+        <input bindinput="bindIdInput" type="number" placeholder="学号" class="userid"/>
+        <input type="text" bindinput="bindNameInput" placeholder="真实姓名" class="username"/>
+        <text class="warning">*首次登录小点名需要绑定学号等信息
+        一经绑定不可更改，请慎重填写！</text>
+        <button bindtap="wxLogin" class="wx-login" disabled="{{invalid}}"><image src="../../images/Weixing.png"></image></button>
+        <text class="login-label">微信一键登录</text>
+    </view>
+    
+</view>

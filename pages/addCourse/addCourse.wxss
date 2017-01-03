@@ -1,0 +1,44 @@
+.container{
+  overflow: hidden;
+}
+.section{
+  margin: 50rpx 0 0;
+  overflow: hidden;
+}
+.section .section-title{
+  margin: 10rpx 20rpx;
+  font-size: 14px;
+}
+.section input{
+  background-color: #fff;
+  padding-left: 50rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+}
+.section picker{
+  background-color: #fff;
+  text-align: center;
+  height: 50rpx;
+  line-height: 50rpx;
+  width: 350rpx;
+  float: left;
+}
+.section .time-span{
+  text-align: center;
+  height: 50rpx;
+  line-height: 50rpx;
+  width: 50rpx;
+  float: left;
+}
+.add-course{
+  width: 80%;
+  height: 80rpx;
+  font-size: 14px;
+  line-height: 80rpx;
+  margin: 50rpx auto;
+  background-color: #49545b;
+  color: #fff;
+}
+.add-course-hover{
+  background-color: #3e4a51;
+}

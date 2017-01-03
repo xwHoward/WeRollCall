@@ -1,0 +1,61 @@
+<view class="container-fluid">
+  <view class="line-shadow"></view>
+  <view class="course-per-weekday">
+    <text class="weekday">星期一</text>
+    <view class="course">
+      <text class="course-name">高等数学</text>
+      <text class="course-classroom">教室：X9413</text>
+      <view class="course-time">
+        <text class="time-start">09:30</text>
+        <text class="time-end">12:00</text>    
+      </view>
+    </view>
+  </view>
+  <view class="course-per-weekday">
+    <text class="weekday">星期三</text>
+    <view class="course">
+      <text class="course-name">数据结构</text>
+      <text class="course-classroom">教室：X9213</text>
+      <view class="course-time">
+        <text class="time-start">09:30</text>
+        <text class="time-end">12:30</text>    
+      </view>
+    </view>
+    <view class="course">
+      <text class="course-name">高级语言程序设计</text>
+      <text class="course-classroom">教室：X9243</text>
+      <view class="course-time">
+        <text class="time-start">09:30</text>
+        <text class="time-end">12:30</text>    
+      </view>
+    </view>
+  </view>
+  <view class="course-per-weekday">
+    <text class="weekday">星期五</text>
+    <view class="course">
+      <text class="course-name">计算机系统结构</text>
+      <text class="course-classroom">教室：X2213</text>
+      <view class="course-time">
+        <text class="time-start">16:30</text>
+        <text class="time-end">17:00</text>    
+      </view>
+    </view>
+    <view class="course">
+      <text class="course-name">计算机系统结构</text>
+      <text class="course-classroom">教室：X2213</text>
+      <view class="course-time">
+        <text class="time-start">16:30</text>
+        <text class="time-end">17:00</text>    
+      </view>
+    </view>
+    <view class="course">
+      <text class="course-name">计算机系统结构</text>
+      <text class="course-classroom">教室：X2213</text>
+      <view class="course-time">
+        <text class="time-start">16:30</text>
+        <text class="time-end">17:00</text>    
+      </view>
+    </view>
+  </view>
+  <button class="add-course" hover-class="add-course-hover" bindtap="addCourse">+ 添加课程</button>
+</view>

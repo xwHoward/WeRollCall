@@ -1,0 +1,40 @@
+{
+  "pages":[
+    "pages/index/index",
+    "pages/rollcall/rollcall",
+    "pages/user/user",
+    "pages/login/login",
+    "pages/addCourse/addCourse"
+  ],
+  "window":{
+    "navigationBarBackgroundColor": "#3e4a51",
+    "navigationBarTextStyle":"white",
+    "navigationBarTitleText": "小点名",
+    "backgroundTextStyle":"light",
+    "backgroundColor": "#000",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "backgroundColor": "#3e4a51",
+    "color": "#ccc",
+    "selectedColor": "#fff",
+    "borderStyle": "white",
+    "list": [{
+      "pagePath": "pages/index/index",
+      "text": "首页",
+      "iconPath": "images/Home.png",
+      "selectedIconPath": "images/Homes.png"
+    }, {
+      "pagePath": "pages/rollcall/rollcall",
+      "text": "点名",
+      "iconPath": "images/Check.png",
+      "selectedIconPath": "images/Checks.png"
+    }, {
+      "pagePath": "pages/user/user",
+      "text": "我",
+      "iconPath": "images/User.png",
+      "selectedIconPath": "images/Users.png"
+    }]
+  },
+  "debug": false
+}

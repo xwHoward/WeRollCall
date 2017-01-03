@@ -1,0 +1,11 @@
+<template name="rollcall">
+  <view class="rollcall-button timing"></view>
+  <view class="rollcall-button location"></view>
+  <view class="rollcall-button qr-code"></view>
+  <view class="rollcall-button key"></view>
+</template>
+<template name="sign-in">
+  <button class="pulse-button">
+    <image src="../../images/handUp.png"></image>
+  </button>
+</template>

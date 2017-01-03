@@ -1,0 +1,11 @@
+<view class="container">
+    <view class="line-shadow"></view>
+    <view class="panel">
+        <image src="{{userInfo.avatarUrl}}" class="photo"></image>
+        <text class="userType">{{userInfo.userType}}</text>
+        <view class="nickname">{{userInfo.nickName}}</view> 
+        <view class="user-info">学号<text class="user-info-item">{{userInfo.userId}}</text></view>
+        <view class="user-info">姓名<text class="user-info-item">{{userInfo.userName}}</text></view>
+    </view>
+</view>
+

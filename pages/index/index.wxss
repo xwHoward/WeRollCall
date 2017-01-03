@@ -1,0 +1,61 @@
+.course-per-weekday{
+  width: 94%;
+  margin: 40rpx auto;
+}
+.course-per-weekday .weekday{
+  color: #c1c1c1;
+  letter-spacing: 6rpx;
+  font-size:14px;
+}
+.course-per-weekday .course{
+  box-sizing: border-box;
+  height: 160rpx;
+  background-color: #fff;
+  margin: 20rpx 0;
+  box-shadow: 4rpx 4rpx 4rpx #d4d4d4;
+  position: relative;
+  padding: 40rpx 20rpx;
+}
+.course .course-name{
+  display: block;
+  font-size: 14px;
+  line-height: 48rpx;
+  letter-spacing: 4rpx;
+}
+.course .course-classroom{
+  color: #aaa;
+  line-height: 32rpx;
+}
+.course .course-time{
+  height: 80rpx;
+  width: 300rpx;
+  position: absolute;
+  right: 20rpx;
+  top: 40rpx;
+}
+.course-time text{
+  color: #fff;
+  float: left;
+  text-align: center;
+  height: 80rpx;
+  line-height: 80rpx;
+  width: 150rpx;
+}
+.course-time .time-start{
+  background-color: #49545b;
+}
+.course-time .time-end{
+  background-color: #3e4a51;
+}
+.add-course{
+  width: 80%;
+  height: 80rpx;
+  font-size: 14px;
+  line-height: 80rpx;
+  margin: 0 auto;
+  background-color: #49545b;
+  color: #fff;
+}
+.add-course-hover{
+  background-color: #3e4a51;
+}

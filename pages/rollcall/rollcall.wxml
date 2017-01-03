@@ -1,0 +1,5 @@
+<import src="rollcall_tpl.wxml"/>
+<view class="container">
+  <view class="line-shadow"></view>
+  <template is="sign-in" data=""/>
+</view>

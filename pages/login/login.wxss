@@ -1,0 +1,72 @@
+.panel{
+    font-size: 14px;
+    text-align: center;
+    box-sizing: border-box;
+    background-color: #3e4a51;
+    width: 600rpx;
+    padding: 50rpx 0;
+    border-radius: 5%;
+    margin: 0 auto;
+    position: relative;
+    top: 200rpx;
+}
+.banner{
+    color: #fff;
+    line-height: 80rpx;
+    font-size: 22px;
+    letter-spacing: 6px;
+}
+.section{
+    width: 400rpx;
+    height: 100rpx;
+    margin: 20rpx auto;
+}
+.section__title{
+    float: left;
+    color: #fff;
+    width: 100rpx;
+    line-height: 100rpx;
+}
+picker{
+    float:left;
+    width: 300rpx;
+    height: 100rpx;
+    line-height: 100rpx;
+    color: #000;
+    border-radius: 50rpx;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+.warning{
+    font-size: 12px;
+    color: #f39c12;
+}
+.wx-login{
+    width: 50px;
+    height: 50px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background-color: #1AAD16;
+}
+.wx-login image{
+    position: relative;
+    top: 8px;
+    left: -5px;
+    width: 30px;
+    height: 30px;
+}
+.panel input{
+    width: 340rpx;
+    height: 40rpx;
+    line-height: 40rpx;
+    background-color: #fff;
+    border-radius: 10rpx;
+    text-align: left;
+    margin: 40rpx auto 40rpx;
+    padding: 0 40rpx;
+    font-family: 'Microsoft Yahei';
+}
+.panel .login-label{
+    font-size: 14px;
+    font-weight: bold;
+    color: #1AAD16;
+}
