@@ -5,7 +5,7 @@
 .course-per-weekday .weekday{
   color: #c1c1c1;
   letter-spacing: 6rpx;
-  font-size:14px;
+  font-size:16px;
 }
 .course-per-weekday .course{
   box-sizing: border-box;
@@ -18,13 +18,13 @@
 }
 .course .course-name{
   display: block;
-  font-size: 14px;
-  line-height: 48rpx;
+  font-size: 16px;
+  line-height:46rpx;
   letter-spacing: 4rpx;
 }
 .course .course-classroom{
   color: #aaa;
-  line-height: 32rpx;
+  line-height: 28rpx;
 }
 .course .course-time{
   height: 80rpx;
@@ -50,7 +50,7 @@
 .add-course{
   width: 80%;
   height: 80rpx;
-  font-size: 14px;
+  font-size: 18px;
   line-height: 80rpx;
   margin: 0 auto;
   background-color: #49545b;

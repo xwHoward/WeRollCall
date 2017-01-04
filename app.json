@@ -12,7 +12,7 @@
     "navigationBarTitleText": "小点名",
     "backgroundTextStyle":"light",
     "backgroundColor": "#000",
-    "enablePullDownRefresh": false
+    "enablePullDownRefresh": true
   },
   "tabBar": {
     "backgroundColor": "#3e4a51",

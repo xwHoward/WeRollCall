@@ -3,5 +3,6 @@
   "navigationBarTextStyle": "white",
   "navigationBarTitleText": "点 名 时 间",
   "backgroundColor": "#eeeeee",
-  "backgroundTextStyle": "light"
+  "backgroundTextStyle": "light",
+  "enablePullDownRefresh": false
 }

@@ -7,7 +7,7 @@
 }
 .section .section-title{
   margin: 10rpx 20rpx;
-  font-size: 14px;
+  font-size: 16px;
 }
 .section input{
   background-color: #fff;
@@ -33,7 +33,7 @@
 .add-course{
   width: 80%;
   height: 80rpx;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 80rpx;
   margin: 50rpx auto;
   background-color: #49545b;
