@@ -52,21 +52,22 @@ Page({
       user.set('userType',this.data.userType[this.data.index]);
       user.save().then(user => {
         app.globalData.user = user.toJSON();
-          console.log('AV.User.loginWithWeapp() returned user:')
-          console.log(user);
-      });
-      wx.switchTab({
+        console.log('AV.User.loginWithWeapp() returned user:')
+        console.log(user);
+        wx.switchTab({
           url: '../index/index',
-          success: function(res){
+          success: function (res) {
             console.log("redirected to index page..")
           },
-          fail: function() {
+          fail: function () {
             console.log('redirect fail!')
           },
-          complete: function() {
+          complete: function () {
             // complete
           }
         });
+      });
+      
     }).catch(console.error);
     
   }

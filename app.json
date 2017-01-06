@@ -4,7 +4,8 @@
     "pages/rollcall/rollcall",
     "pages/user/user",
     "pages/login/login",
-    "pages/addCourse/addCourse"
+    "pages/addCourse/addCourse",
+    "pages/rollcall/location/location"
   ],
   "window":{
     "navigationBarBackgroundColor": "#3e4a51",
@@ -12,7 +13,7 @@
     "navigationBarTitleText": "小点名",
     "backgroundTextStyle":"light",
     "backgroundColor": "#000",
-    "enablePullDownRefresh": true
+    "enablePullDownRefresh": false
   },
   "tabBar": {
     "backgroundColor": "#3e4a51",

@@ -70,7 +70,6 @@ Page({
       console.log('choose course success!')
       wx.showModal({
         title: '添加课程成功',
-        icon: 'success',
         content: '您可以继续添加课程或者返回主页',
         cancelText: '继续添加',
         cancelColor: '#1AAD16',

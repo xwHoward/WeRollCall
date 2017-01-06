@@ -1,0 +1,2 @@
+<map id="map" controls="{{controls}}" bindcontroltap="controltap" scale="18" markers="{{markers}}" bindmarkertap="markertap" bindregionchange="regionchange" show-location style="width: 100%; height: 300px;"></map>
+<button bindtap="getLocation">获取地理位置</button>
