@@ -21,7 +21,6 @@ Page({
       userName: e.detail.value
     })
     if(this.data.userName != '' && this.data.userId !== ''){
-      console.log("username and userid both inputed! you can go on")
       this.setData({
         invalid: false
       })
@@ -46,10 +45,12 @@ Page({
     
   },
   wxLogin: function(){
+    var that = this;
     AV.User.loginWithWeapp().then(user => {
-      user.set('userName',this.data.userName);
-      user.set('userId',this.data.userId);
-      user.set('userType',this.data.userType[this.data.index]);
+      user.set('userName',that.data.userName);
+      user.set('userId',that.data.userId);
+      user.set('userType',that.data.userType[that.data.index]);
+      user.set('register',true);
       user.save().then(user => {
         app.globalData.user = user.toJSON();
         console.log('AV.User.loginWithWeapp() returned user:')

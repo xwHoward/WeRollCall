@@ -3,5 +3,6 @@
   "navigationBarTextStyle": "white",
   "navigationBarTitleText": "我 的 课 程",
   "backgroundColor": "#eeeeee",
-  "backgroundTextStyle": "light"
+  "backgroundTextStyle": "light",
+  "enablePullDownRefresh": true
 }
