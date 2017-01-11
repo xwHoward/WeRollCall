@@ -1,2 +1,49 @@
-<map id="map" controls="{{controls}}" bindcontroltap="controltap" scale="18" markers="{{markers}}" bindmarkertap="markertap" bindregionchange="regionchange" show-location style="width: 100%; height: 300px;"></map>
-<button bindtap="getLocation">获取地理位置</button>
+<map id="map" longitude="{{location.longitude}}" latitude="{{location.latitude}}" scale="16" show-location style="width: 100%; height: 300px;"></map>
+<block wx:if="{{template == 'create'}}">
+  <view class="location clearfix">
+    <block wx:if="{{location.hasLocation === false}}">
+      <view class="page-body-text-location">
+        <text class="page-body-text-small">当前位置经纬度</text>
+        <text>未获取</text>
+      </view>
+    </block>
+    <block wx:if="{{location.hasLocation === true}}">
+      <view class="page-body-text-location clearfix">
+        <text class="page-body-text-small">当前位置经纬度</text>
+        <text>E{{formatedLocation.longitude[0]}}°{{formatedLocation.longitude[1]}}′</text>
+        <text> N{{formatedLocation.latitude[0]}}°{{formatedLocation.latitude[1]}}′</text>
+      </view>
+    </block>
+    <button class="page-body-button" bindtap="getLocation">获取位置</button>
+  </view>
+  <text>选择范围：{{radius}}m</text>
+  <slider bindchange="radiusChange" min="50" max="1000" value="{{radius}}" step="50" selected-color="#3e4a51" show-value/>
+  <text>选择定时：{{timeout}}min</text>
+  <slider bindchange="timeoutChange" min="1" max="10" value="{{timeout}}" step="1" selected-color="#3e4a51" show-value/>
+  <button bindtap="createRollcall">发布点名</button>
+</block>
+<block wx:if="{{template == 'token'}}">
+  <view>本次签到密令：{{token}}</view>
+  <view>剩余时间：{{timeLeft}}</view>
+  <button bindtap="updateStatus">刷新签到情况</button>
+  <view wx:for="{{signedInStudents}}">{{item.userName}} -- {{item.userId}}</view>
+</block>
+<block wx:if="{{template == 'repo'}}">
+  <view class="location">
+    <block wx:if="{{location.hasLocation === false}}">
+      <view class="page-body-text-location">
+        <text class="page-body-text-small">当前位置经纬度</text>
+        <text>未获取</text>
+      </view>
+    </block>
+    <block wx:if="{{location.hasLocation === true}}">
+      <view class="page-body-text-location">
+        <text class="page-body-text-small">当前位置经纬度</text>
+        <text>E{{formatedLocation.longitude[0]}}°{{formatedLocation.longitude[1]}}′</text>
+        <text> N{{formatedLocation.latitude[0]}}°{{formatedLocation.latitude[1]}}′</text>
+      </view>
+    </block>
+    <button class="page-body-button" bindtap="getLocation">获取位置</button>
+    <button bindtap="signIn">确认地理位置信息并签到</button>
+  </view>
+</block>

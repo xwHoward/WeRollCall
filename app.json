@@ -5,7 +5,8 @@
     "pages/user/user",
     "pages/login/login",
     "pages/addCourse/addCourse",
-    "pages/rollcall/location/location"
+    "pages/rollcall/location/location",
+    "pages/rollcall/timeout/timeout"
   ],
   "window":{
     "navigationBarBackgroundColor": "#3e4a51",

@@ -1,89 +1,151 @@
+const AV = require('../../../lib/leancloud-storage');
+var ROLLCALL = AV.Object.extend('ROLLCALL');
+var app = getApp();
 Page({
     data: {
-        markers: [{
-            iconPath: "/images/HandUp.png",
-            id: 0,
-            latitude: 23.099994,
-            longitude: 113.324520,
-            width: 50,
-            height: 50
-        }],
-        polyline: [{
-            points: [{
-                longitude: 113.3245211,
-                latitude: 23.10229
-            }, {
-                longitude: 113.324520,
-                latitude: 23.21229
-            }],
-            color: "#FF0000DD",
-            width: 2,
-            dottedLine: true
-        }],
-        controls: [{
-            id: 1,
-            iconPath: '/images/HandUp.png',
-            position: {
-                left: 0,
-                top: 300 - 50,
-                width: 50,
-                height: 50
-            },
-            clickable: true
-        }]
-    },
-    regionchange(e) {
-        console.log(e.type)
-    },
-    markertap(e) {
-        console.log(e.markerId)
-    },
-    controltap(e) {
-        console.log(e.controlId)
+        template: '',
+        location: {
+            hasLocation: false,
+            longitude: 104.066541,
+            latitude: 30.572269
+        },
+        formatedLocation: {
+        },
+        radius: 100,
+        timeout: 5
     },
     getLocation: function () {
+        var that = this;
+        wx.showToast({
+            title: '获取位置信息',
+            icon: 'loading',
+            mask: true,
+            duration: 1000
+        });
         wx.getLocation({
             type: 'gcj02',
             success: function (res) {
                 console.log(res)
-                var latitude = res.latitude
-                var longitude = res.longitude
-                var accuracy = res.accuracy
-                wx.openLocation({
-                    latitude: latitude,
-                    longitude: longitude,
-                    scale: 28
-                })
+                that.setData({
+                    'location.longitude': res.longitude,
+                    'location.latitude': res.latitude,
+                    'location.hasLocation': true,
+                    formatedLocation: that.formatLocation(res.longitude, res.latitude)
+                });
+                wx.hideToast();
             }
         })
     },
+    formatLocation: function (longitude, latitude) {
+        longitude = longitude.toFixed(2)
+        latitude = latitude.toFixed(2)
+        return {
+            longitude: longitude.toString().split('.'),
+            latitude: latitude.toString().split('.')
+        }
+    },
+    radiusChange: function (e) {
+        this.setData({
+            radius: e.detail.value
+        });
+    },
+    timeoutChange: function (e) {
+        this.setData({
+            timeout: e.detail.value
+        });
+    },
+    createRollcall: function () {
+        var that = this;
+        var rollcall = new ROLLCALL();
+        console.log(app.globalData.user)
+        var teacher = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
+        rollcall.set('teacher', teacher);
+        var point = new AV.GeoPoint(this.data.location.latitude, this.data.location.longitude);
+        console.log(point)
+        rollcall.set('teacherLoc', point);
+        rollcall.set('radius', this.data.radius);
+        rollcall.set('type', 'location');
+        rollcall.set('students', []);
+        rollcall.set('timeout', this.data.timeout);
+        rollcall.save()
+        .then(function(rc){
+            console.log(rc)
+            var token = rc.id.toString().substring(20);
+            that.setData({
+                template: 'token',
+                token: token
+            });
+            that.startCountdown(that.data.timeout);
+        })
+        .catch(console.error);
+    },
+    //更新学生签到情况
+    updateStatus: function(){
+
+    },
+    //学生签到
+    signIn: function(){
+        var that = this;
+        var rollcall = new ROLLCALL();
+        var student = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
+        var point = new AV.GeoPoint(this.data.location.latitude, this.data.location.longitude);
+        var stuObj = {
+            student: student,
+            loc: point
+        }
+        rollcall.addUnique('students', stuObj);
+        rollcall.set('studentLoc', point);
+        rollcall.set('radius', this.data.radius);
+        rollcall.set('type', 'location');
+        rollcall.set('timeout', this.data.timeout);
+        rollcall.save()
+        .then(function(rc){
+            console.log(rc)
+            var token = rc.id.toString().substring(20);
+            that.setData({
+                template: 'token',
+                token: token
+            });
+            that.startCountdown(that.data.timeout);
+        })
+        .catch(console.error);
+    },
+    startCountdown: function (m) {
+        var that = this;
+        m--;
+        let s = 9;
+        var intv = setInterval(function () {
+            if (s >= 0) {
+                that.setData({
+                    timeLeft: m + ':' + s--
+                });
+            } else {
+                m--;
+                s = 9;
+                if (m < 0) {
+                    clearInterval(intv);
+                } else {
+                    that.setData({
+                        timeLeft: m + ':' + s--
+                    });
+                }
+            }
+        }, 1000);
+    },
     onLoad: function (options) {
         // 生命周期函数--监听页面加载
-    },
-    onReady: function () {
-        // 生命周期函数--监听页面初次渲染完成
+        // this.getLocation();
+        if(app.globalData.user.userType == '老师'){
+            this.setData({
+                template: 'create'
+            });
+        }else{
+            this.setData({
+                template: 'repo'
+            });
+        }
     },
     onShow: function () {
         // 生命周期函数--监听页面显示
-    },
-    onHide: function () {
-        // 生命周期函数--监听页面隐藏
-    },
-    onUnload: function () {
-        // 生命周期函数--监听页面卸载
-    },
-    onPullDownRefresh: function () {
-        // 页面相关事件处理函数--监听用户下拉动作
-    },
-    onReachBottom: function () {
-        // 页面上拉触底事件的处理函数
-    },
-    onShareAppMessage: function () {
-        // 用户点击右上角分享
-        return {
-            title: 'title', // 分享标题
-            desc: 'desc', // 分享描述
-            path: 'path' // 分享路径
-        }
     }
 })

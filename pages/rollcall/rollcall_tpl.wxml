@@ -4,8 +4,10 @@
   <view class="rollcall-button qr-code"></view>
   <view class="rollcall-button key"></view>
 </template>
+
+
 <template name="sign-in">
-  <button class="pulse-button">
-    <image src="../../images/handUp.png"></image>
+  <button class="pulse-button" bindtap="signIn">
+    签到
   </button>
 </template>

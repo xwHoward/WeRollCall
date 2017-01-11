@@ -1,0 +1,31 @@
+.location{
+  width: 700rpx;
+  margin: 20rpx auto;
+}
+
+
+.page-body-text-location {
+  float: left;
+  width: 492rpx;
+  height: 100rpx;
+  font-size: 16px;
+  line-height: 100rpx;
+  border: 2px #ccc solid;
+}
+.page-body-text-location text{
+  float: left;
+}
+.page-body-text-small {
+  text-align: center;
+  font-size: 24rpx;
+  line-height: 50rpx;
+  width: 100rpx;
+  margin: 0 10rpx;
+}
+.page-body-button {
+  float: left;
+  background-color: #3e4a51;
+  color: #fff;
+  width: 200rpx;
+  font-size: 16px;
+}
