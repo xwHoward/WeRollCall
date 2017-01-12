@@ -1,0 +1,7 @@
+<!--pages/rollcall/qrcode/qrcode.wxml-->
+<view class="ta-c">长按二维码保存到本地，每门课程对应唯一的二维码。</view>
+<view class="ta-c">您可以提前将二维码作为课件保存，发布点名后再展示给学生。</view>
+<canvas bindlongtap="previewImg" class="qrcode" canvas-id="qrcode"/>
+<text>选择定时：{{timeout}}min</text>
+  <slider bindchange="timeoutChange" min="1" max="5" value="{{timeout}}" step="1" selected-color="#3e4a51" show-value/>
+  <button bindtap="createRollcall">发布点名</button>

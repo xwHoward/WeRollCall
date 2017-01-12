@@ -7,7 +7,7 @@ var getUserInfoPromisified = util.wxPromisify(wx.getUserInfo)
 
 Page({
   data: {
-    userInfo: {},
+    // userInfo: {},
     courses: []
   },
   onPullDownRefresh: function () {
@@ -85,18 +85,17 @@ Page({
   //获取学生所选课程
   getChosenCourses: function () {
     var that = this;
-    //从coursesChosen字段中取出id，到COURSE表中查找相应的行
-    var results = [];
-    app.globalData.user.coursesChosen.forEach(function (e) {
-      var queryCourse = new AV.Query('COURSE');
-      queryCourse.equalTo('objectId', e.objectId);
-      queryCourse.find().then(function (course) {
-        results.push(course[0])
-        that.setData({
-          courses: results
-        });
+    var studentQuery = new AV.Query('_User');
+    studentQuery.include('coursesChosen');// 关键代码，用 include 告知服务端需要返回的关联属性对应的对象的详细信息，而不仅仅是 objectId
+    studentQuery.get(app.globalData.user.objectId).then(function (stu) {
+      that.setData({
+        courses: stu.attributes.coursesChosen
       });
+    }, function (error) {
+      // 异常处理
+      console.log(error)
     });
+
   },
 
   initData: function () {

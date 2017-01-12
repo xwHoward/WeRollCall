@@ -1,8 +1,8 @@
 <template name="rollcall">
   <view class="rollcall-button timing" bindtap="timeout">定时点名</view>
   <view class="rollcall-button location" bindtap="location">地理位置点名</view>
-  <view class="rollcall-button qr-code"></view>
-  <view class="rollcall-button key"></view>
+  <view class="rollcall-button qr-code" bindtap="qrcode">二维码快速签到</view>
+  <view class="rollcall-button key">密令点名</view>
 </template>
 
 

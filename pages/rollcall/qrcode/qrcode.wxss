@@ -1,0 +1,10 @@
+/* pages/rollcall/qrcode/qrcode.wxss */
+.ta-c{
+    text-align: center;
+}
+.qrcode{
+    width: 600rpx;
+    height: 600rpx;
+    background-color: #eee;
+    margin: 20rpx auto;
+}
