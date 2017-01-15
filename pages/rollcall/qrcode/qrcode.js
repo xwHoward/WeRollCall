@@ -6,7 +6,8 @@ var app = getApp();
 Page({
   data: {
     imagePath: '',
-    timeout: 2
+    timeout: 2,
+    template: 'create'
   },
   onLoad: function (options) {
     // 页面初始化 options为页面跳转所带来的参数
@@ -85,12 +86,53 @@ Page({
     rollcall.set('course', course);
     rollcall.set('type', 'qrcode');
     rollcall.set('students', []);
+    var stuA = AV.Object.createWithoutData('_User', '587b6dd15c497d0058a39e76');
+    rollcall.addUnique('students',stuA);
     rollcall.set('timeout', this.data.timeout);
     rollcall.save()
       .then(function (rc) {
-        console.log(rc)
+        console.log('rollcall:',rc);
+        that.setData({
+          template: 'countdown',
+          rollcallId: rc.id
+        });
+        that.startCountdown(that.data.timeout);
       })
       .catch(console.error);
+  },
+  startCountdown: function (m) {
+    var that = this;
+    m--;
+    let s = 9;
+    var intv = setInterval(function () {
+      if (s >= 0) {
+        that.setData({
+          timeLeft: m + ':' + s--
+        });
+      } else {
+        m--;
+        s = 9;
+        if (m < 0) {
+          clearInterval(intv);
+        } else {
+          that.setData({
+            timeLeft: m + ':' + s--
+          });
+        }
+      }
+    }, 1000);
+  },
+  //更新学生签到情况
+  updateStatus: function(){
+    var that = this;
+    var rollcallQuery = new AV.Query('ROLLCALL');
+     rollcallQuery.include('students');
+    rollcallQuery.get(that.data.rollcallId).then(function(rc){
+      var students = rc.get('students');
+      that.setData({
+        signedInStudents: students
+      });
+    })
   },
   onReady: function () {
     // 页面渲染完成

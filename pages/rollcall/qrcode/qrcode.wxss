@@ -1,10 +1,25 @@
 /* pages/rollcall/qrcode/qrcode.wxss */
-.ta-c{
-    text-align: center;
+.tips{
+    width: 600rpx;
+    margin: 40rpx auto;
+    background-color: #3e4a51;
+    padding: 20rpx 40rpx 0;
+}
+.tips icon{
+    float: left;
+}
+.tips .tip{
+    float: left;
+    margin-left: 20rpx;
+    margin-bottom: 20rpx;
+    width: 520rpx;
+    color: #fff;
+    font-size: 14px;
+    line-height: 20px;
 }
 .qrcode{
     width: 600rpx;
     height: 600rpx;
-    background-color: #eee;
+    background-color: #fff;
     margin: 20rpx auto;
 }
