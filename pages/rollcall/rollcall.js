@@ -15,12 +15,36 @@ Page({
       url: 'location/location'
     })
   },
+  signIn: function () {
+    wx.scanCode({
+      success: (res) => {
+        console.log(res.result)
+        var rollcallQuery = new AV.Query('ROLLCALL');
+        var course = AV.Object.createWithoutData('COURSE', res.result);
+        rollcallQuery.equalTo('course', course);
+        rollcallQuery.descending('createdAt');
+        rollcallQuery.limit(3);
+        rollcallQuery.find().then(function (rcs) {
+          console.log(rcs[0])
+          var rollcall = rcs[0];
+          if (rollcall.attributes.type == 'qrcode') {
+            console.log('qrcode fast sign in!')
+            wx.navigateTo({
+              url: 'qrcode/qrcode'
+            })
+          } else if (rollcall.attributes.type == 'location') {
+            console.log('location sign in!')
+          }
+        });
+      }
+    })
+  },
   //二维码快速签到
   qrcode: function () {
     var that = this;
     var courseQuery = new AV.Query('COURSE');
     var teacher = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
-    courseQuery.equalTo('teacher',teacher);// 关键代码，用 include 告知服务端需要返回的关联属性对应的对象的详细信息，而不仅仅是 objectId
+    courseQuery.equalTo('teacher', teacher);// 关键代码，用 include 告知服务端需要返回的关联属性对应的对象的详细信息，而不仅仅是 objectId
     courseQuery.find().then(function (courses) {
       var itemList = [];
       for (let i = 0; i < courses.length; i++) {

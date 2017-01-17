@@ -1,4 +1,3 @@
-// pages/rollcall/qrcode/qrcode.js
 const AV = require('../../../lib/leancloud-storage');
 var QR = require("../../../lib/qrcode.js");
 var ROLLCALL = AV.Object.extend('ROLLCALL');
@@ -7,7 +6,12 @@ Page({
   data: {
     imagePath: '',
     timeout: 2,
-    template: 'create'
+    bgc: '#09BB07',
+    countdownEnd: true,
+    manuAdd: false,
+    template: 'create',
+    timeLeft: '2:0',
+    signedInStudents: []
   },
   onLoad: function (options) {
     // 页面初始化 options为页面跳转所带来的参数
@@ -22,7 +26,6 @@ Page({
     };//动态设置画布大小
     var token = options.courseId;
     this.createQrCode(token, "qrcode", size.w, size.h);
-
   },
   createQrCode: function (url, canvasId, cavW, cavH) {
     //调用插件中的draw方法，绘制二维码图片
@@ -87,11 +90,11 @@ Page({
     rollcall.set('type', 'qrcode');
     rollcall.set('students', []);
     var stuA = AV.Object.createWithoutData('_User', '587b6dd15c497d0058a39e76');
-    rollcall.addUnique('students',stuA);
+    rollcall.addUnique('students', stuA);
     rollcall.set('timeout', this.data.timeout);
     rollcall.save()
       .then(function (rc) {
-        console.log('rollcall:',rc);
+        console.log('rollcall:', rc);
         that.setData({
           template: 'countdown',
           rollcallId: rc.id
@@ -101,6 +104,7 @@ Page({
       .catch(console.error);
   },
   startCountdown: function (m) {
+    this.updateStatus();
     var that = this;
     m--;
     let s = 9;
@@ -110,10 +114,21 @@ Page({
           timeLeft: m + ':' + s--
         });
       } else {
+        that.updateStatus();
         m--;
         s = 9;
         if (m < 0) {
           clearInterval(intv);
+          //定时结束
+          that.setData({
+            bgc: '#f76060',
+            countdownEnd: false
+          });
+          wx.showToast({
+            title: '点名结束',
+            icon: 'success',
+            duration: 3000
+          });
         } else {
           that.setData({
             timeLeft: m + ':' + s--
@@ -123,16 +138,75 @@ Page({
     }, 1000);
   },
   //更新学生签到情况
-  updateStatus: function(){
+  updateStatus: function () {
     var that = this;
+    //更新签到表
     var rollcallQuery = new AV.Query('ROLLCALL');
-     rollcallQuery.include('students');
-    rollcallQuery.get(that.data.rollcallId).then(function(rc){
+    rollcallQuery.include('students');
+    rollcallQuery.get(that.data.rollcallId).then(function (rc) {
+      console.log(rc)
       var students = rc.get('students');
       that.setData({
-        signedInStudents: students
+        signedInStudents: students,
+        signedInStudentsNum: students.length,
       });
+    });
+    //更新签到进度
+    var courseQuery = new AV.Query('COURSE');
+    courseQuery.get(that.data.courseId).then(function (c) {
+      console.log(c)
+      var sum = c.attributes.students.length;
+      that.setData({
+        studentSum: sum
+      });
+    });
+  },
+  addToNamelist: function () {
+    this.setData({
+      manuAdd: true
+    });
+
+  },
+  inputStuId: function (e) {
+    this.setData({
+      stuId: e.detail.value
     })
+  },
+  manuAdd: function () {
+    var that = this;
+    console.log(this.data.stuId)
+    //搜索学号对应的学生用户
+    var studentQuery = new AV.Query('_User');
+    studentQuery.equalTo('userId', this.data.stuId);
+    studentQuery.find()
+      .then(function (stu) {
+        if (stu.length > 0) {
+          var rollcall = AV.Object.createWithoutData('ROLLCALL', that.data.rollcallId);
+          var student = AV.Object.createWithoutData('_User', stu[0].id);
+          rollcall.addUnique('students', student);
+          rollcall.save().then(function (rc) {
+            wx.showToast({
+              title: '添加成功',
+              icon: 'success',
+              duration: 2000
+            });
+            that.updateStatus();
+          });
+        } else {
+          wx.showModal({
+            title: '没有找到匹配的学生信息',
+            showCancel: false,
+            content: '请确认学号信息准确无误',
+            confirmText: '确认',
+            confirmColor: '#3CC51F',
+            success: function (res) {
+              wx.hideToast();
+            }
+          });
+        }
+      }, function (error) {
+        console.log(error)
+      });
   },
   onReady: function () {
     // 页面渲染完成

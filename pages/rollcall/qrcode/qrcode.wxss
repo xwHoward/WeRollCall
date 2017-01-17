@@ -1,25 +1,132 @@
 /* pages/rollcall/qrcode/qrcode.wxss */
-.tips{
-    width: 600rpx;
-    margin: 40rpx auto;
+
+.tips {
+  width: 600rpx;
+  margin: 40rpx auto;
+  background-color: #3e4a51;
+  padding: 20rpx 40rpx 0;
+}
+
+icon {
+  float: left;
+}
+
+.tip {
+  float: left;
+  margin-left: 20rpx;
+  margin-bottom: 20rpx;
+  width: 520rpx;
+  color: #fff;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.qrcode {
+  width: 600rpx;
+  height: 600rpx;
+  background-color: #fff;
+  margin: 0 auto 40rpx;
+}
+
+.label {
+  padding: 10px 18px;
+  margin: 20rpx 0;
+}
+
+.timeout {
+  font-weight: bold;
+  margin: 0 4rpx;
+}
+
+.add-course {
+  width: 80%;
+  height: 80rpx;
+  font-size: 18px;
+  line-height: 80rpx;
+  margin: 60rpx auto;
+  background-color: #49545b;
+  color: #fff;
+}
+
+.add-course-hover {
+  background-color: #3e4a51;
+}
+.countdown{
+    width: 500rpx;
+    margin: 100rpx auto;
+    border-radius: 20rpx;
+    text-align: center;
+    padding-bottom: 10rpx;
+}
+.cd-top{
     background-color: #3e4a51;
-    padding: 20rpx 40rpx 0;
-}
-.tips icon{
-    float: left;
-}
-.tips .tip{
-    float: left;
-    margin-left: 20rpx;
-    margin-bottom: 20rpx;
-    width: 520rpx;
+    border-radius: 20rpx;
     color: #fff;
-    font-size: 14px;
-    line-height: 20px;
+    font-size: 40px;
+    padding: 10rpx 0 0 40rpx;
+    letter-spacing: 15px;
+    margin: 20rpx 0;
 }
-.qrcode{
-    width: 600rpx;
-    height: 600rpx;
+.cd-bottom{
+    color: #fff;
+}
+.progress{
+    width: 700rpx;
+    margin: 40rpx auto;
+}
+.percent{
+    float: left;
+    width: 550rpx;
+}
+.detail{
+    float: right;
+    width: 150rpx;
+    height: 40rpx;
+    line-height: 40rpx;
+    text-align: center;
+}
+.namelist{
+    width: 700rpx;
+    margin: 0 auto;
+    border-top: 2rpx #3e4a51 solid;
+    border-left: 2rpx #3e4a51 solid;
+}
+.nl-item{
     background-color: #fff;
-    margin: 20rpx auto;
+    text-align: center;
+}
+.nl-item view{
+    float: left;
+    background-color: #fff;
+    border-right: 2rpx #3e4a51 solid;
+    border-bottom: 2rpx #3e4a51 solid;
+}
+.nli-index{
+    width: 100rpx;
+}
+.nli-name{
+    width: 350rpx;
+}
+.nli-id{
+    width: 244rpx;
+}
+.add{
+    width: 700rpx;
+    margin: 0 auto 100rpx;
+}
+.add-input{
+    float: left;
+    width: 400rpx;
+    padding-left: 20rpx;
+    background-color: #fff;
+    height: 80rpx;
+}
+.add-btn{
+    float: right;
+    width: 200rpx;
+    height: 80rpx;
+    line-height: 80rpx;
+    background-color: #3e4a51;
+    color: #fff;
+    /*background-color: #fff;*/
 }
