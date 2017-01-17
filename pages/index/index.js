@@ -149,7 +149,6 @@ Page({
       .catch(console.error);
   },
   onLoad: function () {
-    // wx.clearStorageSync()
     var that = this;
     that.initUserInfo();
   }

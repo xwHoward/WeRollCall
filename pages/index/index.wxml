@@ -1,5 +1,6 @@
 <view class="container-fluid">
   <view class="line-shadow"></view>
+  <view class="placeholder" wx:if="{{courses.length == 0}}">还没有课程信息哦哦，下拉刷新或添加新课程~</view>
   <view class="course-per-weekday" wx:for="{{courses}}">
     <text class="weekday">{{item.weekdays}}</text>
     <view class="course">

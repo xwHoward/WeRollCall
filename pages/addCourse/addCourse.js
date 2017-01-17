@@ -3,7 +3,7 @@ var COURSE = AV.Object.extend('COURSE');
 var app = getApp();
 Page({
   data: {
-    template: 'search-course',
+    template: '',
     tplData: {
       timeStart: '08:00',
       timeEnd: '09:35',
@@ -72,11 +72,11 @@ Page({
       .then(function (stu) {
         console.log('choose course success!', stu)
         var course = AV.Object.createWithoutData('COURSE', e.target.dataset.course.objectId);
-    var student = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
+        var student = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
         course.addUnique('students', student);
         course.save().then(function (c) {
-        console.log(c)
-        },function(error){
+          console.log(c)
+        }, function (error) {
           console.log(error)
         });
         wx.showModal({
@@ -127,8 +127,15 @@ Page({
     });
   },
   onLoad: function () {
-    this.setData({
-      'tplData.courseTeacher': app.globalData.user.userName
-    })
+    if (app.globalData.user.userType == "老师") {
+      this.setData({
+        'template': 'add-course',
+        'tplData.courseTeacher': app.globalData.user.userName
+      });
+    } else {
+      this.setData({
+        'template': 'search-course'
+      });
+    }
   }
 })

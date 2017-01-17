@@ -5,27 +5,38 @@ var app = getApp();
 Page({
   data: {
     imagePath: '',
-    timeout: 2,
+    timeout: '',
     bgc: '#09BB07',
     countdownEnd: true,
     manuAdd: false,
-    template: 'create',
-    timeLeft: '2:0',
+    template: '',
+    timeLeft: '0:0',
     signedInStudents: []
   },
   onLoad: function (options) {
     // 页面初始化 options为页面跳转所带来的参数
-    console.log(options)
-    this.setData({
-      courseId: options.courseId
-    });
-    var res = wx.getSystemInfoSync();
-    var size = {
-      w: res.windowWidth / 1.25,
-      h: res.windowWidth / 1.25
-    };//动态设置画布大小
-    var token = options.courseId;
-    this.createQrCode(token, "qrcode", size.w, size.h);
+    console.log('页面初始化 options为页面跳转所带来的参数:', options)
+    if (options.userType == 'student') {
+      //学生身份，对应签到界面
+      this.setData({
+        template: 'signin',
+        rollcallId: options.rollcallId
+      });
+      this.initSignInData(options.rollcallId);
+    } else {
+      //教师身份，对应创建点名
+      this.setData({
+        template: 'create',
+        courseId: options.courseId
+      });
+      var res = wx.getSystemInfoSync();
+      var size = {
+        w: res.windowWidth / 1.25,
+        h: res.windowWidth / 1.25
+      };//动态设置画布大小
+      var token = options.courseId;
+      this.createQrCode(token, "qrcode", size.w, size.h);
+    }
   },
   createQrCode: function (url, canvasId, cavW, cavH) {
     //调用插件中的draw方法，绘制二维码图片
@@ -99,24 +110,28 @@ Page({
           template: 'countdown',
           rollcallId: rc.id
         });
-        that.startCountdown(that.data.timeout);
+        that.startCountdown(that.data.timeout, 59);
+        var intv = setInterval(function () {
+          if (that.data.countdownEnd) {
+            that.updateStatus();
+          } else {
+            clearInterval(intv);
+          }
+        }, 30000);
       })
       .catch(console.error);
   },
-  startCountdown: function (m) {
-    this.updateStatus();
+  startCountdown: function (m, s) {
     var that = this;
     m--;
-    let s = 9;
     var intv = setInterval(function () {
       if (s >= 0) {
         that.setData({
           timeLeft: m + ':' + s--
         });
       } else {
-        that.updateStatus();
         m--;
-        s = 9;
+        s = 59;
         if (m < 0) {
           clearInterval(intv);
           //定时结束
@@ -207,6 +222,87 @@ Page({
       }, function (error) {
         console.log(error)
       });
+  },
+  //初始化学生签到界面
+  initSignInData: function (rcId) {
+    var that = this;
+    var rollcallQuery = new AV.Query('ROLLCALL');
+    rollcallQuery.get(rcId).then(function (rc) {
+      console.log('rollcall:', rc)
+      var timeStart = rc.get('createdAt');
+      var timeout = rc.get('timeout');
+      var now = new Date();
+      console.log(timeStart - now + timeout * 60000)
+      var timeLeft = timeStart - now + timeout * 60000;
+      if (timeLeft <= 0) {
+        //点名已结束
+        that.setData({
+          bgc: '#f76060',
+          countdownEnd: false
+        });
+        wx.showToast({
+          title: '点名已结束',
+          icon: 'success',
+          duration: 3000
+        });
+      } else {
+        //点名正在进行中
+        var min = (new Date(timeLeft)).getMinutes();
+        var sec = (new Date(timeLeft)).getSeconds();
+        that.startCountdown(min, sec);
+      }
+    });
+  },
+  //扫码签到
+  qrcodeSignIn: function () {
+    var that = this;
+    wx.scanCode({
+      success: (res) => {
+        var str = res.result;
+        var courseId = str.slice(str.lastIndexOf('/') + 1);
+        console.log('courseId:', courseId);
+        var rollcallQuery = new AV.Query('ROLLCALL');
+        rollcallQuery.get(that.data.rollcallId).then(function (rc) {
+          console.log("rollcall's course id, scanned id:", rc.attributes.course.id, courseId)
+          if (rc.attributes.course.id == courseId) {
+            //签到成功
+            var rollcall = AV.Object.createWithoutData('ROLLCALL', that.data.rollcallId);
+            var student = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
+            rollcall.addUnique('students', student);
+            rollcall.save().then(function (rc) {
+              console.log('签到成功！')
+              // var rollcall = AV.Object.createWithoutData('ROLLCALL', that.data.rollcallId);
+            var self = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
+              self.addUnique('rollcalls', rc);
+              self.save();
+              wx.showModal({
+                title: '签到成功',
+                content: '点击确定返回主页',
+                showCancel: false,
+                confirmText: '返回主页',
+                confirmColor: '#3CC51F',
+                success: function (res) {
+                    console.log('返回主页')
+                    wx.navigateBack();
+                }
+              });
+            })
+          } else {
+            console.log('签到失败！')
+            wx.showModal({
+                title: '签到失败！',
+                content: '请检查二维码是否正确，或重新扫码',
+                showCancel: false,
+                confirmText: '确定',
+                confirmColor: '#3CC51F',
+                success: function (res) {
+                    wx.hideModal();
+                }
+              });
+          }
+        });
+      }
+    })
   },
   onReady: function () {
     // 页面渲染完成

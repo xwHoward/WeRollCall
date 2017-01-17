@@ -10,7 +10,8 @@
       <text class="tip">您可以提前将二维码作为课件保存，发布点名后再展示给学生。</text>
     </view>
     <canvas bindlongtap="previewImg" class="qrcode" canvas-id="qrcode" />
-    <text class="label">设置本次点名持续时间：<text class="timeout">{{timeout}}</text>min</text>
+    <text class="label">设置本次点名持续时间：
+      <text class="timeout">{{timeout}}</text>min</text>
     <slider bindchange="timeoutChange" min="1" max="5" value="{{timeout}}" step="1" selected-color="#3e4a51" show-value/>
     <button bindtap="createRollcall" class="add-course" hover-class="add-course-hover">发布点名</button>
   </block>
@@ -21,27 +22,38 @@
       <view class="cd-top">{{timeLeft}}</view>
       <view class="cd-bottom">剩余时间</view>
     </view>
+
     <!--<button bindtap="updateStatus" class="add-course" hover-class="add-course-hover">刷新签到情况</button>-->
     <view class="progress clearfix">
       <progress percent="{{signedInStudentsNum/studentSum*100}}" color="	#09BB07" active stroke-width="20" class="percent" />
       <view class="detail">{{signedInStudentsNum}}/{{studentSum}}</view>
     </view>
-
     <scroll-view scroll-y="true" style="height: 200px;">
-    <view class="namelist clearfix">
-      <view wx:for="{{signedInStudents}}" class="nl-item">
-        <view class="nli-index">{{index}}</view>
-        <view class="nli-name">{{item.userName}}</view>
-        <view class="nli-id">{{item.userId}}</view>
+      <view class="namelist clearfix">
+        <view wx:for="{{signedInStudents}}" class="nl-item">
+          <view class="nli-index">{{index}}</view>
+          <view class="nli-name">{{item.userName}}</view>
+          <view class="nli-id">{{item.userId}}</view>
+        </view>
       </view>
-    </view>
-  </scroll-view>
+    </scroll-view>
     <button class="add-course" hover-class="add-course-hover" bindtap="addToNamelist" disabled="{{countdownEnd}}">+ 手动添加</button>
     <block wx:if="{{manuAdd}}">
-    <view class="add clearfix">
-      <input placeholder="请输入完整学号" bindinput="inputStuId" auto-focus class="add-input"/>
-      <button bindtap="manuAdd" class="add-btn">添加</button>
-    </view>
+      <view class="add clearfix">
+        <input placeholder="请输入完整学号" bindinput="inputStuId" auto-focus class="add-input" />
+        <button bindtap="manuAdd" class="add-btn">添加</button>
+      </view>
     </block>
   </block>
+
+  <!--学生签到-->
+  <block wx:if="{{template == 'signin'}}">
+    <view class="countdown" style="background-color:{{bgc}}">
+      <view class="cd-top">{{timeLeft}}</view>
+      <view class="cd-bottom">剩余时间</view>
+    </view>
+    <image src="https://dn-03kfwto5.qbox.me/17b5d323db4c99070828.gif" class="animation"></image>
+    <button bindtap="qrcodeSignIn" disabled="{{!countdownEnd}}" class="scanCode"><image src="/images/Scan.png" class="btn-icon"></image> 扫描二维码签到</button>
+  </block>
+
 </view>

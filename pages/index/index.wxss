@@ -1,3 +1,11 @@
+.placeholder{
+  height: 200rpx;
+  width: 500rpx;
+  margin: 0 auto;
+  padding: 100rpx 0;
+  text-align: center;
+  color: #aaa;
+}
 .course-per-weekday{
   width: 94%;
   margin: 40rpx auto;

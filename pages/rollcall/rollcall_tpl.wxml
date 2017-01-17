@@ -10,4 +10,5 @@
   <button class="pulse-button" bindtap="signIn">
     签到
   </button>
+  <image src="https://dn-03kfwto5.qbox.me/17b5d323db4c99070828.gif"></image>
 </template>

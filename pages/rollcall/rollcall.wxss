@@ -1,3 +1,6 @@
+.container {
+  background-color: #2a3162;
+} 
 .rollcall-button{
     height: 200rpx;
     width: 90%;
@@ -5,21 +8,17 @@
     background-color: #fff;
     border-radius: 6rpx;
     box-shadow: 6rpx 6rpx 10rpx #333;
+    font-size: 20px;
+    color: #fff;
+    text-align: center;
 }
-/*.sign-in-button{
-    height: 400rpx;
-    width: 400rpx;
-    margin: 100rpx auto;
-    border-radius: 200rpx;
-    background-color: #1AAD16;
-    border: #fff solid 10rpx;
-}*/
+
 .pulse-button {
-  height: 400rpx;
-  width: 400rpx;
-  margin: 100rpx auto;
-  border-radius: 200rpx;
-  background-color: #1AAD16;
+  height: 300rpx;
+  width: 300rpx;
+  margin: 0 auto;
+  border-radius: 150rpx;
+  background-color: #eee;
   border: none;
   box-shadow: 0 0 0 0 rgba(222,222,222, .5);
   animation: pulse 1.5s infinite;
