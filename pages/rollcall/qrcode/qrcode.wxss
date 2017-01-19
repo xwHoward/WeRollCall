@@ -35,6 +35,7 @@ icon {
 .timeout {
   font-weight: bold;
   margin: 0 4rpx;
+  color: #2a3162;
 }
 
 .add-course {

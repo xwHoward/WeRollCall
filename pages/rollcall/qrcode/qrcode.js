@@ -5,7 +5,7 @@ var app = getApp();
 Page({
   data: {
     imagePath: '',
-    timeout: '',
+    timeout: 2,
     bgc: '#09BB07',
     countdownEnd: true,
     manuAdd: false,
@@ -93,24 +93,34 @@ Page({
   createRollcall: function () {
     var that = this;
     var rollcall = new ROLLCALL();
-    console.log(app.globalData.user)
     var teacher = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
     rollcall.set('teacher', teacher);
     var course = AV.Object.createWithoutData('COURSE', that.data.courseId);
     rollcall.set('course', course);
     rollcall.set('type', 'qrcode');
     rollcall.set('students', []);
-    var stuA = AV.Object.createWithoutData('_User', '587b6dd15c497d0058a39e76');
-    rollcall.addUnique('students', stuA);
+    var stuA = AV.Object.createWithoutData('_User', '587b6dd15c497d0058a39e76');//测试数据
+    rollcall.addUnique('students', stuA);//测试数据
     rollcall.set('timeout', this.data.timeout);
     rollcall.save()
       .then(function (rc) {
-        console.log('rollcall:', rc);
+        console.log('新增rollcall行成功，rollcall行注入course成功');
+        var course = AV.Object.createWithoutData('COURSE', that.data.courseId);
+        var rollcall = AV.Object.createWithoutData('ROLLCALL', rc.id);
+        course.addUnique('rollcalls', rollcall);
+        course.save().then(function (c) {
+          console.log('course行注入rollcall成功');
+        });
+        var teacher = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
+        teacher.addUnique('rollcalls', rollcall);
+        teacher.save().then(function (t) {
+          console.log('user行注入rollcall成功');
+        });
         that.setData({
           template: 'countdown',
           rollcallId: rc.id
         });
-        that.startCountdown(that.data.timeout, 59);
+        that.startCountdown(that.data.timeout - 1, 59);
         var intv = setInterval(function () {
           if (that.data.countdownEnd) {
             that.updateStatus();
@@ -123,7 +133,6 @@ Page({
   },
   startCountdown: function (m, s) {
     var that = this;
-    m--;
     var intv = setInterval(function () {
       if (s >= 0) {
         that.setData({
@@ -270,11 +279,13 @@ Page({
             var student = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
             rollcall.addUnique('students', student);
             rollcall.save().then(function (rc) {
-              console.log('签到成功！')
-              // var rollcall = AV.Object.createWithoutData('ROLLCALL', that.data.rollcallId);
-            var self = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
-              self.addUnique('rollcalls', rc);
-              self.save();
+              console.log('rollcall表注入签到学生成功')
+              var rollcall = AV.Object.createWithoutData('ROLLCALL', rc.id);
+              var self = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
+              self.addUnique('rollcalls', rollcall);
+              self.save().then(function (stu) {
+                console.log('user表注入rollcall成功')
+              });
               wx.showModal({
                 title: '签到成功',
                 content: '点击确定返回主页',
@@ -282,23 +293,23 @@ Page({
                 confirmText: '返回主页',
                 confirmColor: '#3CC51F',
                 success: function (res) {
-                    console.log('返回主页')
-                    wx.navigateBack();
+                  console.log('返回主页')
+                  wx.navigateBack();
                 }
               });
             })
           } else {
             console.log('签到失败！')
             wx.showModal({
-                title: '签到失败！',
-                content: '请检查二维码是否正确，或重新扫码',
-                showCancel: false,
-                confirmText: '确定',
-                confirmColor: '#3CC51F',
-                success: function (res) {
-                    wx.hideModal();
-                }
-              });
+              title: '签到失败！',
+              content: '请检查二维码是否正确，或重新扫码',
+              showCancel: false,
+              confirmText: '确定',
+              confirmColor: '#3CC51F',
+              success: function (res) {
+
+              }
+            });
           }
         });
       }

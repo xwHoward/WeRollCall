@@ -6,6 +6,7 @@ page{
 .container {
   height: 100%;
   background-color: #efefef;
+  overflow: hidden;
 } 
 .line-shadow{
   height: 2rpx;
@@ -25,7 +26,7 @@ text,view,input,button,picker{
   overflow: hidden;
 }
 slider{
-  width: 700rpx;
+  width: 650rpx;
   margin-left: 50rpx; 
 }
 

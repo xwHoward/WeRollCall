@@ -1,6 +1,6 @@
 //index.js
 const AV = require('../../lib/leancloud-storage');
-var Promise = require("../../lib/bluebird");
+var Promise = require("../../lib/es6-promise.min");
 var app = getApp();
 var util = require('../../lib/util')
 var getUserInfoPromisified = util.wxPromisify(wx.getUserInfo)
@@ -122,11 +122,13 @@ Page({
       console.log("usertype:student")
       that.getChosenCourses();
     }
+    wx.hideNavigationBarLoading();
   },
   //初始化用户信息
   //返回用户类型：'教师'/'学生'
   initUserInfo: function () {
     var that = this;
+    wx.showNavigationBarLoading();
     AV.User.loginWithWeapp()
       .then(function () {
         var user = AV.User.current();
@@ -147,6 +149,9 @@ Page({
         }
       })
       .catch(console.error);
+  },
+  goToStat: function(courseId){
+    console.log(courseId)
   },
   onLoad: function () {
     var that = this;

@@ -70,6 +70,7 @@ Page({
         rollcall.save()
         .then(function(rc){
             console.log(rc)
+
             var token = rc.id.toString().substring(20);
             that.setData({
                 template: 'token',
@@ -134,6 +135,7 @@ Page({
     },
     onLoad: function (options) {
         // 生命周期函数--监听页面加载
+        console.log(options)
         // this.getLocation();
         if(app.globalData.user.userType == '老师'){
             this.setData({
