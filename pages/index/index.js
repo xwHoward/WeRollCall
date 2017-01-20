@@ -122,13 +122,17 @@ Page({
       console.log("usertype:student")
       that.getChosenCourses();
     }
-    wx.hideNavigationBarLoading();
+    wx.hideToast();
   },
   //初始化用户信息
   //返回用户类型：'教师'/'学生'
   initUserInfo: function () {
     var that = this;
-    wx.showNavigationBarLoading();
+    wx.showToast({
+      icon: 'loading',
+      title: '拉取用户数据中...',
+      mask: true
+    });
     AV.User.loginWithWeapp()
       .then(function () {
         var user = AV.User.current();
@@ -150,8 +154,19 @@ Page({
       })
       .catch(console.error);
   },
-  goToStat: function(courseId){
-    console.log(courseId)
+  goToStat: function (e) {
+    wx.navigateTo({
+      url: 'stat/stat?courseId=' + e.target.dataset.courseId,
+      success: function (res) {
+        // success
+      },
+      fail: function () {
+        // fail
+      },
+      complete: function () {
+        // complete
+      }
+    })
   },
   onLoad: function () {
     var that = this;

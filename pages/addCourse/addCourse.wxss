@@ -42,3 +42,57 @@
 .add-course-hover{
   background-color: #3e4a51;
 }
+.search-field{
+  width: 600rpx;
+  margin: 100rpx auto;
+}
+.search-field input{
+  background-color: #fff;
+  height: 80rpx;
+  font-size: 16px;
+  line-height: 80rpx;
+  padding-left: 40rpx;
+}
+.course-per-weekday{
+  width: 94%;
+  margin: 40rpx auto;
+}
+.course-per-weekday .weekday{
+  color: #c1c1c1;
+  letter-spacing: 6rpx;
+  font-size:16px;
+}
+.course-per-weekday .course{
+  box-sizing: border-box;
+  height: 160rpx;
+  background-color: #fff;
+  margin: 20rpx 0;
+  box-shadow: 4rpx 4rpx 4rpx #d4d4d4;
+  position: relative;
+  padding: 40rpx 20rpx;
+}
+.course .course-name{
+  display: block;
+  font-size: 16px;
+  line-height:46rpx;
+  letter-spacing: 4rpx;
+}
+.course .course-classroom{
+  color: #aaa;
+  line-height: 28rpx;
+}
+.course .course-time{
+  height: 80rpx;
+  width: 300rpx;
+  position: absolute;
+  right: 20rpx;
+  top: 40rpx;
+  background-color: #3e4a51;
+  text-align: center;
+}
+.course-time text{
+  color: #fff;
+  height: 80rpx;
+  line-height: 80rpx;
+  width: 300rpx;
+}

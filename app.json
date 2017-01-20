@@ -1,6 +1,7 @@
 {
   "pages":[
     "pages/index/index",
+    "pages/index/stat/stat",
     "pages/rollcall/rollcall",
     "pages/user/user",
     "pages/login/login",

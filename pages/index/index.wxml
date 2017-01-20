@@ -1,10 +1,10 @@
 <view class="container-fluid">
   <view class="line-shadow"></view>
-  <view class="placeholder" wx:if="{{courses.length == 0}}">还没有课程信息哦哦，下拉刷新或添加新课程~</view>
+  <view class="placeholder" wx:if="{{courses.length == 0}}">还没有课程信息哦，下拉刷新或添加新课程~</view>
   <view class="course-per-weekday" wx:for="{{courses}}">
     <text class="weekday">{{item.weekdays}}</text>
     <view class="course">
-      <text class="course-name" bindtap="goToStat(item.objectId)">{{item.courseName}}</text>
+      <text class="course-name" bindtap="goToStat" data-course-id="{{item.objectId}}">{{item.courseName}}</text>
       <text class="course-classroom">教室：{{item.courseAddr}}</text>
       <view class="course-time">
         <text class="time-start">{{item.courseTimeStart}}</text>

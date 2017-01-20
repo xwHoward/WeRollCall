@@ -3,7 +3,7 @@ var COURSE = AV.Object.extend('COURSE');
 var app = getApp();
 Page({
   data: {
-    template: '',
+    template: 'search-course',
     tplData: {
       timeStart: '08:00',
       timeEnd: '09:35',
@@ -65,13 +65,14 @@ Page({
   },
   chooseCourse: function (e) {
     //学生身份对应选课
-    var course = AV.Object.createWithoutData('COURSE', e.target.dataset.course.objectId);
+    console.log(e.target.dataset)
+    var course = AV.Object.createWithoutData('COURSE', e.target.dataset.courseId);
     var student = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
     student.addUnique('coursesChosen', course);
     student.save()
       .then(function (stu) {
         console.log('choose course success!', stu)
-        var course = AV.Object.createWithoutData('COURSE', e.target.dataset.course.objectId);
+        var course = AV.Object.createWithoutData('COURSE', e.target.dataset.courseId);
         var student = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
         course.addUnique('students', student);
         course.save().then(function (c) {
@@ -106,6 +107,7 @@ Page({
   },
   searchCourse: function (e) {
     var that = this;
+    wx.showNavigationBarLoading();
     var query = new AV.Query('COURSE');
     query.contains('courseName', e.detail.value);
     query.include('teacher');
@@ -122,6 +124,7 @@ Page({
       that.setData({
         'tplData.results': results
       });
+      wx.hideNavigationBarLoading();
     }, function (error) {
       console.log(error)
     });
