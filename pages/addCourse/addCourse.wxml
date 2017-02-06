@@ -1,5 +1,5 @@
 <import src="addCourse_tpl.wxml"/>
-<view class="container">
+<view class="container-fluid">
   <view class="line-shadow"></view>
   <template is="{{template}}" data="{{...tplData}}"/>
 </view>  

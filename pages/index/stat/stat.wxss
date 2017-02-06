@@ -1,1 +1,61 @@
-/* pages/index/stat/stat.wxss */
+view{
+    box-sizing: border-box;
+}
+.title{
+    width: 600rpx;
+    text-align: center;
+    margin: 50rpx auto;
+    font-size: 40rpx;
+}
+.graph{
+    width: 600rpx;
+    height: 100rpx;
+    margin: 50rpx auto;
+    border-radius: 50rpx;
+    overflow: hidden;
+    background-color: #b2b0b1;
+}
+.graph view{
+    height: 100rpx;
+    float: right;
+    overflow: hidden;
+    box-shadow: #000 0 0 50rpx;
+}
+.gray{
+    background-color: #b2b0b1;
+}
+.green{
+    background-color: #318f35;
+}
+.blue{
+    background-color: #45a0cf;
+}
+.red{
+    background-color: #cf5835;
+}
+.detail{
+    width: 600rpx;
+    margin: 0 auto;
+}
+.detail view{
+    float: left;
+    width: 50rpx;
+    height: 50rpx;
+    border-radius: 20rpx;
+    margin-right: 20rpx;
+    margin-bottom: 20rpx;
+}
+.detail text{
+    float: left;
+    height: 50rpx;
+    width:230rpx;
+    line-height: 50rpx;
+    margin-bottom: 20rpx;
+}
+.leave-note{
+    background-color: #c3d4d1;
+    width: 700rpx;
+    margin: 50rpx auto;
+    padding: 50rpx;
+    border-radius: 20rpx;
+}

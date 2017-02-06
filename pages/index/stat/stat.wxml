@@ -1,2 +1,29 @@
-<!--pages/index/stat/stat.wxml-->
-<text>pages/index/stat/stat.wxml</text>
+<view class="container">
+  <view class="line-shadow"></view>
+  <view class="title">{{courseName}}</view>
+  <view class="graph">
+    <view class="red" style="width:{{absence/total*100}}%;"></view>
+    <view class="blue" style="width:{{leave/total*100}}%;"></view>
+    <view class="green" style="width:{{attend/total*100}}%;"></view>
+  </view>
+  <view class="detail clearfix">
+    <view class="gray"></view>
+    <text>点名：{{total}} 次</text>
+    <view class="green"></view>
+    <text>出勤：{{attend}} 次</text>
+    <view class="blue"></view>
+    <text>请假：{{leave}} 次</text>
+    <view class="red"></view>
+    <text>缺勤：{{absence}} 次</text>
+  </view>
+  <view class="leave-note">
+    <view class="student">
+      <text class="leave-title">{{courseName}} 课请假条</text>
+      <text>{{teacher}} 老师：</text>
+      <text>请假人：{{student}}</text>
+      <text>学号：{{stuId}}</text>
+    </view>
+    <view class="teacher">
+    </view>
+  </view>
+</view>

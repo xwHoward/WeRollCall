@@ -1,6 +1,3 @@
-.container{
-  overflow: hidden;
-}
 .section{
   margin: 50rpx 0 0;
   overflow: hidden;
