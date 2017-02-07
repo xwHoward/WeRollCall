@@ -1,4 +1,4 @@
-<view class="container">
+<view class="container-fluid">
   <view class="line-shadow"></view>
   <view class="title">{{courseName}}</view>
   <view class="graph">
@@ -17,12 +17,31 @@
     <text>缺勤：{{absence}} 次</text>
   </view>
   <view class="leave-note">
-    <view class="student">
-      <text class="leave-title">{{courseName}} 课请假条</text>
-      <text>{{teacher}} 老师：</text>
-      <text>请假人：{{student}}</text>
-      <text>学号：{{stuId}}</text>
+    <view class="message">
+      <view class="leave-title">请假条</view>
+      <view>尊敬的
+        <text class="underline"> {{teacher}} </text>老师：</view>
+      <view>我因
+        <input type="text" class="reason" value="{{reason}}" placeholder="说明请假原因"/>需要在
+        <text class="underline"> {{courseName}} </text>课请假。</view>
+      <view class="leave-info">
+        <view>请假人：
+          <text class="underline"> {{student}} </text>
+        </view>
+        <view>学号：
+          <text class="underline"> {{stuId}} </text>
+        </view>
+        <view>日期：
+          <text class="underline"> {{date}} </text>
+        </view>
+      </view>
     </view>
+    <view class="image">
+      <image src="/images/Camera.png" class="placeholder" bindtap="uploadFile"></image>
+      <image src="{{tempFilePath}}" class="file" wx:if="{{tempFilePath != null}}" bindlongtap="deletePic"></image>
+      <view class="notation">上传证明图片，长按删除已选图片</view>
+    </view>
+    <button class="add-course" hover-class="add-course-hover" bindtap="sendMessage">向老师发送假条</button>
     <view class="teacher">
     </view>
   </view>

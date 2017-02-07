@@ -53,9 +53,68 @@ view{
     margin-bottom: 20rpx;
 }
 .leave-note{
-    background-color: #c3d4d1;
     width: 700rpx;
     margin: 50rpx auto;
-    padding: 50rpx;
+}
+.message{
+    background-color: #fff;
+    width: 100%;
     border-radius: 20rpx;
+    padding: 50rpx;
+    border-bottom: #000 dotted 1px;
+}
+.leave-title{
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20rpx;
+}
+.underline{
+    text-decoration: underline;
+}
+.reason{
+    border-bottom: #000 solid 1px;
+}
+.leave-info{
+    margin-left: 300rpx;
+}
+.image{
+    background-color: #fff;
+    width: 100%;
+    height: 400rpx;
+    border-radius: 20rpx;
+    padding: 50rpx;
+    border-top: #000 dotted 1px;
+    position: relative;
+}
+.placeholder{
+    z-index: 0;
+    width: 300rpx;
+    height: 300rpx;
+    display: block;
+    margin: 0 auto;
+}
+.file{
+    display: block;
+    width: 600rpx;
+    height: 300rpx;
+    z-index: 1;
+    position: absolute;
+    top: 50rpx;
+    left: 50rpx; 
+}
+.notation{
+    text-align: center;
+    color: #ccc;
+}
+.add-course{
+  width: 80%;
+  height: 80rpx;
+  font-size: 18px;
+  line-height: 80rpx;
+  margin: 20rpx auto;
+  background-color: #49545b;
+  color: #fff;
+}
+.add-course-hover{
+  background-color: #3e4a51;
 }
