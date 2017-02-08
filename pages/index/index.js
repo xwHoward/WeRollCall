@@ -91,6 +91,7 @@ Page({
       that.setData({
         courses: stu.attributes.coursesChosen
       });
+      wx.hideToast();
     }, function (error) {
       // 异常处理
       console.log(error)
@@ -112,9 +113,9 @@ Page({
         that.setData({
           courses: results
         });
-        resolve();
+        wx.hideToast();
       }, function (error) {
-        reject(error)
+        wx.hideToast();
       });
     } else {
       //以学生身份登录
@@ -122,7 +123,7 @@ Page({
       console.log("usertype:student")
       that.getChosenCourses();
     }
-    wx.hideToast();
+    
   },
   //初始化用户信息
   //返回用户类型：'教师'/'学生'

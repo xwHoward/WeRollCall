@@ -1,48 +1,102 @@
 <view class="container-fluid">
-  <view class="line-shadow"></view>
-  <view class="title">{{courseName}}</view>
-  <view class="graph">
-    <view class="red" style="width:{{absence/total*100}}%;"></view>
-    <view class="blue" style="width:{{leave/total*100}}%;"></view>
-    <view class="green" style="width:{{attend/total*100}}%;"></view>
-  </view>
-  <view class="detail clearfix">
-    <view class="gray"></view>
-    <text>点名：{{total}} 次</text>
-    <view class="green"></view>
-    <text>出勤：{{attend}} 次</text>
-    <view class="blue"></view>
-    <text>请假：{{leave}} 次</text>
-    <view class="red"></view>
-    <text>缺勤：{{absence}} 次</text>
-  </view>
-  <view class="leave-note">
-    <view class="message">
-      <view class="leave-title">请假条</view>
-      <view>尊敬的
-        <text class="underline"> {{teacher}} </text>老师：</view>
-      <view>我因
-        <input type="text" class="reason" value="{{reason}}" placeholder="说明请假原因"/>需要在
-        <text class="underline"> {{courseName}} </text>课请假。</view>
-      <view class="leave-info">
-        <view>请假人：
-          <text class="underline"> {{student}} </text>
-        </view>
-        <view>学号：
-          <text class="underline"> {{stuId}} </text>
-        </view>
-        <view>日期：
-          <text class="underline"> {{date}} </text>
-        </view>
+  <block wx:if="{{template == 'student'}}">
+    <view class="title">{{courseName}}</view>
+    <view class="graph">
+      <view class="red" style="width:{{absence/total*100}}%;"></view>
+      <view class="blue" style="width:{{leave/total*100}}%;"></view>
+      <view class="green" style="width:{{attend/total*100}}%;"></view>
+    </view>
+    <view class="detail clearfix">
+      <view class="green"></view>
+      <text>出勤</text>
+      <view class="blue"></view>
+      <text>请假</text>
+      <view class="red"></view>
+      <text>缺勤</text>
+    </view>
+    <view class="table">
+      <view class="row head clearfix">
+        <view class="cell">项目</view>
+        <view class="cell">%</view>
+        <view class="cell">数据</view>
+      </view>
+      <view class="row clearfix">
+        <view class="cell">出勤</view>
+        <view class="cell">{{(attend/total*100)}}%</view>
+        <view class="cell">{{attend}}</view>
+      </view>
+      <view class="row clearfix">
+        <view class="cell">请假</view>
+        <view class="cell">{{leave/total*100}}%</view>
+        <view class="cell">{{leave}}</view>
+      </view>
+      <view class="row clearfix">
+        <view class="cell">缺勤</view>
+        <view class="cell">{{absence/total*100}}%</view>
+        <view class="cell">{{absence}}</view>
+      </view>
+      <view class="row tail clearfix">
+        <view class="cell">总计</view>
+        <view class="cell">100%</view>
+        <view class="cell">{{total}}</view>
       </view>
     </view>
-    <view class="image">
-      <image src="/images/Camera.png" class="placeholder" bindtap="uploadFile"></image>
-      <image src="{{tempFilePath}}" class="file" wx:if="{{tempFilePath != null}}" bindlongtap="deletePic"></image>
-      <view class="notation">上传证明图片，长按删除已选图片</view>
+    <button class="add-course" bindtap="createMessage" wx:if="{{!leaveNoteShow}}">写假条</button>
+    <block wx:if="{{leaveNoteShow}}">
+      <view class="leave-note">
+        <view class="message">
+          <view class="leave-title">请假条</view>
+          <view>尊敬的
+            <text class="underline"> {{teacher}} </text>老师：</view>
+          <view>我因
+            <input type="text" class="reason" bindinput="inputReason" placeholder="说明请假原因" />需要在
+            <text class="underline"> {{courseName}} </text>课请假。</view>
+          <view class="leave-info">
+            <view>请假人：
+              <text class="underline"> {{student}} </text>
+            </view>
+            <view>学号：
+              <text class="underline"> {{stuId}} </text>
+            </view>
+            <view>日期：
+              <text class="underline"> {{date}} </text>
+            </view>
+          </view>
+        </view>
+        <view class="image">
+          <image src="/images/Camera.png" class="placeholder" bindtap="chooseImage"></image>
+          <image src="{{tempFilePath}}" class="file" wx:if="{{tempFilePath != null}}" bindlongtap="deletePic"></image>
+          <view class="notation">上传证明图片，长按删除已选图片</view>
+        </view>
+      </view>
+      <button class="add-course" bindtap="sendMessage" disabled="{{leaveNoteSend}}">向老师发送假条</button>
+    </block>
+  </block>
+  <block wx:if="{{template == 'teacher'}}">
+    <view class="leave-note" wx:for="{{unreadLeaves}}">
+      <view class="message">
+        <view class="leave-title">请假条</view>
+        <view>尊敬的
+          <text class="underline"> {{item.teacher.userName}} </text>老师：</view>
+        <view>我因{{item.reason}}需要在
+          <text class="underline"> {{item.course}} </text>课请假。</view>
+        <view class="leave-info">
+          <view>请假人：
+            <text class="underline"> {{item.student}} </text>
+          </view>
+          <view>学号：
+            <text class="underline"> {{item.student.id}} </text>
+          </view>
+          <view>日期：
+            <text class="underline"> {{date}} </text>
+          </view>
+        </view>
+      </view>
+      <view class="image">
+        <image src="/images/Camera.png" class="placeholder" bindtap="chooseImage"></image>
+        <image src="{{tempFilePath}}" class="file" wx:if="{{tempFilePath != null}}" bindlongtap="deletePic"></image>
+        <view class="notation">上传证明图片，长按删除已选图片</view>
+      </view>
     </view>
-    <button class="add-course" hover-class="add-course-hover" bindtap="sendMessage">向老师发送假条</button>
-    <view class="teacher">
-    </view>
-  </view>
+  </block>
 </view>

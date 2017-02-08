@@ -20,7 +20,7 @@ text,view,input,button,picker{
 .container-fluid{
   background-color: #efefef;
   padding: 0 0 80rpx 0;
-  min-height: 1200rpx;
+  min-height: 1300rpx;
 }
 .clearfix{
   overflow: hidden;
