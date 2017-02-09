@@ -148,3 +148,21 @@ view{
   background-color: #3892b8;
   color: #fff;
 }
+.operation{
+    width: 100%;
+}
+.operation view{
+    float: left;
+    width: 50%;
+    height: 100rpx;
+    line-height: 100rpx;
+    color: #fff;
+    text-align: center;
+    font-size: 40rpx;
+}
+.operation .deny{
+    background-color: #c55e4b;
+}
+.operation .pass{
+    background-color: #0bad62;
+}

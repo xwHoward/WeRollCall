@@ -75,27 +75,25 @@
   <block wx:if="{{template == 'teacher'}}">
     <view class="leave-note" wx:for="{{unreadLeaves}}">
       <view class="message">
-        <view class="leave-title">请假条</view>
-        <view>尊敬的
-          <text class="underline"> {{item.teacher.userName}} </text>老师：</view>
-        <view>我因{{item.reason}}需要在
-          <text class="underline"> {{item.course}} </text>课请假。</view>
-        <view class="leave-info">
-          <view>请假人：
-            <text class="underline"> {{item.student}} </text>
-          </view>
-          <view>学号：
-            <text class="underline"> {{item.student.id}} </text>
-          </view>
-          <view>日期：
-            <text class="underline"> {{date}} </text>
-          </view>
+        <view>请假理由：
+          <text class="underline">{{item.reason}}</text>
+        </view>
+        <view>请假人：
+          <text class="underline"> {{item.studentName}} </text>
+        </view>
+        <view>学号：
+          <text class="underline"> {{item.studentId}} </text>
+        </view>
+        <view>日期：
+          <text class="underline"> {{item.date}} </text>
         </view>
       </view>
       <view class="image">
-        <image src="/images/Camera.png" class="placeholder" bindtap="chooseImage"></image>
-        <image src="{{tempFilePath}}" class="file" wx:if="{{tempFilePath != null}}" bindlongtap="deletePic"></image>
-        <view class="notation">上传证明图片，长按删除已选图片</view>
+        <image src="{{item.imgSrc}}" data-src="{{item.imgSrc}}" class="file" bindtap="previewPic"></image>
+      </view>
+      <view class="operation clearfix">
+        <view class="deny">驳回</view>
+        <view class="pass">同意</view>
       </view>
     </view>
   </block>

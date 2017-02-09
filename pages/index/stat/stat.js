@@ -33,6 +33,7 @@ Page({
       this.setData({
         template: 'teacher'
       });
+      console.log("teacher")
       this.initLeaveNotes(options.courseId);
     }
   },
@@ -50,37 +51,32 @@ Page({
       var unreadLeaves = [];
       for (let i = 0; i < leaves.length; i++) {
         if (leaves[i].get('read') == false) {
+          //未读请假条
           var stu = leaves[i].get('student');
           var leaveQuery = new AV.Query('LEAVE');
           leaveQuery.include('student');
-          // leaveQuery.include('');
           leaveQuery.get(leaves[i].id).then(function (lv) {
-            console.log("leave:",lv)
-            //从这里开始。。。
+            console.log("leave:", lv)
             //遍历unreadLeave获取student字段，重新拼装unreadLeaves
-
-
-
-
-
-
-
-
-
-
+            var student = lv.get('student');
+            console.log(student)
+            var unreadLeave = {
+              reason: lv.get('reason'),
+              studentName: student.get('userName'),
+              studentId: student.get('userId'),
+              date: lv.get('date'),
+              imgSrc: lv.get('image').get('url')
+            }
+            unreadLeaves.push(unreadLeave);
+            if (i == leaves.length - 1) {
+              console.log("unreadLeaves:", unreadLeaves)
+              that.setData({
+                unreadLeaves: unreadLeaves
+              });
+            }
           });
-          // var leaveObj = {
-          //   studentName: stu,
-          //   reason: leaves[i].get('reason')
-          // }
-          // unreadLeaves.push(leaveObj);
         }
       }
-      console.log("unreadLeaves:", unreadLeaves)
-      that.setData({
-        unreadLeaves: unreadLeaves
-      });
-
     }, function (error) {
       // 异常处理
       console.log(error);
@@ -254,6 +250,13 @@ Page({
   createMessage: function () {
     this.setData({
       leaveNoteShow: true
+    });
+  },
+  //查看图片
+  previewPic: function (e) {
+    console.log(e);
+    wx.previewImage({
+      urls: [e.target.dataset.src] // 需要预览的图片http链接列表
     });
   },
   onReady: function () {
