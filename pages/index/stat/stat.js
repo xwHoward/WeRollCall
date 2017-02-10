@@ -21,9 +21,16 @@ Page({
     reason: "",
     leaveNoteShow: false,
     leaveNoteSend: false,
-    template: 'teacher'
+    template: 'teacher',
+    unreadLeaves: []
+  },
+  refresh: function(){
+    this.initLeaveNotes(this.data.courseId);
   },
   onLoad: function (options) {
+    this.setData({
+      courseId: options.courseId
+    });
     if (app.globalData.user.userType == '学生') {
       this.setData({
         template: 'student'
@@ -39,6 +46,11 @@ Page({
   },
   // 加载请假条列表
   initLeaveNotes: function (courseId) {
+    wx.showToast({
+      title: '获取课程信息...',
+      icon: 'loading',
+      mask: true
+    });
     var that = this;
     var courseQuery = new AV.Query('COURSE');
     courseQuery.include('leaves');
@@ -49,9 +61,11 @@ Page({
       // console.log("teacher:", teacher)
       var leaves = crs.get('leaves');
       var unreadLeaves = [];
+      var unreadLeaveNum = 0;
       for (let i = 0; i < leaves.length; i++) {
         if (leaves[i].get('read') == false) {
           //未读请假条
+          unreadLeaveNum++;
           var stu = leaves[i].get('student');
           var leaveQuery = new AV.Query('LEAVE');
           leaveQuery.include('student');
@@ -59,8 +73,8 @@ Page({
             console.log("leave:", lv)
             //遍历unreadLeave获取student字段，重新拼装unreadLeaves
             var student = lv.get('student');
-            console.log(student)
             var unreadLeave = {
+              id: lv.id,
               reason: lv.get('reason'),
               studentName: student.get('userName'),
               studentId: student.get('userId'),
@@ -68,15 +82,22 @@ Page({
               imgSrc: lv.get('image').get('url')
             }
             unreadLeaves.push(unreadLeave);
-            if (i == leaves.length - 1) {
-              console.log("unreadLeaves:", unreadLeaves)
-              that.setData({
-                unreadLeaves: unreadLeaves
-              });
-            }
           });
         }
       }
+      var intv = setInterval(function(){
+        if(unreadLeaves.length == unreadLeaveNum){
+          wx.hideToast();
+          clearInterval(intv);
+          that.setData({
+            unreadLeaves: unreadLeaves
+          });
+        }
+      },1000);
+        // console.log(i, leaves.length)
+        // if (i == leaves.length - 1) {
+        //   console.log("unreadLeaves:", unreadLeaves)
+        // }
     }, function (error) {
       // 异常处理
       console.log(error);
@@ -254,9 +275,29 @@ Page({
   },
   //查看图片
   previewPic: function (e) {
-    console.log(e);
     wx.previewImage({
       urls: [e.target.dataset.src] // 需要预览的图片http链接列表
+    });
+  },
+  deny: function (e) {
+    var that = this;
+    var leave = AV.Object.createWithoutData('LEAVE', e.target.dataset.leaveId);
+    leave.set('read', true);
+    leave.set('agree', false);
+    leave.save().then(function (lv) {
+      that.initLeaveNotes(that.data.courseId);
+      console.log('modify success')
+    });
+  },
+  pass: function (e) {
+    var that = this;
+    console.log(e.target.dataset)
+    var leave = AV.Object.createWithoutData('LEAVE', e.target.dataset.leaveId);
+    leave.set('read', true);
+    leave.set('agree', true);
+    leave.save().then(function (lv) {
+      that.initLeaveNotes(that.data.courseId);
+      console.log('modify success')
     });
   },
   onReady: function () {

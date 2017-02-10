@@ -92,9 +92,14 @@
         <image src="{{item.imgSrc}}" data-src="{{item.imgSrc}}" class="file" bindtap="previewPic"></image>
       </view>
       <view class="operation clearfix">
-        <view class="deny">驳回</view>
-        <view class="pass">同意</view>
+        <view class="deny" bindtap="deny" data-leave-id="{{item.id}}">驳回</view>
+        <view class="pass" bindtap="pass" data-leave-id="{{item.id}}">同意</view>
       </view>
     </view>
+    <view wx:if="{{unreadLeaves.length == 0}}" class="no-leave-notes">
+      本课程当前没有未读学生假条。您可以
+      <text class="underline" bindtap="refresh">点击刷新</text>
+    </view>
+    <!--教师可查看的统计信息-->
   </block>
 </view>

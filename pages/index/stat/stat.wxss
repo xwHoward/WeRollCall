@@ -159,10 +159,17 @@ view{
     color: #fff;
     text-align: center;
     font-size: 40rpx;
+    border-radius: 0 0 20rpx 20rpx;
 }
 .operation .deny{
     background-color: #c55e4b;
 }
 .operation .pass{
     background-color: #0bad62;
+}
+.no-leave-notes{
+    width: 500rpx;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 36rpx;
 }

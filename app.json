@@ -40,5 +40,5 @@
       "selectedIconPath": "images/Users.png"
     }]
   },
-  "debug": true
+  "debug": false
 }

@@ -38,17 +38,17 @@ Page({
       // 调用小程序 API，得到用户信息
       getUserInfoPromisified({})
         .then(function (res) {
-          console.log('wx.getUserInfo success, returned wx userInfo:', res.userInfo)
+          // console.log('wx.getUserInfo success, returned wx userInfo:', res.userInfo)
           // 更新当前用户的信息
           user.set(res.userInfo).save().then(user => {
             // 成功，此时可在控制台中看到更新后的用户信息
             app.globalData.user = user.toJSON();
-            console.log("Update userinfo on leanCloud success, returned new user info:", app.globalData.user)
+            // console.log("Update userinfo on leanCloud success, returned new user info:", app.globalData.user)
             resolve();
           }).catch(console.error);
         })
         .catch(function () {
-          console.log("Update userinfo on leanCloud FAILED! Downloading userinfo on leanCloud...")
+          // console.log("Update userinfo on leanCloud FAILED! Downloading userinfo on leanCloud...")
           //从LeanCloud下载用户信息
           // var query = new AV.Query('_User');
           // query.get(user.id).then(function (userinfo) {
@@ -72,10 +72,10 @@ Page({
     wx.navigateTo({
       url: '../addCourse/addCourse',
       success: function (res) {
-        console.log("page.addCourse redirected..")
+        // console.log("page.addCourse redirected..")
       },
       fail: function () {
-        console.log('redirect fail!')
+        // console.log('redirect fail!')
       },
       complete: function () {
         // complete
@@ -101,12 +101,12 @@ Page({
 
   initData: function () {
     var that = this;
-    console.log("app.globalData.user", app.globalData.user)
+    // console.log("app.globalData.user", app.globalData.user)
     if (app.globalData.user.userType === "老师") {
       console.log("usertype:teacher")
       //以教师身份登录，初始化教师所授课程
       var queryCourse = new AV.Query('COURSE');
-      console.log(app.globalData.user)
+      // console.log(app.globalData.user)
       var teacher = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
       queryCourse.equalTo('teacher', teacher);
       queryCourse.find().then(function (results) {
@@ -137,14 +137,14 @@ Page({
     AV.User.loginWithWeapp()
       .then(function () {
         var user = AV.User.current();
-        console.log("AV.User.current() already in client when page.index onload:", user)
+        // console.log("AV.User.current() already in client when page.index onload:", user)
         if (user.attributes.register != true) {
           // 首次登陆需要初始化身份数据
           console.log('Never registered, redirecting To login page..')
           that.register();
         } else {
           //用户已经注册过
-          console.log('Already registered, now updating user info on leanCloud from wx.getUserInfo()...')
+          // console.log('Already registered, now updating user info on leanCloud from wx.getUserInfo()...')
           that.updateUserInfo()
             .then(function () {
               console.log("updateUserInfo() success! initData()...")

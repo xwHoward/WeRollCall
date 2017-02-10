@@ -3,7 +3,7 @@ var COURSE = AV.Object.extend('COURSE');
 var app = getApp();
 Page({
   data: {
-    template: 'search-course',
+    template: 'add-course',
     tplData: {
       timeStart: '08:00',
       timeEnd: '09:35',
