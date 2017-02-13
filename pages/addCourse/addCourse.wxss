@@ -21,8 +21,9 @@
   box-sizing: border-box;
   background-color: #fff;
   padding: 0 40rpx;
-  height: 50rpx;
-  line-height: 50rpx;
+  height: 70rpx;
+  line-height: 70rpx;
+  font-size: 18px;
   border: 2px #49545b solid;
   border-radius: 10rpx;
 }

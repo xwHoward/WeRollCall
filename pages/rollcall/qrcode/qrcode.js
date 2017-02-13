@@ -153,6 +153,24 @@ Page({
             icon: 'success',
             duration: 3000
           });
+          //对本次点名的请假记录做清理
+          //向今日有效请假记录插入标记字段
+          var today = (new Date()).getLocaleDate().toString();
+          console.log("today:", today)
+          //从这里开始。。。
+          //对符合日期的请假做标记adopted字段
+
+
+
+
+
+
+
+
+
+
+
+
         } else {
           that.setData({
             timeLeft: m + ':' + s--

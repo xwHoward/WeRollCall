@@ -8,10 +8,10 @@ var course = {};
 var date = (new Date()).toLocaleDateString();
 Page({
   data: {
-    attend: 7,
-    leave: 1,//假数据
-    absence: 2,
-    total: 10,
+    attend: 0,
+    leave: 0,
+    absence: 0,
+    total: 0,
     teacher: '',
     student: '',
     stuId: '',
@@ -21,10 +21,10 @@ Page({
     reason: "",
     leaveNoteShow: false,
     leaveNoteSend: false,
-    template: 'teacher',
+    template: '',
     unreadLeaves: []
   },
-  refresh: function(){
+  refresh: function () {
     this.initLeaveNotes(this.data.courseId);
   },
   onLoad: function (options) {
@@ -32,15 +32,16 @@ Page({
       courseId: options.courseId
     });
     if (app.globalData.user.userType == '学生') {
+      console.log("student")
       this.setData({
         template: 'student'
       });
       this.getCourseInfo(options.courseId);
     } else {
+      console.log("teacher")
       this.setData({
         template: 'teacher'
       });
-      console.log("teacher")
       this.initLeaveNotes(options.courseId);
     }
   },
@@ -85,62 +86,85 @@ Page({
           });
         }
       }
-      var intv = setInterval(function(){
-        if(unreadLeaves.length == unreadLeaveNum){
+      var intv = setInterval(function () {
+        if (unreadLeaves.length == unreadLeaveNum) {
           wx.hideToast();
           clearInterval(intv);
           that.setData({
             unreadLeaves: unreadLeaves
           });
         }
-      },1000);
-        // console.log(i, leaves.length)
-        // if (i == leaves.length - 1) {
-        //   console.log("unreadLeaves:", unreadLeaves)
-        // }
+      }, 1000);
+      // console.log(i, leaves.length)
+      // if (i == leaves.length - 1) {
+      //   console.log("unreadLeaves:", unreadLeaves)
+      // }
     }, function (error) {
       // 异常处理
       console.log(error);
     });
   },
-  //初始化点名总数及课程信息
+  //初始化点名总数、出勤次数及课程信息
   getCourseInfo: function (courseId) {
+    wx.showToast({
+      title: '获取课程信息...',
+      icon: 'loading',
+      mask: true
+    });
     var that = this;
     var myRollcalls = app.globalData.user.rollcalls;
     var courseQuery = new AV.Query('COURSE');
-    // courseQuery.include('rollcalls');
     courseQuery.include('teacher');
+    courseQuery.include('leaves');
     courseQuery.get(courseId).then(function (crs) {
       console.log("course:", crs)
       course = crs;
       var courseName = crs.get('courseName');
       var rollcalls = crs.get('rollcalls');
       teacher = crs.get('teacher');
-      var targetStr = '';
+      var targetRollcallStr = '';
       for (var i = 0; i < rollcalls.length; i++) {
-        targetStr += rollcalls[i].id;
+        targetRollcallStr += rollcalls[i].id;
       }
-      console.log("teacher:", teacher)
       var attend = 0;
       console.log("myRollcalls:", myRollcalls)
       for (var i = 0; i < myRollcalls.length; i++) {
         var id = myRollcalls[i].objectId
-        if (targetStr.indexOf(id) > 0) {
+        if (targetRollcallStr.indexOf(id) >= 0) {
           attend++;
         }
       }
-      var leave = 1;//假数据
+      console.log(targetRollcallStr,attend)
+      //请假次数
+      //1.获取用户请假记录
+      var myLeaves = app.globalData.user.leaves;
+      //2.获取指定课程请假记录
+      var leaves = crs.get('leaves');
+      //3.数据合并比较
+      var targetLeaveStr = '';
+      for (var i = 0; i < leaves.length; i++) {
+        targetLeaveStr += leaves[i].id;
+      }
+      var leaveSum = 0;
+      console.log("myLeaves:", myLeaves)
+      for (var i = 0; i < myLeaves.length; i++) {
+        var id = myLeaves[i].objectId
+        if (targetLeaveStr.indexOf(id) >= 0) {
+          leaveSum++;
+        }
+      }
+      console.log(targetLeaveStr,leaveSum)
       that.setData({
         total: rollcalls.length,
         courseName: courseName,
         teacher: teacher.get('userName'),
         student: app.globalData.user.userName,
         attend: attend,
-        absence: rollcalls.length - attend - leave,
-        stuId: app.globalData.user.userId
+        absence: rollcalls.length - attend - leaveSum,
+        stuId: app.globalData.user.userId,
+        leave: leaveSum
       });
-      // var userQuery = new AV.Query('_User');
-
+      wx.hideToast();
     }, function (error) {
       // 异常处理
       console.log(error);
@@ -190,7 +214,7 @@ Page({
       }).save().then(function (file) {
         // 文件保存成功
         console.log("file:", file.id);
-        resolve(file.id);
+        resolve('文件上传完成');
 
       }).catch(function (error) {
         reject(error);
@@ -205,12 +229,14 @@ Page({
       icon: 'loading',
       mask: true
     })
+
     //带图片文件
     if (that.data.tempFilePath !== null) {
       console.log("带图片文件")
       that.uploadFile()
         .then(function (fileId) {
           console.log(fileId);
+          //新增LEAVE表行数据
           var leave = new LEAVE();
           var studentObj = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
           var teacherObj = AV.Object.createWithoutData('_User', teacher.id);
@@ -223,6 +249,7 @@ Page({
           leave.set('course', courseObj);
           leave.set('image', fileObj);
           leave.set('read', false);
+          leave.set('adopted', false);
           leave.save()
             .then(function (res) {
               console.log(res)
@@ -230,11 +257,18 @@ Page({
               that.setData({
                 leaveNoteSend: true
               });
+
               //COURSE表leaves字段追加记录
               var courseClass = AV.Object.createWithoutData('COURSE', course.id);
               var leaveClass = AV.Object.createWithoutData('LEAVE', res.id);
               courseClass.addUnique('leaves', leaveClass);
               courseClass.save();
+
+              //_USER表leaves字段追加记录
+              var userReg = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
+              var leaveReg = AV.Object.createWithoutData('LEAVE', res.id);
+              userReg.addUnique('leaves', leaveReg);
+              userReg.save();
             })
             .catch(console.error);
         });
@@ -245,11 +279,12 @@ Page({
       var studentObj = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
       var teacherObj = AV.Object.createWithoutData('_User', teacher.id);
       var courseObj = AV.Object.createWithoutData('COURSE', course.id);
-      console.log(studentObj, teacherObj, courseObj)
       leave.set('student', studentObj);
       leave.set('teacher', teacherObj);
       leave.set('date', date);
       leave.set('reason', that.data.reason);
+      leave.set('read', false);
+      leave.set('adopted', false);
       leave.set('course', courseObj);
       leave.save()
         .then(function (res) {
@@ -258,6 +293,18 @@ Page({
           that.setData({
             leaveNoteSend: true
           });
+
+          //COURSE表leaves字段追加记录
+          var courseClass = AV.Object.createWithoutData('COURSE', course.id);
+          var leaveClass = AV.Object.createWithoutData('LEAVE', res.id);
+          courseClass.addUnique('leaves', leaveClass);
+          courseClass.save();
+
+          //_USER表leaves字段追加记录
+          var userReg = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
+          var leaveReg = AV.Object.createWithoutData('LEAVE', res.id);
+          userReg.addUnique('leaves', leaveReg);
+          userReg.save();
         })
         .catch(console.error);
     }
