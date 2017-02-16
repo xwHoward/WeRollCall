@@ -58,36 +58,42 @@ Page({
     courseQuery.get(courseId).then(function (crs) {
       console.log("course:", crs)
       course = crs;
-      // var courseName = crs.get('courseName');
-      // console.log("teacher:", teacher)
       var leaves = crs.get('leaves');
+      console.log('leaves of this course:',leaves)
       var unreadLeaves = [];
       var unreadLeaveNum = 0;
       for (let i = 0; i < leaves.length; i++) {
         if (leaves[i].get('read') == false) {
           //未读请假条
           unreadLeaveNum++;
-          var stu = leaves[i].get('student');
           var leaveQuery = new AV.Query('LEAVE');
           leaveQuery.include('student');
           leaveQuery.get(leaves[i].id).then(function (lv) {
-            console.log("leave:", lv)
             //遍历unreadLeave获取student字段，重新拼装unreadLeaves
             var student = lv.get('student');
+            var img = lv.get('image');
+            console.log(img)
+            var imgSrc = '';
+            if (img){
+              imgSrc = img.get('url');
+            }
             var unreadLeave = {
               id: lv.id,
               reason: lv.get('reason'),
               studentName: student.get('userName'),
               studentId: student.get('userId'),
               date: lv.get('date'),
-              imgSrc: lv.get('image').get('url')
+              imgSrc: imgSrc
             }
+            console.log('unread leave:',unreadLeave)
             unreadLeaves.push(unreadLeave);
           });
         }
       }
       var intv = setInterval(function () {
+        console.log(unreadLeaves.length,unreadLeaveNum)
         if (unreadLeaves.length == unreadLeaveNum) {
+          console.log("unreadLeaves:", unreadLeaves)
           wx.hideToast();
           clearInterval(intv);
           that.setData({
@@ -95,10 +101,6 @@ Page({
           });
         }
       }, 1000);
-      // console.log(i, leaves.length)
-      // if (i == leaves.length - 1) {
-      //   console.log("unreadLeaves:", unreadLeaves)
-      // }
     }, function (error) {
       // 异常处理
       console.log(error);
@@ -134,7 +136,7 @@ Page({
           attend++;
         }
       }
-      console.log(targetRollcallStr,attend)
+      console.log(targetRollcallStr, attend)
       //请假次数
       //1.获取用户请假记录
       var myLeaves = app.globalData.user.leaves;
@@ -148,12 +150,12 @@ Page({
       var leaveSum = 0;
       console.log("myLeaves:", myLeaves)
       for (var i = 0; i < myLeaves.length; i++) {
-        var id = myLeaves[i].objectId
+        var id = myLeaves[i].objectId;
         if (targetLeaveStr.indexOf(id) >= 0) {
           leaveSum++;
         }
       }
-      console.log(targetLeaveStr,leaveSum)
+      console.log(targetLeaveStr, leaveSum)
       that.setData({
         total: rollcalls.length,
         courseName: courseName,

@@ -85,6 +85,9 @@ icon {
     line-height: 40rpx;
     text-align: center;
 }
+.scroll-view-title{
+    margin: 10rpx 50rpx;
+}
 .namelist{
     width: 700rpx;
     margin: 0 auto;
@@ -100,6 +103,12 @@ icon {
     background-color: #fff;
     border-right: 2rpx #3e4a51 solid;
     border-bottom: 2rpx #3e4a51 solid;
+}
+.bg-blue{
+    background-color: #bedbff;
+}
+.bg-blue view{
+    background-color: #bedbff;
 }
 .nli-index{
     width: 100rpx;

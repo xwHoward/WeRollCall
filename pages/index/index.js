@@ -38,29 +38,21 @@ Page({
       // 调用小程序 API，得到用户信息
       getUserInfoPromisified({})
         .then(function (res) {
-          // console.log('wx.getUserInfo success, returned wx userInfo:', res.userInfo)
           // 更新当前用户的信息
           user.set(res.userInfo).save().then(user => {
             // 成功，此时可在控制台中看到更新后的用户信息
-            app.globalData.user = user.toJSON();
-            // console.log("Update userinfo on leanCloud success, returned new user info:", app.globalData.user)
-            resolve();
+            var userQuery = new AV.Query('_User');
+            userQuery.include('leaves');
+            userQuery.get(user.id).then(function (user) {
+              app.globalData.user = user.toJSON();
+              console.log("Update userinfo on leanCloud success, app.globalData.user:", app.globalData.user)
+              resolve();
+            });
           }).catch(console.error);
         })
         .catch(function () {
-          // console.log("Update userinfo on leanCloud FAILED! Downloading userinfo on leanCloud...")
-          //从LeanCloud下载用户信息
-          // var query = new AV.Query('_User');
-          // query.get(user.id).then(function (userinfo) {
-          // 成功获得实例
-          // console.log("Download userinfo on leanCloud SUCCESS!")
-          // app.globalData.user = userinfo[0].toJSON();
           app.globalData.user = user;
           resolve();
-          // }, function (error) {
-          // 异常处理
-          // reject(new Error(error));
-          // });
         });
     });
   },
@@ -123,7 +115,7 @@ Page({
       console.log("usertype:student")
       that.getChosenCourses();
     }
-    
+
   },
   //初始化用户信息
   //返回用户类型：'教师'/'学生'

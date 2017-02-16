@@ -11,7 +11,10 @@ Page({
     manuAdd: false,
     template: '',
     timeLeft: '0:0',
-    signedInStudents: []
+    signedInStudents: [],
+    onLeaveStudents: [],
+    signedInStudentsNum: 0,
+    studentSum: 0
   },
   onLoad: function (options) {
     // 页面初始化 options为页面跳转所带来的参数
@@ -120,14 +123,35 @@ Page({
           template: 'countdown',
           rollcallId: rc.id
         });
-        that.startCountdown(that.data.timeout - 1, 59);
+        that.startCountdown(that.data.timeout - 1, 29);
         var intv = setInterval(function () {
           if (that.data.countdownEnd) {
             that.updateStatus();
           } else {
+            //对本次点名的请假记录做清理
+            //向今日有效请假记录插入标记字段
+            var today = (new Date()).toLocaleDateString();
+            //对符合日期的请假做标记adopted字段
+            var leaveQuery = new AV.Query('LEAVE');
+            leaveQuery.equalTo('date', today);
+            leaveQuery.include('student');
+            leaveQuery.find().then(function (lvs) {
+              console.log('今日请假记录：', lvs)
+              for (var i = 0; i < lvs.length; i++) {
+                var lv = AV.Object.createWithoutData('LEAVE', lvs[i].id);
+                lv.set('adopted', true);
+                lv.save().then();
+                var onLeaveStudents = [];
+                onLeaveStudents.push(lvs[i].get('student'));
+              }
+              console.log("onLeaveStudents:",onLeaveStudents)
+              that.setData({
+                onLeaveStudents: onLeaveStudents
+              });
+            });
             clearInterval(intv);
           }
-        }, 30000);
+        }, 5000);
       })
       .catch(console.error);
   },
@@ -153,23 +177,6 @@ Page({
             icon: 'success',
             duration: 3000
           });
-          //对本次点名的请假记录做清理
-          //向今日有效请假记录插入标记字段
-          var today = (new Date()).getLocaleDate().toString();
-          console.log("today:", today)
-          //从这里开始。。。
-          //对符合日期的请假做标记adopted字段
-
-
-
-
-
-
-
-
-
-
-
 
         } else {
           that.setData({
@@ -186,7 +193,6 @@ Page({
     var rollcallQuery = new AV.Query('ROLLCALL');
     rollcallQuery.include('students');
     rollcallQuery.get(that.data.rollcallId).then(function (rc) {
-      console.log(rc)
       var students = rc.get('students');
       that.setData({
         signedInStudents: students,
@@ -196,7 +202,6 @@ Page({
     //更新签到进度
     var courseQuery = new AV.Query('COURSE');
     courseQuery.get(that.data.courseId).then(function (c) {
-      console.log(c)
       var sum = c.attributes.students.length;
       that.setData({
         studentSum: sum

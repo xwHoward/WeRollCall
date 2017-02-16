@@ -88,8 +88,8 @@
           <text class="underline"> {{item.date}} </text>
         </view>
       </view>
-      <view class="image">
-        <image src="{{item.imgSrc}}" data-src="{{item.imgSrc}}" class="file" bindtap="previewPic"></image>
+      <view class="image">学生未上传证明文件  
+        <image wx:if="{{item.imgSrc != ''}}" src="{{item.imgSrc}}" data-src="{{item.imgSrc}}" class="file" bindtap="previewPic"></image>
       </view>
       <view class="operation clearfix">
         <view class="deny" bindtap="deny" data-leave-id="{{item.id}}">驳回</view>

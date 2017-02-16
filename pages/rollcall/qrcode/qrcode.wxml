@@ -27,9 +27,20 @@
       <progress percent="{{signedInStudentsNum/studentSum*100}}" color="	#09BB07" active stroke-width="20" class="percent" />
       <view class="detail">{{signedInStudentsNum}}/{{studentSum}}</view>
     </view>
+    <view class="scroll-view-title">签到学生名单：</view>
     <scroll-view scroll-y="true" style="height: 200px;">
       <view class="namelist clearfix">
         <view wx:for="{{signedInStudents}}" class="nl-item">
+          <view class="nli-index">{{index}}</view>
+          <view class="nli-name">{{item.userName}}</view>
+          <view class="nli-id">{{item.userId}}</view>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="scroll-view-title">请假学生名单：</view>
+    <scroll-view scroll-y="true" style="height: 50px;">
+      <view class="namelist clearfix">
+        <view wx:for="{{onLeaveStudents}}" class="nl-item bg-blue">
           <view class="nli-index">{{index}}</view>
           <view class="nli-name">{{item.userName}}</view>
           <view class="nli-id">{{item.userId}}</view>

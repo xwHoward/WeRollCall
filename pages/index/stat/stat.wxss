@@ -159,7 +159,6 @@ view{
     color: #fff;
     text-align: center;
     font-size: 40rpx;
-    border-radius: 0 0 20rpx 20rpx;
 }
 .operation .deny{
     background-color: #c55e4b;

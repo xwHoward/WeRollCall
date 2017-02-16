@@ -72,7 +72,7 @@
   }
 }
 
-.timing {
+.compass {
   background-color: #e36a44;
 }
 

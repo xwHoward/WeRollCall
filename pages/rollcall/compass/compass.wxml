@@ -1,0 +1,9 @@
+<view class="container">
+ <view class="line-shadow"></view>
+ <view class="compass">
+  <image src="../../../images/compass.png" class="cp-bg-img"></image>
+ </view>
+ <button bindtap="getCompassInfo">获取罗盘数据</button>
+ <view>{{direction}}</view>
+ <view>{{x}}-{{y}}-{{z}}</view>
+</view>

@@ -1,7 +1,7 @@
 <template name="rollcall">
   <view class="rollcall-button qr-code" bindtap="qrcode"><image src="/images/QRCode.png" class="icon"></image><text class="desc">二维码快速签到</text></view>
   <view class="rollcall-button location" bindtap="location"><text class="desc">地理位置点名</text><image src="/images/Map.png" class="icon"></image></view>
-  <view class="rollcall-button timing" bindtap="timeout"><image src="/images/Scan.png" class="icon"></image><text class="desc">定时点名</text></view>
+  <view class="rollcall-button compass" bindtap="compass"><image src="/images/Scan.png" class="icon"></image><text class="desc">罗盘点名</text></view>
   <view class="rollcall-button key"><text class="desc">密令点名</text><image src="/images/Scan.png" class="icon"></image></view>
 </template>
 

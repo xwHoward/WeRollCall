@@ -7,7 +7,7 @@
     "pages/login/login",
     "pages/addCourse/addCourse",
     "pages/rollcall/location/location",
-    "pages/rollcall/timeout/timeout",
+    "pages/rollcall/compass/compass",
     "pages/rollcall/qrcode/qrcode"
   ],
   "window":{
