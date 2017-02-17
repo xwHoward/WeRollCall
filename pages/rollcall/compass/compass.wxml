@@ -1,9 +1,56 @@
-<view class="container">
- <view class="line-shadow"></view>
- <view class="compass">
-  <image src="../../../images/compass.png" class="cp-bg-img"></image>
- </view>
- <button bindtap="getCompassInfo">获取罗盘数据</button>
- <view>{{direction}}</view>
- <view>{{x}}-{{y}}-{{z}}</view>
+<view class="container-fluid">
+  <view class="line-shadow"></view>
+
+  <block wx:if="{{template == 'compass-panel'}}">
+    <view class="compass-panel">
+      <view class="compass">
+        <image src="../../../images/compass.png" class="cp-bg-img" style="transform:rotate({{-direction}}deg)"></image>
+        <image src="../../../images/Pointer.png" class="compass-pointer"></image>
+      </view>
+      <view class="degree">{{direction}}°</view>
+    </view>
+
+    <button bindtap="createRollcall" class="add-course" wx:if="{{userType == 'teacher'}}">上传角度 & 发布点名</button>
+    <button bindtap="signIn" class="add-course" wx:if="{{userType == 'student'}}">上传角度 & 签到</button>
+  </block>
+
+  <!--签到情况-->
+  <block wx:if="{{template == 'countdown'}}">
+    <view class="countdown" style="background-color:{{bgc}}">
+      <view class="cd-top">{{timeLeft}}</view>
+      <view class="cd-bottom">剩余时间</view>
+    </view>
+
+    <view class="progress clearfix">
+      <progress percent="{{signedInStudentsNum/studentSum*100}}" color="	#09BB07" active stroke-width="20" class="percent" />
+      <view class="detail">{{signedInStudentsNum}}/{{studentSum}}</view>
+    </view>
+    <view class="scroll-view-title">签到学生名单：</view>
+    <scroll-view scroll-y="true" style="height: 200px;">
+      <view class="namelist clearfix">
+        <view wx:for="{{signedInStudents}}" class="nl-item">
+          <view class="nli-index">{{index}}</view>
+          <view class="nli-name">{{item.userName}}</view>
+          <view class="nli-id">{{item.userId}}</view>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="scroll-view-title">请假学生名单：</view>
+    <scroll-view scroll-y="true" style="height: 50px;">
+      <view class="namelist clearfix">
+        <view wx:for="{{onLeaveStudents}}" class="nl-item bg-blue">
+          <view class="nli-index">{{index}}</view>
+          <view class="nli-name">{{item.userName}}</view>
+          <view class="nli-id">{{item.userId}}</view>
+        </view>
+      </view>
+    </scroll-view>
+    <button class="add-course" hover-class="add-course-hover" bindtap="addToNamelist" disabled="{{countdownEnd}}">+ 手动添加</button>
+    <block wx:if="{{manuAdd}}">
+      <view class="add clearfix">
+        <input placeholder="请输入完整学号" bindinput="inputStuId" auto-focus class="add-input" />
+        <button bindtap="manuAdd" class="add-btn">添加</button>
+      </view>
+    </block>
+  </block>
 </view>

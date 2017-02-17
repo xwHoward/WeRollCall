@@ -22,7 +22,7 @@
       </view>
       <view class="row clearfix">
         <view class="cell">出勤</view>
-        <view class="cell">{{(attend/total*100)}}%</view>
+        <view class="cell">{{attend/total*100}}%</view>
         <view class="cell">{{attend}}</view>
       </view>
       <view class="row clearfix">

@@ -47,6 +47,11 @@ Page({
             });
           } else if (rollcall.attributes.type == 'location') {
             console.log('location sign in!')
+          } else if (rollcall.attributes.type == 'compass') {
+            console.log('compass sign in!')
+            wx.navigateTo({
+              url: 'compass/compass?userType=student&rollcallId=' + rollcall.id
+            });
           }
         });
       },
