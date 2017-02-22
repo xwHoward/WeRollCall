@@ -29,4 +29,13 @@ slider{
   width: 650rpx;
   margin-left: 50rpx; 
 }
+.default-btn{
+  width: 80%;
+  height: 80rpx;
+  font-size: 18px;
+  line-height: 80rpx;
+  margin: 0 auto;
+  background-color: #49545b;
+  color: #fff;
+}
 

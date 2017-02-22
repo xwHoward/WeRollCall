@@ -1,31 +1,188 @@
-.location{
+.location {
   width: 700rpx;
-  margin: 20rpx auto;
+  margin: 0 auto 40rpx;
 }
-
 
 .page-body-text-location {
   float: left;
   width: 492rpx;
-  height: 100rpx;
+  height: 92rpx;
   font-size: 16px;
-  line-height: 100rpx;
-  border: 2px #ccc solid;
+  line-height: 92rpx;
+  border: 4rpx #ccc solid;
 }
-.page-body-text-location text{
+
+.page-body-text-location text {
   float: left;
-}
-.page-body-text-small {
   text-align: center;
+}
+
+.page-body-text-small {
   font-size: 24rpx;
   line-height: 50rpx;
   width: 100rpx;
   margin: 0 10rpx;
 }
+
+.c-gray {
+  color: #ccc;
+}
+
+.loc-data {
+  width: 372rpx;
+}
+
 .page-body-button {
   float: left;
   background-color: #3e4a51;
   color: #fff;
+  width: 150rpx;
+  margin-left: 50rpx;
+  font-size: 32rpx;
+  line-height: 48rpx;
+}
+
+.accuracy {
+  text-align: center;
+  height: 50rpx;
+  line-height: 50rpx;
+  font-size: 12px;
+  color: #ccc;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    color: #aaa;
+  }
+
+  25% {
+    color: #ccc;
+  }
+
+  50% {
+    color: #eee;
+  }
+
+  75% {
+    color: #ccc;
+  }
+
+  100% {
+    color: #aaa;
+  }
+}
+
+.slider-section {
+  width: 700rpx;
+  margin: 40rpx auto;
+}
+
+.slider-section .slider-title {
+  margin: 20rpx auto;
+}
+
+.countdown {
+  width: 500rpx;
+  margin: 100rpx auto;
+  border-radius: 20rpx;
+  text-align: center;
+  padding-bottom: 10rpx;
+}
+
+.cd-top {
+  background-color: #3e4a51;
+  border-radius: 20rpx;
+  color: #fff;
+  font-size: 40px;
+  padding: 10rpx 0 0 40rpx;
+  letter-spacing: 15px;
+  margin: 20rpx 0;
+}
+
+.cd-bottom {
+  color: #fff;
+}
+
+.progress {
+  width: 700rpx;
+  margin: 40rpx auto;
+}
+
+.percent {
+  float: left;
+  width: 550rpx;
+}
+
+.detail {
+  float: right;
+  width: 150rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+  text-align: center;
+}
+
+.scroll-view-title {
+  margin: 10rpx 50rpx;
+}
+
+.namelist {
+  width: 700rpx;
+  margin: 0 auto;
+  border-top: 2rpx #3e4a51 solid;
+  border-left: 2rpx #3e4a51 solid;
+}
+
+.nl-item {
+  background-color: #fff;
+  text-align: center;
+}
+
+.nl-item view {
+  float: left;
+  background-color: #fff;
+  border-right: 2rpx #3e4a51 solid;
+  border-bottom: 2rpx #3e4a51 solid;
+}
+
+.bg-blue {
+  background-color: #bedbff;
+}
+
+.bg-blue view {
+  background-color: #bedbff;
+}
+
+.nli-index {
+  width: 100rpx;
+}
+
+.nli-name {
+  width: 350rpx;
+}
+
+.nli-id {
+  width: 244rpx;
+}
+
+.add {
+  width: 700rpx;
+  margin: 0 auto 100rpx;
+}
+
+.add-input {
+  float: left;
+  width: 400rpx;
+  padding-left: 20rpx;
+  background-color: #fff;
+  height: 80rpx;
+}
+
+.add-btn {
+  float: right;
   width: 200rpx;
-  font-size: 16px;
+  height: 80rpx;
+  line-height: 80rpx;
+  background-color: #3e4a51;
+  color: #fff;
 }

@@ -1,49 +1,81 @@
-<map id="map" longitude="{{location.longitude}}" latitude="{{location.latitude}}" scale="16" show-location style="width: 100%; height: 300px;"></map>
-<block wx:if="{{template == 'create'}}">
-  <view class="location clearfix">
-    <block wx:if="{{location.hasLocation === false}}">
-      <view class="page-body-text-location">
-        <text class="page-body-text-small">当前位置经纬度</text>
-        <text>未获取</text>
-      </view>
-    </block>
-    <block wx:if="{{location.hasLocation === true}}">
+<view class="container-fluid">
+  <map id="map" longitude="{{location.longitude}}" latitude="{{location.latitude}}" scale="16" show-location style="width: 100%; height: 300px;"></map>
+  <view class="accuracy">当前定位精度为: {{accuracy}} m</view>
+  <block wx:if="{{template == 'create'}}">
+    <view class="location clearfix">
       <view class="page-body-text-location clearfix">
         <text class="page-body-text-small">当前位置经纬度</text>
-        <text>E{{formatedLocation.longitude[0]}}°{{formatedLocation.longitude[1]}}′</text>
-        <text> N{{formatedLocation.latitude[0]}}°{{formatedLocation.latitude[1]}}′</text>
+        <text class="loc-data c-gray" wx:if="{{location.hasLocation === false}}">未获取</text>
+        <text class="loc-data" wx:if="{{location.hasLocation === true}}">E{{formatedLocation.longitude[0]}}°{{formatedLocation.longitude[1]}}′ N{{formatedLocation.latitude[0]}}°{{formatedLocation.latitude[1]}}′</text>
+      </view>
+      <button class="page-body-button" bindtap="getLocation">获取位置</button>
+    </view>
+    <view class="slider-section">
+      <text class="slider-title">设定范围：半径 {{radius}} m内</text>
+      <slider bindchange="radiusChange" min="50" max="1000" value="{{radius}}" step="50" selected-color="#3e4a51" show-value/>
+    </view>
+    <view class="slider-section">
+      <text class="slider-title">本次点名有效时间： {{timeout}} min</text>
+      <slider bindchange="timeoutChange" min="1" max="10" value="{{timeout}}" step="1" selected-color="#3e4a51" show-value/>
+    </view>
+    <button bindtap="createRollcall" class="default-btn" disabled="{{location.hasLocation === false}}">发布点名</button>
+  </block>
+
+  <!--签到情况-->
+  <block wx:if="{{template == 'countdown'}}">
+    <view class="countdown" style="background-color:{{bgc}}">
+      <view class="cd-top">{{timeLeft}}</view>
+      <view class="cd-bottom">剩余时间</view>
+    </view>
+    <view class="progress clearfix">
+      <progress percent="{{signedInStudentsNum/studentSum*100}}" color="	#09BB07" active stroke-width="20" class="percent" />
+      <view class="detail">{{signedInStudentsNum}}/{{studentSum}}</view>
+    </view>
+    <view class="scroll-view-title">签到学生名单：</view>
+    <scroll-view scroll-y="true" style="height: 200px;">
+      <view class="namelist clearfix">
+        <view wx:for="{{signedInStudents}}" class="nl-item">
+          <view class="nli-index">{{index}}</view>
+          <view class="nli-name">{{item.userName}}</view>
+          <view class="nli-id">{{item.userId}}</view>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="scroll-view-title">请假学生名单：</view>
+    <scroll-view scroll-y="true" style="height: 50px;">
+      <view class="namelist clearfix">
+        <view wx:for="{{onLeaveStudents}}" class="nl-item bg-blue">
+          <view class="nli-index">{{index}}</view>
+          <view class="nli-name">{{item.userName}}</view>
+          <view class="nli-id">{{item.userId}}</view>
+        </view>
+      </view>
+    </scroll-view>
+    <button class="add-course" hover-class="add-course-hover" bindtap="addToNamelist" disabled="{{countdownEnd}}">+ 手动添加</button>
+    <block wx:if="{{manuAdd}}">
+      <view class="add clearfix">
+        <input placeholder="请输入完整学号" bindinput="inputStuId" auto-focus class="add-input" />
+        <button bindtap="manuAdd" class="add-btn">添加</button>
       </view>
     </block>
-    <button class="page-body-button" bindtap="getLocation">获取位置</button>
-  </view>
-  <text>选择范围：{{radius}}m</text>
-  <slider bindchange="radiusChange" min="50" max="1000" value="{{radius}}" step="50" selected-color="#3e4a51" show-value/>
-  <text>选择定时：{{timeout}}min</text>
-  <slider bindchange="timeoutChange" min="1" max="10" value="{{timeout}}" step="1" selected-color="#3e4a51" show-value/>
-  <button bindtap="createRollcall">发布点名</button>
-</block>
-<block wx:if="{{template == 'token'}}">
-  <view>本次签到密令：{{token}}</view>
-  <view>剩余时间：{{timeLeft}}</view>
-  <button bindtap="updateStatus">刷新签到情况</button>
-  <view wx:for="{{signedInStudents}}">{{item.userName}} -- {{item.userId}}</view>
-</block>
-<block wx:if="{{template == 'repo'}}">
-  <view class="location">
-    <block wx:if="{{location.hasLocation === false}}">
-      <view class="page-body-text-location">
-        <text class="page-body-text-small">当前位置经纬度</text>
-        <text>未获取</text>
-      </view>
-    </block>
-    <block wx:if="{{location.hasLocation === true}}">
-      <view class="page-body-text-location">
-        <text class="page-body-text-small">当前位置经纬度</text>
-        <text>E{{formatedLocation.longitude[0]}}°{{formatedLocation.longitude[1]}}′</text>
-        <text> N{{formatedLocation.latitude[0]}}°{{formatedLocation.latitude[1]}}′</text>
-      </view>
-    </block>
-    <button class="page-body-button" bindtap="getLocation">获取位置</button>
-    <button bindtap="signIn">确认地理位置信息并签到</button>
-  </view>
-</block>
+  </block>
+  <block wx:if="{{template == 'signin'}}">
+    <view class="location">
+      <block wx:if="{{location.hasLocation === false}}">
+        <view class="page-body-text-location">
+          <text class="page-body-text-small">当前位置经纬度</text>
+          <text>未获取</text>
+        </view>
+      </block>
+      <block wx:if="{{location.hasLocation === true}}">
+        <view class="page-body-text-location">
+          <text class="page-body-text-small">当前位置经纬度</text>
+          <text>E{{formatedLocation.longitude[0]}}°{{formatedLocation.longitude[1]}}′</text>
+          <text> N{{formatedLocation.latitude[0]}}°{{formatedLocation.latitude[1]}}′</text>
+        </view>
+      </block>
+      <button class="page-body-button" bindtap="getLocation">获取位置</button>
+      <button bindtap="signIn">确认地理位置信息并签到</button>
+    </view>
+  </block>
+</view>
