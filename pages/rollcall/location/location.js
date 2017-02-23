@@ -3,7 +3,7 @@ var ROLLCALL = AV.Object.extend('ROLLCALL');
 var app = getApp();
 Page({
     data: {
-        template: 'countdown',
+        template: 'signIn',
         location: {
             hasLocation: false,
             longitude: 104.066541,
@@ -11,7 +11,7 @@ Page({
         },
         formatedLocation: {
         },
-        radius: 100,
+        radius: 500,
         timeout: 5,
         timeLeft: '0:0',
         bgc: '#09BB07',
@@ -67,6 +67,8 @@ Page({
         var rollcall = new ROLLCALL();
         var teacher = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
         rollcall.set('teacher', teacher);
+        var course = AV.Object.createWithoutData('COURSE', that.data.courseId);
+        rollcall.set('course', course);
         var point = new AV.GeoPoint(this.data.location.latitude, this.data.location.longitude);
         console.log(point)
         rollcall.set('teacherLoc', point);
@@ -78,7 +80,6 @@ Page({
         rollcall.set('timeout', this.data.timeout);
         rollcall.save()
             .then(function (rc) {
-                console.log(rc)
                 console.log('新增rollcall行成功，rollcall行注入course成功');
                 var course = AV.Object.createWithoutData('COURSE', that.data.courseId);
                 var rollcall = AV.Object.createWithoutData('ROLLCALL', rc.id);
@@ -93,15 +94,63 @@ Page({
                 });
                 that.setData({
                     template: 'countdown',
+                    rollcallId: rc.id
                 });
-                that.startCountdown(that.data.timeout);
+                that.startCountdown(that.data.timeout - 1, 59);
+                var intv = setInterval(function () {
+                    if (that.data.countdownEnd) {
+                        that.updateStatus();
+                    } else {
+                        //对本次点名的请假记录做清理
+                        //向今日有效请假记录插入标记字段
+                        var today = (new Date()).toLocaleDateString();
+                        //对符合日期的请假做标记adopted字段
+                        var leaveQuery = new AV.Query('LEAVE');
+                        leaveQuery.equalTo('date', today);
+                        leaveQuery.include('student');
+                        leaveQuery.find().then(function (lvs) {
+                            console.log('今日请假记录：', lvs)
+                            var onLeaveStudents = [];
+                            for (var i = 0; i < lvs.length; i++) {
+                                var lv = AV.Object.createWithoutData('LEAVE', lvs[i].id);
+                                lv.set('adopted', true);
+                                lv.save().then();
+                                onLeaveStudents.push(lvs[i].get('student'));
+                            }
+                            console.log("onLeaveStudents:", onLeaveStudents)
+                            that.setData({
+                                onLeaveStudents: onLeaveStudents
+                            });
+                        });
+                        clearInterval(intv);
+                    }
+                }, 5000);
             })
             .catch(console.error);
     },
     //更新学生签到情况
     updateStatus: function () {
-
+        var that = this;
+        //更新签到表
+        var rollcallQuery = new AV.Query('ROLLCALL');
+        rollcallQuery.include('students');
+        rollcallQuery.get(that.data.rollcallId).then(function (rc) {
+            var students = rc.get('students');
+            that.setData({
+                signedInStudents: students,
+                signedInStudentsNum: students.length,
+            });
+        });
+        //更新签到进度
+        var courseQuery = new AV.Query('COURSE');
+        courseQuery.get(that.data.courseId).then(function (c) {
+            var sum = c.toJSON().students.length;
+            that.setData({
+                studentSum: sum
+            });
+        });
     },
+
     //学生签到
     signIn: function () {
         var that = this;
@@ -227,13 +276,42 @@ Page({
                 console.log(error)
             });
     },
+    //初始化学生签到界面
+    initSignInData: function (rcId) {
+        var that = this;
+        var rollcallQuery = new AV.Query('ROLLCALL');
+        rollcallQuery.get(rcId).then(function (rc) {
+            console.log('rollcall:', rc)
+            var timeStart = rc.get('createdAt');
+            var timeout = rc.get('timeout');
+            var now = new Date();
+            var timeLeft = timeStart - now + timeout * 60000;
+            if (timeLeft <= 0) {
+                //点名已结束
+                that.setData({
+                    bgc: '#f76060',
+                    countdownEnd: false
+                });
+                wx.showToast({
+                    title: '点名已结束',
+                    icon: 'success',
+                    duration: 3000
+                });
+            } else {
+                //点名正在进行中
+                var min = (new Date(timeLeft)).getMinutes();
+                var sec = (new Date(timeLeft)).getSeconds();
+                that.startCountdown(min, sec);
+            }
+        });
+    },
     onLoad: function (options) {
         // 生命周期函数--监听页面加载
         console.log(options)
         if (options.userType == 'student') {
             //学生身份，对应签到界面
             this.setData({
-                template: 'signin',
+                template: 'signIn',
                 rollcallId: options.rollcallId
             });
             this.initSignInData(options.rollcallId);

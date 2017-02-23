@@ -12,7 +12,7 @@
     </view>
     <view class="slider-section">
       <text class="slider-title">设定范围：半径 {{radius}} m内</text>
-      <slider bindchange="radiusChange" min="50" max="1000" value="{{radius}}" step="50" selected-color="#3e4a51" show-value/>
+      <slider bindchange="radiusChange" min="100" max="2000" value="{{radius}}" step="100" selected-color="#3e4a51" show-value/>
     </view>
     <view class="slider-section">
       <text class="slider-title">本次点名有效时间： {{timeout}} min</text>
@@ -59,23 +59,15 @@
       </view>
     </block>
   </block>
-  <block wx:if="{{template == 'signin'}}">
-    <view class="location">
-      <block wx:if="{{location.hasLocation === false}}">
-        <view class="page-body-text-location">
-          <text class="page-body-text-small">当前位置经纬度</text>
-          <text>未获取</text>
-        </view>
-      </block>
-      <block wx:if="{{location.hasLocation === true}}">
-        <view class="page-body-text-location">
-          <text class="page-body-text-small">当前位置经纬度</text>
-          <text>E{{formatedLocation.longitude[0]}}°{{formatedLocation.longitude[1]}}′</text>
-          <text> N{{formatedLocation.latitude[0]}}°{{formatedLocation.latitude[1]}}′</text>
-        </view>
-      </block>
+  <block wx:if="{{template == 'signIn'}}">
+    <view class="location clearfix">
+      <view class="page-body-text-location clearfix">
+        <text class="page-body-text-small">当前位置经纬度</text>
+        <text class="loc-data c-gray" wx:if="{{location.hasLocation === false}}">未获取</text>
+        <text class="loc-data" wx:if="{{location.hasLocation === true}}">E{{formatedLocation.longitude[0]}}°{{formatedLocation.longitude[1]}}′ N{{formatedLocation.latitude[0]}}°{{formatedLocation.latitude[1]}}′</text>
+      </view>
       <button class="page-body-button" bindtap="getLocation">获取位置</button>
-      <button bindtap="signIn">确认地理位置信息并签到</button>
     </view>
+    <button bindtap="signIn" class="default-btn" disabled="{{location.hasLocation === false}}">报告地理位置并签到</button>
   </block>
 </view>

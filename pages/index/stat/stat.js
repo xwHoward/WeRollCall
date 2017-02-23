@@ -11,6 +11,9 @@ Page({
     attend: 0,
     leave: 0,
     absence: 0,
+    attendRate: 0,
+    leaveRate: 0,
+    absenceRate: 0,
     total: 0,
     teacher: '',
     student: '',
@@ -164,7 +167,10 @@ Page({
         attend: attend,
         absence: rollcalls.length - attend - leaveSum,
         stuId: app.globalData.user.userId,
-        leave: leaveSum
+        leave: leaveSum,
+        attendRate: (attend/rollcalls.length*100).toFixed(2),
+        absenceRate: ((rollcalls.length - attend - leaveSum)/rollcalls.length*100).toFixed(2),
+        leaveRate: (leaveSum/rollcalls.length*100).toFixed(2)
       });
       wx.hideToast();
     }, function (error) {

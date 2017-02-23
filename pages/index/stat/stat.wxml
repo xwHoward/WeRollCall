@@ -2,9 +2,9 @@
   <block wx:if="{{template == 'student'}}">
     <view class="title">{{courseName}}</view>
     <view class="graph">
-      <view class="red" style="width:{{absence/total*100}}%;"></view>
-      <view class="blue" style="width:{{leave/total*100}}%;"></view>
-      <view class="green" style="width:{{attend/total*100}}%;"></view>
+      <view class="red" style="width:{{absenceRate}}%;"></view>
+      <view class="blue" style="width:{{leaveRate}}%;"></view>
+      <view class="green" style="width:{{attendRate}}%;"></view>
     </view>
     <view class="detail clearfix">
       <view class="green"></view>
@@ -22,17 +22,17 @@
       </view>
       <view class="row clearfix">
         <view class="cell">出勤</view>
-        <view class="cell">{{attend/total*100}}%</view>
+        <view class="cell">{{attendRate}}%</view>
         <view class="cell">{{attend}}</view>
       </view>
       <view class="row clearfix">
         <view class="cell">请假</view>
-        <view class="cell">{{leave/total*100}}%</view>
+        <view class="cell">{{leaveRate}}%</view>
         <view class="cell">{{leave}}</view>
       </view>
       <view class="row clearfix">
         <view class="cell">缺勤</view>
-        <view class="cell">{{absence/total*100}}%</view>
+        <view class="cell">{{absenceRate}}%</view>
         <view class="cell">{{absence}}</view>
       </view>
       <view class="row tail clearfix">

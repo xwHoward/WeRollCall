@@ -35,6 +35,8 @@
 }
 .pulse-button {
   height: 300rpx;
+  line-height: 300rpx;
+  font-size: 40px;
   width: 300rpx;
   margin: 0 auto;
   color: #fff;
