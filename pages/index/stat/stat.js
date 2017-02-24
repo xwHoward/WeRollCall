@@ -221,8 +221,8 @@ Page({
         },
       }).save().then(function (file) {
         // 文件保存成功
-        console.log("file:", file.id);
-        resolve('文件上传完成');
+        console.log("file id:", file.id);
+        resolve(file.id);
 
       }).catch(function (error) {
         reject(error);

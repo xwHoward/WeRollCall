@@ -5,10 +5,6 @@ Page({
     tpl: "sign-in",
     courseNameArr: []
   },
-  //定时点名
-  timeout: function () {
-
-  },
   // 地理位置点名
   location: function () {
     var that = this;
@@ -35,23 +31,39 @@ Page({
         var rollcallQuery = new AV.Query('ROLLCALL');
         var course = AV.Object.createWithoutData('COURSE', that.data.courses[res.tapIndex].id);
         rollcallQuery.equalTo('course', course);
+        // rollcallQuery.equalTo('new', true);此处应该判断点名是否未结束
         rollcallQuery.descending('createdAt');
         rollcallQuery.limit(3);
         rollcallQuery.find().then(function (rcs) {
-          console.log(rcs[0])
-          var rollcall = rcs[0];
-          if (rollcall.attributes.type == 'qrcode') {
-            console.log('qrcode fast sign in!')
-            wx.navigateTo({
-              url: 'qrcode/qrcode?userType=student&rollcallId=' + rollcall.id
+          if (rcs.length < 1) {
+            wx.showModal({
+              title: '当前无点名',
+              content: '老师发布点名之后才可以签到哦！',
+              showCancel: false,
+              confirmText: '知道了',
+              confirmColor: '#3CC51F',
+              success: function (res) {
+
+              }
             });
-          } else if (rollcall.attributes.type == 'location') {
-            console.log('location sign in!')
-          } else if (rollcall.attributes.type == 'compass') {
-            console.log('compass sign in!')
-            wx.navigateTo({
-              url: 'compass/compass?userType=student&rollcallId=' + rollcall.id
-            });
+          } else {
+            var rollcall = rcs[0];
+            if (rollcall.get('type') == 'qrcode') {
+              console.log('qrcode fast sign in!')
+              wx.navigateTo({
+                url: 'qrcode/qrcode?userType=student&rollcallId=' + rollcall.id
+              });
+            } else if (rollcall.get('type') == 'location') {
+              console.log('location sign in!')
+              wx.navigateTo({
+                url: 'location/location?userType=student&rollcallId=' + rollcall.id
+              });
+            } else if (rollcall.get('type') == 'compass') {
+              console.log('compass sign in!')
+              wx.navigateTo({
+                url: 'compass/compass?userType=student&rollcallId=' + rollcall.id
+              });
+            }
           }
         });
       },
@@ -85,12 +97,13 @@ Page({
     courseQuery.find().then(function (courses) {
       var itemList = [];
       for (let i = 0; i < courses.length; i++) {
-        itemList.push(courses[i].attributes.courseName);
+        itemList.push(courses[i].get('courseName'));
       }
       that.setData({
         courses: courses,
         courseNameArr: itemList
-      })
+      });
+      wx.hideToast();
     }, function (error) {
       // 异常处理
       console.log(error)
@@ -106,12 +119,13 @@ Page({
       console.log(coursesChosen)
       var itemList = [];
       for (let i = 0; i < coursesChosen.length; i++) {
-        itemList.push(coursesChosen[i].attributes.courseName);
+        itemList.push(coursesChosen[i].get('courseName'));
       }
       that.setData({
         courses: coursesChosen,
         courseNameArr: itemList
       });
+      wx.hideToast();
     }, function (error) {
       // 异常处理
       console.log(error)
@@ -133,6 +147,11 @@ Page({
     });
   },
   onLoad: function (options) {
+    wx.showToast({
+      icon: 'loading',
+      title: '初始化页面...',
+      mask: true
+    });
     // 页面初始化 options为页面跳转所带来的参数
     if (app.globalData.user.userType == '老师') {
       console.log('teacher')

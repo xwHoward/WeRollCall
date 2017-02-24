@@ -68,6 +68,10 @@
       </view>
       <button class="page-body-button" bindtap="getLocation">获取位置</button>
     </view>
-    <button bindtap="signIn" class="default-btn" disabled="{{location.hasLocation === false}}">报告地理位置并签到</button>
+    <view class="countdown" style="background-color:{{bgc}}">
+      <view class="cd-top">{{timeLeft}}</view>
+      <view class="cd-bottom">剩余时间</view>
+    </view>
+    <button bindtap="signIn" class="default-btn" disabled="{{countdownEnd}}">报告地理位置并签到</button>
   </block>
 </view>

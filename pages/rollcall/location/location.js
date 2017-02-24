@@ -71,7 +71,7 @@ Page({
         rollcall.set('course', course);
         var point = new AV.GeoPoint(this.data.location.latitude, this.data.location.longitude);
         console.log(point)
-        rollcall.set('teacherLoc', point);
+        rollcall.set('whereCreated', point);
         rollcall.set('radius', this.data.radius);
         rollcall.set('type', 'location');
         rollcall.set('students', []);
@@ -153,28 +153,59 @@ Page({
 
     //学生签到
     signIn: function () {
-        var that = this;
-        var rollcall = new ROLLCALL();
-        var student = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
-        var point = new AV.GeoPoint(this.data.location.latitude, this.data.location.longitude);
-        var stuObj = {
-            student: student,
-            loc: point
+        if (this.data.location.hasLocation) {
+            var that = this;
+            var rollcallQuery = new AV.Query('ROLLCALL');
+            var radiuskilom = this.data.radius / 1000;
+            var studentLoc = new AV.GeoPoint(this.data.location.latitude, this.data.location.longitude);
+            rollcallQuery.withinKilometers('whereCreated', studentLoc, radiuskilom);
+            rollcallQuery.find().then(function (rcs) {
+                console.log("rollcalls finded:", rcs)
+                if (rcs.length < 1) {
+                    console.log('签到失败！')
+                    wx.showModal({
+                        title: '签到失败！',
+                        content: '你的位置距离老师过远，请重新报告地理位置',
+                        showCancel: false,
+                        confirmText: '重试',
+                        confirmColor: '#3CC51F',
+                        success: function (res) {
+
+                        }
+                    });
+                } else {
+                    for (var i = 0; i < rcs.length; i++) {
+                        if (rcs[i].id == that.data.rollcallId) {
+                            //签到成功
+                            var rollcall = AV.Object.createWithoutData('ROLLCALL', that.data.rollcallId);
+                            var student = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
+                            rollcall.addUnique('students', student);
+                            rollcall.save().then(function (rc) {
+                                console.log('rollcall表注入签到学生成功')
+                                var rollcall = AV.Object.createWithoutData('ROLLCALL', rc.id);
+                                var self = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
+                                self.addUnique('rollcalls', rollcall);
+                                self.save().then(function (stu) {
+                                    console.log('user表注入rollcall成功')
+                                });
+                                wx.showModal({
+                                    title: '签到成功',
+                                    content: '点击确定返回主页',
+                                    showCancel: false,
+                                    confirmText: '返回主页',
+                                    confirmColor: '#3CC51F',
+                                    success: function (res) {
+                                        console.log('返回主页')
+                                        wx.navigateBack();
+                                    }
+                                });
+                            })
+                            break;
+                        }
+                    }
+                }
+            });
         }
-        rollcall.addUnique('students', stuObj);
-        rollcall.set('studentLoc', point);
-        rollcall.set('radius', this.data.radius);
-        rollcall.set('type', 'location');
-        rollcall.set('timeout', this.data.timeout);
-        rollcall.save()
-            .then(function (rc) {
-                console.log(rc)
-                that.setData({
-                    template: 'countdown'
-                });
-                that.startCountdown(that.data.timeout);
-            })
-            .catch(console.error);
     },
     startCountdown: function (m, s) {
         var that = this;
@@ -282,6 +313,7 @@ Page({
         var rollcallQuery = new AV.Query('ROLLCALL');
         rollcallQuery.get(rcId).then(function (rc) {
             console.log('rollcall:', rc)
+            var radius = rc.get('radius');
             var timeStart = rc.get('createdAt');
             var timeout = rc.get('timeout');
             var now = new Date();
@@ -299,6 +331,9 @@ Page({
                 });
             } else {
                 //点名正在进行中
+                that.setData({
+                    radius: radius
+                });
                 var min = (new Date(timeLeft)).getMinutes();
                 var sec = (new Date(timeLeft)).getSeconds();
                 that.startCountdown(min, sec);

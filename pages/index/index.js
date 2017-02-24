@@ -117,7 +117,7 @@ Page({
     var that = this;
     wx.showToast({
       icon: 'loading',
-      title: '拉取用户数据中...',
+      title: '拉取用户数据...',
       mask: true
     });
     AV.User.loginWithWeapp()
