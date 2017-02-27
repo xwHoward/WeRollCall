@@ -1,16 +1,9 @@
-.container {
-  background-color: #2a3162;
-  padding-top: 20rpx;
-  box-sizing: border-box;
-}
-
 .rollcall-button {
   height: 160rpx;
   width: 600rpx;
   margin: 40rpx auto;
   background-color: #fff;
   border-radius: 6rpx;
-  /*box-shadow: 10rpx 10rpx 10rpx #000;*/
   font-size: 20px;
   color: #fff;
   text-align: center;
@@ -31,7 +24,7 @@
   line-height: 160rpx;
 }
 .sign-in-btn{
-  padding: 100rpx;
+  padding: 100rpx 0;
 }
 .pulse-button {
   height: 300rpx;
@@ -41,9 +34,9 @@
   margin: 0 auto;
   color: #fff;
   border-radius: 150rpx;
-  background-color: #bedbff;
+  background-color: #3e4a51;
   border: none;
-  box-shadow: 0 0 0 0 rgba(190, 219, 255, 0.5);
+  box-shadow: 0 0 0 0 rgba(62, 74, 81, 0.5);
   animation: pulse 1.5s infinite;
 }
 
@@ -55,9 +48,6 @@
 .pulse-button:hover {
   animation: none;
 }
-.banner{
-  width: 100%;
-}
 @keyframes pulse {
   0% {
     transform: scale(0.9);
@@ -65,12 +55,12 @@
 
   70% {
     transform: scale(1);
-    box-shadow: 0 0 0 50px rgba(190, 219, 255, 0);
+    box-shadow: 0 0 0 50px rgba(62, 74, 81, 0);
   }
 
   100% {
     transform: scale(0.9);
-    box-shadow: 0 0 0 0 rgba(190, 219, 255, 0);
+    box-shadow: 0 0 0 0 rgba(62, 74, 81, 0);
   }
 }
 
@@ -88,4 +78,12 @@
 
 .key {
   background-color: #1aad16;
+}
+
+.carousel{
+  width: 100%;
+  height: 340px;
+}
+.banner{
+  width: 100%;
 }

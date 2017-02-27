@@ -40,25 +40,26 @@ Page({
     course.set('teacher', teacher);
     course.set('weekdays', data.weekdays);
     course.save().then(function (course) {
-      console.log("add course success!");
-      //添加课程成功，继续添加或返回
-      wx.showModal({
-        title: '添加课程成功',
-        content: '您可以继续添加课程或者返回主页',
-        cancelText: '继续添加',
-        cancelColor: '#1AAD16',
-        confirmText: '返回主页',
-        confirmColor: '#3CC51F',
-        success: function (res) {
-          if (res.confirm) {//返回主页
-            console.log('返回主页')
-            wx.navigateBack();
-          } else if (res.cancel) {
-            console.log('继续添加')
-            wx.hideToast();
+      var teacher = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
+      teacher.addUnique('courses', course).save(function () {
+        wx.showModal({
+          title: '添加课程成功',
+          content: '您可以继续添加课程或者返回主页',
+          cancelText: '继续添加',
+          cancelColor: '#1AAD16',
+          confirmText: '返回主页',
+          confirmColor: '#3CC51F',
+          success: function (res) {
+            if (res.confirm) {//返回主页
+              console.log('返回主页')
+              wx.navigateBack();
+            } else if (res.cancel) {
+              wx.hideToast();
+            }
           }
-        }
+        });
       });
+      //添加课程成功，继续添加或返回
     }, function (error) {
       console.error(error);
     });
@@ -92,7 +93,6 @@ Page({
               console.log('返回主页')
               wx.navigateBack();
             } else if (res.cancel) {
-              console.log('继续添加')
               wx.hideToast();
             }
           },

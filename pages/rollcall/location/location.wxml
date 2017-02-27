@@ -72,6 +72,6 @@
       <view class="cd-top">{{timeLeft}}</view>
       <view class="cd-bottom">剩余时间</view>
     </view>
-    <button bindtap="signIn" class="default-btn" disabled="{{countdownEnd}}">报告地理位置并签到</button>
+    <button bindtap="signIn" class="default-btn" disabled="{{countdownEnd || !location.hasLocation}}">报告地理位置并签到</button>
   </block>
 </view>

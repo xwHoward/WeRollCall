@@ -73,6 +73,7 @@ Page({
         console.log(point)
         rollcall.set('whereCreated', point);
         rollcall.set('radius', this.data.radius);
+        rollcall.set('done', false);
         rollcall.set('type', 'location');
         rollcall.set('students', []);
         var stuA = AV.Object.createWithoutData('_User', '587b6dd15c497d0058a39e76');//测试数据
@@ -98,7 +99,7 @@ Page({
                 });
                 that.startCountdown(that.data.timeout - 1, 59);
                 var intv = setInterval(function () {
-                    if (that.data.countdownEnd) {
+                    if (!that.data.countdownEnd) {
                         that.updateStatus();
                     } else {
                         //对本次点名的请假记录做清理
@@ -209,34 +210,36 @@ Page({
     },
     startCountdown: function (m, s) {
         var that = this;
-        var intv = setInterval(function () {
-            if (s >= 0) {
-                that.setData({
-                    timeLeft: m + ':' + s--
-                });
-            } else {
-                m--;
-                s = 59;
-                if (m < 0) {
-                    clearInterval(intv);
-                    //定时结束
-                    that.setData({
-                        bgc: '#f76060',
-                        countdownEnd: false
-                    });
-                    wx.showToast({
-                        title: '点名结束',
-                        icon: 'success',
-                        duration: 3000
-                    });
-
-                } else {
+        return new Promise(function (resolve, reject) {
+            var intv = setInterval(function () {
+                if (s >= 0) {
                     that.setData({
                         timeLeft: m + ':' + s--
                     });
+                } else {
+                    m--;
+                    s = 59;
+                    if (m < 0) {
+                        clearInterval(intv);
+                        //定时结束
+                        that.setData({
+                            bgc: '#f76060',
+                            countdownEnd: true
+                        });
+                        wx.showToast({
+                            title: '点名结束',
+                            icon: 'success',
+                            duration: 3000
+                        });
+                        resolve();
+                    } else {
+                        that.setData({
+                            timeLeft: m + ':' + s--
+                        });
+                    }
                 }
-            }
-        }, 1000);
+            }, 1000);
+        });
     },
     //更新学生签到情况
     updateStatus: function () {
@@ -322,7 +325,7 @@ Page({
                 //点名已结束
                 that.setData({
                     bgc: '#f76060',
-                    countdownEnd: false
+                    countdownEnd: true
                 });
                 wx.showToast({
                     title: '点名已结束',

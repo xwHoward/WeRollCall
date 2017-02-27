@@ -45,6 +45,7 @@ Page({
     rollcall.set('teacher', teacher);
     var course = AV.Object.createWithoutData('COURSE', that.data.courseId);
     rollcall.set('course', course);
+    rollcall.set('done', false);
     rollcall.set('type', 'compass');
     rollcall.set('teacherAngle', that.data.direction);
     rollcall.set('students', []);
@@ -103,33 +104,36 @@ Page({
   },
   startCountdown: function (m, s) {
     var that = this;
-    var intv = setInterval(function () {
-      if (s >= 0) {
-        that.setData({
-          timeLeft: m + ':' + s--
-        });
-      } else {
-        m--;
-        s = 59;
-        if (m < 0) {
-          clearInterval(intv);
-          //定时结束
-          that.setData({
-            bgc: '#f76060',
-            countdownEnd: false
-          });
-          wx.showToast({
-            title: '点名结束',
-            icon: 'success',
-            duration: 3000
-          });
-        } else {
+    return new Promise(function (resolve, reject) {
+      var intv = setInterval(function () {
+        if (s >= 0) {
           that.setData({
             timeLeft: m + ':' + s--
           });
+        } else {
+          m--;
+          s = 59;
+          if (m < 0) {
+            clearInterval(intv);
+            //定时结束
+            that.setData({
+              bgc: '#f76060',
+              countdownEnd: false
+            });
+            wx.showToast({
+              title: '点名结束',
+              icon: 'success',
+              duration: 3000
+            });
+            resolve();
+          } else {
+            that.setData({
+              timeLeft: m + ':' + s--
+            });
+          }
         }
-      }
-    }, 1000);
+      }, 1000);
+    });
   },
   //初始化学生签到界面
   initSignInData: function (rcId) {
@@ -184,7 +188,7 @@ Page({
   },
   signIn: function () {
     var that = this;
-    console.log('that.data.rollcallId:',that.data.rollcallId)
+    console.log('that.data.rollcallId:', that.data.rollcallId)
     var rollcallQuery = new AV.Query('ROLLCALL');
     rollcallQuery.get(that.data.rollcallId).then(function (rc) {
       console.log("rollcall's angle, student's angle:", rc.attributes.teacherAngle, that.data.direction)

@@ -28,7 +28,7 @@ Page({
     })
   },
 
-  //更新、从云端下载用户信息
+  //更新、从云端下载用户信息,对app.global.data赋值
   updateUserInfo: function () {
     var user = AV.User.current();
     return new Promise(function (resolve, reject) {
@@ -36,19 +36,27 @@ Page({
       getUserInfoPromisified({})
         .then(function (res) {
           // 更新当前用户的信息
-          user.set(res.userInfo).save().then(user => {
-            // 成功，此时可在控制台中看到更新后的用户信息
-            var userQuery = new AV.Query('_User');
-            userQuery.include('leaves');
-            userQuery.get(user.id).then(function (user) {
-              app.globalData.user = user.toJSON();
-              console.log("Update userinfo on leanCloud success, app.globalData.user:", app.globalData.user)
-              resolve();
+          user.set(res.userInfo).save()
+            .then(function (user) {
+              // 成功，此时可在控制台中看到更新后的用户信息
+              var userQuery = new AV.Query('_User');
+
+              userQuery.include('leaves');//是否要在初始化时加载请假数据？？？
+              userQuery.include('coursesChosen');//是否要在初始化时加载选课数据？？？
+              userQuery.include('courses');//是否要在初始化时加载选课数据？？？
+
+              userQuery.get(user.id).then(function (user) {
+                app.globalData.user = user.toJSON();
+                console.log("Update userinfo on leanCloud success, app.globalData.user:", app.globalData.user)
+                resolve();
+              });
+            })
+            .catch(function (err) {
+              reject(err);
             });
-          }).catch(console.error);
         })
         .catch(function () {
-          app.globalData.user = user;
+          app.globalData.user = user.toJSON();
           resolve();
         });
     });
@@ -71,75 +79,95 @@ Page({
   },
 
   //获取学生所选课程
-  getChosenCourses: function () {
-    var that = this;
-    var studentQuery = new AV.Query('_User');
-    studentQuery.include('coursesChosen');
-    studentQuery.get(app.globalData.user.objectId).then(function (stu) {
-      that.setData({
-        courses: stu.toJSON().coursesChosen
-      });
-      wx.hideToast();
-    }, function (error) {
-      // 异常处理
-      console.log(error)
-    });
-
-  },
+  // getChosenCourses: function () {
+  //   var that = this;
+  //   return new Promise(function (resolve, reject) {
+  //     var studentQuery = new AV.Query('_User');
+  //     studentQuery.include('coursesChosen');
+  //     studentQuery.get(app.globalData.user.objectId).then(function (stu) {
+  //       that.setData({
+  //         courses: stu.toJSON().coursesChosen
+  //       });
+  //       resolve();
+  //     }, function (error) {
+  //       // 异常处理
+  //       reject(error);
+  //     });
+  //   });
+  // },
 
   initData: function () {
     var that = this;
+    // return new Promise(function (resolve, reject) {
     if (app.globalData.user.userType === "老师") {
       console.log("usertype:teacher")
       //以教师身份登录，初始化教师所授课程
-      var queryCourse = new AV.Query('COURSE');
-      var teacher = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
-      queryCourse.equalTo('teacher', teacher);
-      queryCourse.find().then(function (results) {
-        that.setData({
-          courses: results
-        });
-        wx.hideToast();
-      }, function (error) {
-        wx.hideToast();
+      that.setData({
+        courses: app.globalData.user.courses
       });
+      // var queryCourse = new AV.Query('COURSE');
+      // var teacher = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
+      // queryCourse.equalTo('teacher', teacher);
+      // queryCourse.find().then(function (results) {
+      //   console.log("teacher's courses:", results)
+      //   that.setData({
+      //     courses: results.toJSON()
+      //   });
+      //   console.log("teacher's courses:", results.toJSON())
+      //   resolve();
+      // }, function (error) {
+      //   reject(error);
+      // });
     } else {
       //以学生身份登录
       //初始化学生所选课程
       console.log("usertype:student")
-      that.getChosenCourses();
+      that.setData({
+        courses: app.globalData.user.coursesChosen
+      });
+      // that.getChosenCourses().then(function () {
+      //   resolve();
+      // }).catch(function (err) {
+      //   reject(error);
+      // });
     }
+    // });
   },
 
   //初始化用户信息
   //返回用户类型：'教师'/'学生'
   initUserInfo: function () {
     var that = this;
-    wx.showToast({
-      icon: 'loading',
-      title: '拉取用户数据...',
-      mask: true
-    });
     AV.User.loginWithWeapp()
       .then(function () {
         var user = AV.User.current();
         if (user.get('register') != true) {
           // 首次登陆需要初始化身份数据
-          console.log('Never registered, redirecting To login page..')
           that.register();
         } else {
           //用户已经注册过
-          // console.log('Already registered, now updating user info on leanCloud from wx.getUserInfo()...')
+          wx.showToast({
+            icon: 'loading',
+            title: '初始化数据...',
+            mask: true
+          });
           that.updateUserInfo()
             .then(function () {
+              //app.global.data赋值成功
               that.initData();
+              wx.hideToast();
+              // that.initData().then(function () {
+              //   wx.hideToast();
+              // }).catch(function (err) {
+              //   wx.hideToast();
+              // });
             })
             .catch(console.error);
         }
       })
       .catch(console.error);
   },
-  
+
   goToStat: function (e) {
     wx.navigateTo({
       url: 'stat/stat?courseId=' + e.target.dataset.courseId,

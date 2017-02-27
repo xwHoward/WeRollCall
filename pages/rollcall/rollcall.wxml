@@ -1,5 +1,5 @@
 <import src="rollcall_tpl.wxml"/>
 <view class="container">
-  <!--<view class="line-shadow"></view>-->
+  <view class="line-shadow"></view>
   <template is="{{tpl}}" data=""/>
 </view>

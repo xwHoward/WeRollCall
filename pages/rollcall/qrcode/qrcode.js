@@ -101,6 +101,7 @@ Page({
     var course = AV.Object.createWithoutData('COURSE', that.data.courseId);
     rollcall.set('course', course);
     rollcall.set('type', 'qrcode');
+    rollcall.set('done', false);
     rollcall.set('students', []);
     var stuA = AV.Object.createWithoutData('_User', '587b6dd15c497d0058a39e76');//测试数据
     rollcall.addUnique('students', stuA);//测试数据
@@ -123,32 +124,37 @@ Page({
           template: 'countdown',
           rollcallId: rc.id
         });
-        that.startCountdown(that.data.timeout - 1, 29);
+        that.startCountdown(that.data.timeout - 1, 59).then(function () {
+          //倒计时结束
+          rollcall.set('done',true).save().then(function(rc){
+            console.log('rollcall terminated, rollcall:',rc)
+          });
+          //对本次点名的请假记录做清理
+          //向今日有效请假记录插入标记字段
+          var today = (new Date()).toLocaleDateString();
+          //对符合日期的请假做标记adopted字段
+          var leaveQuery = new AV.Query('LEAVE');
+          leaveQuery.equalTo('date', today);
+          leaveQuery.include('student');
+          leaveQuery.find().then(function (lvs) {
+            console.log('今日请假记录：', lvs)
+            for (var i = 0; i < lvs.length; i++) {
+              var lv = AV.Object.createWithoutData('LEAVE', lvs[i].id);
+              lv.set('adopted', true);
+              lv.save().then();
+              var onLeaveStudents = [];
+              onLeaveStudents.push(lvs[i].get('student'));
+            }
+            console.log("onLeaveStudents:", onLeaveStudents)
+            that.setData({
+              onLeaveStudents: onLeaveStudents
+            });
+          });
+        });
         var intv = setInterval(function () {
-          if (that.data.countdownEnd) {
+          if (!that.data.countdownEnd) {
             that.updateStatus();
           } else {
-            //对本次点名的请假记录做清理
-            //向今日有效请假记录插入标记字段
-            var today = (new Date()).toLocaleDateString();
-            //对符合日期的请假做标记adopted字段
-            var leaveQuery = new AV.Query('LEAVE');
-            leaveQuery.equalTo('date', today);
-            leaveQuery.include('student');
-            leaveQuery.find().then(function (lvs) {
-              console.log('今日请假记录：', lvs)
-              for (var i = 0; i < lvs.length; i++) {
-                var lv = AV.Object.createWithoutData('LEAVE', lvs[i].id);
-                lv.set('adopted', true);
-                lv.save().then();
-                var onLeaveStudents = [];
-                onLeaveStudents.push(lvs[i].get('student'));
-              }
-              console.log("onLeaveStudents:",onLeaveStudents)
-              that.setData({
-                onLeaveStudents: onLeaveStudents
-              });
-            });
             clearInterval(intv);
           }
         }, 5000);
@@ -157,34 +163,36 @@ Page({
   },
   startCountdown: function (m, s) {
     var that = this;
-    var intv = setInterval(function () {
-      if (s >= 0) {
-        that.setData({
-          timeLeft: m + ':' + s--
-        });
-      } else {
-        m--;
-        s = 59;
-        if (m < 0) {
-          clearInterval(intv);
-          //定时结束
-          that.setData({
-            bgc: '#f76060',
-            countdownEnd: false
-          });
-          wx.showToast({
-            title: '点名结束',
-            icon: 'success',
-            duration: 3000
-          });
-
-        } else {
+    return new Promise(function (resolve, reject) {
+      var intv = setInterval(function () {
+        if (s >= 0) {
           that.setData({
             timeLeft: m + ':' + s--
           });
+        } else {
+          m--;
+          s = 59;
+          if (m < 0) {
+            clearInterval(intv);
+            //定时结束
+            that.setData({
+              bgc: '#f76060',
+              countdownEnd: false
+            });
+            wx.showToast({
+              title: '点名结束',
+              icon: 'success',
+              duration: 3000
+            });
+            resolve();
+          } else {
+            that.setData({
+              timeLeft: m + ':' + s--
+            });
+          }
         }
-      }
-    }, 1000);
+      }, 1000);
+    });
   },
   //更新学生签到情况
   updateStatus: function () {
