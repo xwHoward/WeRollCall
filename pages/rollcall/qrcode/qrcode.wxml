@@ -47,7 +47,7 @@
         </view>
       </view>
     </scroll-view>
-    <button class="add-course" hover-class="add-course-hover" bindtap="addToNamelist" disabled="{{countdownEnd}}">+ 手动添加</button>
+    <button class="add-course" hover-class="add-course-hover" bindtap="addToNamelist" disabled="{{!countdownEnd}}">+ 手动添加</button>
     <block wx:if="{{manuAdd}}">
       <view class="add clearfix">
         <input placeholder="请输入完整学号" bindinput="inputStuId" auto-focus class="add-input" />

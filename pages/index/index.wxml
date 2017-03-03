@@ -8,7 +8,7 @@
       <text class="course-classroom">教室：{{item.courseAddr}}</text>
       <view class="course-time">
         <text class="time-start">{{item.courseTimeStart}}</text>
-        <text class="time-end">{{item.courseTimeEnd}}</text>    
+        <text class="time-end">{{item.courseTimeEnd}}</text>
       </view>
     </view>
   </view>

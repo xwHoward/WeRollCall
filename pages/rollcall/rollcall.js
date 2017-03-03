@@ -32,7 +32,7 @@ Page({
         rollcallQuery.equalTo('course', course);
         rollcallQuery.equalTo('done', false);//此处应该判断点名是否未结束
         rollcallQuery.descending('createdAt');
-        rollcallQuery.limit(3);
+        rollcallQuery.limit(2);
         rollcallQuery.find().then(function (rcs) {
           if (rcs.length < 1) {
             wx.showModal({
@@ -42,11 +42,25 @@ Page({
               confirmText: '知道了',
               confirmColor: '#3CC51F',
               success: function (res) {
-
               }
             });
           } else {
             var rollcall = rcs[0].toJSON();
+            app.globalData.signInTag.forEach(function (el, index) {
+              if (el.rollcallId == rollcall.objectId) {
+                //已经签过到
+                wx.showModal({
+                  title: '已经签过到啦',
+                  content: '不可以重复签到哦！',
+                  showCancel: false,
+                  confirmText: '知道了',
+                  confirmColor: '#3CC51F',
+                  success: function (res) {
+                    return 0;
+                  }
+                });
+              }
+            });
             if (rollcall.type == 'qrcode') {
               console.log('qrcode fast sign in!')
               wx.navigateTo({

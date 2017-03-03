@@ -1,4 +1,5 @@
 const AV = require('../../../lib/leancloud-storage');
+var Promise = require("../../../lib/es6-promise.min");
 var ROLLCALL = AV.Object.extend('ROLLCALL');
 var app = getApp();
 Page({
@@ -97,35 +98,46 @@ Page({
                     template: 'countdown',
                     rollcallId: rc.id
                 });
-                that.startCountdown(that.data.timeout - 1, 59);
+                that.startCountdown(that.data.timeout - 1, 59).then(function () {
+                    //倒计时结束
+                    that.getLeaveStudents();
+                });
                 var intv = setInterval(function () {
                     if (!that.data.countdownEnd) {
                         that.updateStatus();
                     } else {
-                        //对本次点名的请假记录做清理
-                        //向今日有效请假记录插入标记字段
-                        var today = (new Date()).toLocaleDateString();
-                        //对符合日期的请假做标记adopted字段
-                        var leaveQuery = new AV.Query('LEAVE');
-                        leaveQuery.equalTo('date', today);
-                        leaveQuery.include('student');
-                        leaveQuery.find().then(function (lvs) {
-                            console.log('今日请假记录：', lvs)
-                            var onLeaveStudents = [];
-                            for (var i = 0; i < lvs.length; i++) {
-                                var lv = AV.Object.createWithoutData('LEAVE', lvs[i].id);
-                                lv.set('adopted', true);
-                                lv.save().then();
-                                onLeaveStudents.push(lvs[i].get('student'));
-                            }
-                            console.log("onLeaveStudents:", onLeaveStudents)
-                            that.setData({
-                                onLeaveStudents: onLeaveStudents
-                            });
-                        });
                         clearInterval(intv);
                     }
                 }, 5000);
+            })
+            .catch(console.error);
+    },
+    //获取今日请假学生
+    getLeaveStudents: function () {
+        var that = this;
+        //对本次点名的请假记录做清理
+        //向今日有效请假记录插入标记字段
+        var today = (new Date()).toLocaleDateString();
+        //对符合日期的请假做标记adopted字段
+        var leaveQuery = new AV.Query('LEAVE');
+        leaveQuery.equalTo('date', today);
+        leaveQuery.include('student');
+        leaveQuery.find()
+            .then(function (lvs) {
+                console.log('今日请假记录：', lvs)
+                var onLeaveStudents = [];
+                for (var i = 0; i < lvs.length; i++) {
+                    var lv = AV.Object.createWithoutData('LEAVE', lvs[i].id);
+                    lv.set('adopted', true);
+                    lv.save().then(function () {
+                        console.log('leave[' + i + '] adopted')
+                    });
+                    onLeaveStudents.push(lvs[i].get('student'));
+                }
+                console.log("onLeaveStudents:", onLeaveStudents)
+                that.setData({
+                    onLeaveStudents: onLeaveStudents
+                });
             })
             .catch(console.error);
     },
@@ -164,6 +176,10 @@ Page({
                 console.log("rollcalls finded:", rcs)
                 if (rcs.length < 1) {
                     console.log('签到失败！')
+                    app.globalData.signInTag.push({
+                        rollcallId: that.data.rollcallId,
+                        success: false
+                    });
                     wx.showModal({
                         title: '签到失败！',
                         content: '你的位置距离老师过远，请重新报告地理位置',
@@ -197,6 +213,10 @@ Page({
                                     confirmColor: '#3CC51F',
                                     success: function (res) {
                                         console.log('返回主页')
+                                        app.globalData.signInTag.push({
+                                            rollcallId: that.data.rollcallId,
+                                            success: true
+                                        });
                                         wx.navigateBack();
                                     }
                                 });

@@ -70,35 +70,46 @@ Page({
           template: 'countdown',
           rollcallId: rc.id
         });
-        that.startCountdown(2, 59);
+        that.startCountdown(2, 59).then(function () {
+          //倒计时结束
+          that.getLeaveStudents();
+        });
         var intv = setInterval(function () {
           if (that.data.countdownEnd) {
             that.updateStatus();
           } else {
-            //对本次点名的请假记录做清理
-            //向今日有效请假记录插入标记字段
-            var today = (new Date()).toLocaleDateString();
-            //对符合日期的请假做标记adopted字段
-            var leaveQuery = new AV.Query('LEAVE');
-            leaveQuery.equalTo('date', today);
-            leaveQuery.include('student');
-            leaveQuery.find().then(function (lvs) {
-              console.log('今日请假记录：', lvs)
-              for (var i = 0; i < lvs.length; i++) {
-                var lv = AV.Object.createWithoutData('LEAVE', lvs[i].id);
-                lv.set('adopted', true);
-                lv.save().then();
-                var onLeaveStudents = [];
-                onLeaveStudents.push(lvs[i].get('student'));
-              }
-              console.log("onLeaveStudents:", onLeaveStudents)
-              that.setData({
-                onLeaveStudents: onLeaveStudents
-              });
-            });
             clearInterval(intv);
           }
         }, 5000);
+      })
+      .catch(console.error);
+  },
+  //获取今日请假学生
+  getLeaveStudents: function () {
+    var that = this;
+    //对本次点名的请假记录做清理
+    //向今日有效请假记录插入标记字段
+    var today = (new Date()).toLocaleDateString();
+    //对符合日期的请假做标记adopted字段
+    var leaveQuery = new AV.Query('LEAVE');
+    leaveQuery.equalTo('date', today);
+    leaveQuery.include('student');
+    leaveQuery.find()
+      .then(function (lvs) {
+        console.log('今日请假记录：', lvs)
+        var onLeaveStudents = [];
+        for (var i = 0; i < lvs.length; i++) {
+          var lv = AV.Object.createWithoutData('LEAVE', lvs[i].id);
+          lv.set('adopted', true);
+          lv.save().then(function () {
+            console.log('leave[' + i + '] adopted')
+          });
+          onLeaveStudents.push(lvs[i].get('student'));
+        }
+        console.log("onLeaveStudents:", onLeaveStudents)
+        that.setData({
+          onLeaveStudents: onLeaveStudents
+        });
       })
       .catch(console.error);
   },
@@ -118,7 +129,7 @@ Page({
             //定时结束
             that.setData({
               bgc: '#f76060',
-              countdownEnd: false
+              countdownEnd: true
             });
             wx.showToast({
               title: '点名结束',
@@ -180,22 +191,23 @@ Page({
     //更新签到进度
     var courseQuery = new AV.Query('COURSE');
     courseQuery.get(that.data.courseId).then(function (c) {
-      var sum = c.attributes.students.length;
+      var sum = c.get('students').length;
       that.setData({
         studentSum: sum
       });
     });
   },
   signIn: function () {
+    console.log('rollcallId:', that.data.rollcallId)
     var that = this;
-    console.log('that.data.rollcallId:', that.data.rollcallId)
+    var studentAngle = that.data.direction;
     var rollcallQuery = new AV.Query('ROLLCALL');
     rollcallQuery.get(that.data.rollcallId).then(function (rc) {
-      console.log("rollcall's angle, student's angle:", rc.attributes.teacherAngle, that.data.direction)
-      var teacherAngle = rc.attributes.teacherAngle;
+      console.log("rollcall's angle, student's angle:", rc.get('teacherAngle'), studentAngle)
+      var teacherAngle = rc.get('teacherAngle');
       var targetAngle = teacherAngle > 180 ? (teacherAngle - 180) : (teacherAngle + 180);
-      console.log('targetAngle:', targetAngle);
-      if (Math.abs(targetAngle - that.data.direction) <= 10) {
+      console.log('targetAngle:', targetAngle, 'studentAngle:', studentAngle);
+      if ((Math.abs(targetAngle - studentAngle) <= 10) || (Math.abs(targetAngle - studentAngle) >= 350)) {
         //签到成功
         var rollcall = AV.Object.createWithoutData('ROLLCALL', that.data.rollcallId);
         var student = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
@@ -207,6 +219,10 @@ Page({
           self.addUnique('rollcalls', rollcall);
           self.save().then(function (stu) {
             console.log('user表注入rollcall成功')
+          });
+          app.globalData.signInTag.push({
+            rollcallId: that.data.rollcallId,
+            success: true
           });
           wx.showModal({
             title: '签到成功',
@@ -220,7 +236,20 @@ Page({
           });
         })
       } else {
-        console.log('签到失败！')
+        wx.showModal({
+          title: '签到失败',
+          content: '请与老师沟通后补签',
+          showCancel: false,
+          confirmText: '返回主页',
+          confirmColor: '#3CC51F',
+          success: function (res) {
+            app.globalData.signInTag.push({
+              rollcallId: that.data.rollcallId,
+              success: false
+            });
+            wx.navigateBack();
+          }
+        });
       }
     });
   },

@@ -1,4 +1,5 @@
 const AV = require('../../../lib/leancloud-storage');
+var Promise = require("../../../lib/es6-promise.min");
 var QR = require("../../../lib/qrcode.js");
 var ROLLCALL = AV.Object.extend('ROLLCALL');
 var app = getApp();
@@ -7,7 +8,7 @@ Page({
     imagePath: '',
     timeout: 2,
     bgc: '#09BB07',
-    countdownEnd: true,
+    countdownEnd: false,
     manuAdd: false,
     template: '',
     timeLeft: '0:0',
@@ -17,7 +18,6 @@ Page({
     studentSum: 0
   },
   onLoad: function (options) {
-    // 页面初始化 options为页面跳转所带来的参数
     console.log('页面初始化 options为页面跳转所带来的参数:', options)
     if (options.userType == 'student') {
       //学生身份，对应签到界面
@@ -42,9 +42,9 @@ Page({
     }
   },
   createQrCode: function (url, canvasId, cavW, cavH) {
+    var that = this;
     //调用插件中的draw方法，绘制二维码图片
     QR.qrApi.draw(url, canvasId, cavW, cavH);
-    var that = this;
     //二维码生成之后调用canvasToTempImage();延迟3s，否则获取图片路径为空
     var st = setTimeout(function () {
       that.canvasToTempImage();
@@ -63,15 +63,13 @@ Page({
     wx.canvasToTempFilePath({
       canvasId: 'qrcode',
       success: function (res) {
-        console.log(res)
         var tempFilePath = res.tempFilePath;
-        console.log(tempFilePath);
         that.setData({
           imagePath: tempFilePath,
         });
       },
       fail: function (res) {
-        console.log(res);
+        console.error(res);
       }
     });
   },
@@ -85,7 +83,6 @@ Page({
     })
     var st = setTimeout(function () {
       var img = that.data.imagePath
-      console.log(img)
       wx.previewImage({
         current: img, // 当前显示图片的http链接
         urls: [img] // 需要预览的图片http链接列表
@@ -103,7 +100,7 @@ Page({
     rollcall.set('type', 'qrcode');
     rollcall.set('done', false);
     rollcall.set('students', []);
-    var stuA = AV.Object.createWithoutData('_User', '587b6dd15c497d0058a39e76');//测试数据
+    var stuA = AV.Object.createWithoutData('_User', '5858ea9c61ff4b006875e5f3');//测试数据
     rollcall.addUnique('students', stuA);//测试数据
     rollcall.set('timeout', this.data.timeout);
     rollcall.save()
@@ -126,38 +123,44 @@ Page({
         });
         that.startCountdown(that.data.timeout - 1, 59).then(function () {
           //倒计时结束
-          rollcall.set('done',true).save().then(function(rc){
-            console.log('rollcall terminated, rollcall:',rc)
-          });
-          //对本次点名的请假记录做清理
-          //向今日有效请假记录插入标记字段
-          var today = (new Date()).toLocaleDateString();
-          //对符合日期的请假做标记adopted字段
-          var leaveQuery = new AV.Query('LEAVE');
-          leaveQuery.equalTo('date', today);
-          leaveQuery.include('student');
-          leaveQuery.find().then(function (lvs) {
-            console.log('今日请假记录：', lvs)
-            for (var i = 0; i < lvs.length; i++) {
-              var lv = AV.Object.createWithoutData('LEAVE', lvs[i].id);
-              lv.set('adopted', true);
-              lv.save().then();
-              var onLeaveStudents = [];
-              onLeaveStudents.push(lvs[i].get('student'));
-            }
-            console.log("onLeaveStudents:", onLeaveStudents)
-            that.setData({
-              onLeaveStudents: onLeaveStudents
-            });
-          });
+          that.getLeaveStudents();
         });
-        var intv = setInterval(function () {
-          if (!that.data.countdownEnd) {
-            that.updateStatus();
-          } else {
-            clearInterval(intv);
-          }
-        }, 5000);
+      })
+      .catch(console.error);
+    var intv = setInterval(function () {
+      if (!that.data.countdownEnd) {
+        that.updateStatus();
+      } else {
+        clearInterval(intv);
+      }
+    }, 5000);
+  },
+  //获取今日请假学生
+  getLeaveStudents: function () {
+    var that = this;
+    //对本次点名的请假记录做清理
+    //向今日有效请假记录插入标记字段
+    var today = (new Date()).toLocaleDateString();
+    //对符合日期的请假做标记adopted字段
+    var leaveQuery = new AV.Query('LEAVE');
+    leaveQuery.equalTo('date', today);
+    leaveQuery.include('student');
+    leaveQuery.find()
+      .then(function (lvs) {
+        console.log('今日请假记录：', lvs)
+        var onLeaveStudents = [];
+        for (var i = 0; i < lvs.length; i++) {
+          var lv = AV.Object.createWithoutData('LEAVE', lvs[i].id);
+          lv.set('adopted', true);
+          lv.save().then(function () {
+            console.log('leave[' + i + '] adopted')
+          });
+          onLeaveStudents.push(lvs[i].get('student'));
+        }
+        console.log("onLeaveStudents:", onLeaveStudents)
+        that.setData({
+          onLeaveStudents: onLeaveStudents
+        });
       })
       .catch(console.error);
   },
@@ -177,7 +180,7 @@ Page({
             //定时结束
             that.setData({
               bgc: '#f76060',
-              countdownEnd: false
+              countdownEnd: true
             });
             wx.showToast({
               title: '点名结束',
@@ -210,7 +213,7 @@ Page({
     //更新签到进度
     var courseQuery = new AV.Query('COURSE');
     courseQuery.get(that.data.courseId).then(function (c) {
-      var sum = c.attributes.students.length;
+      var sum = c.get('students').length;
       that.setData({
         studentSum: sum
       });
@@ -278,7 +281,7 @@ Page({
         //点名已结束
         that.setData({
           bgc: '#f76060',
-          countdownEnd: false
+          countdownEnd: true
         });
         wx.showToast({
           title: '点名已结束',
@@ -287,6 +290,10 @@ Page({
         });
       } else {
         //点名正在进行中
+        that.setData({
+          bgc: '#f76060',
+          countdownEnd: false
+        });
         var min = (new Date(timeLeft)).getMinutes();
         var sec = (new Date(timeLeft)).getSeconds();
         that.startCountdown(min, sec);
@@ -317,6 +324,10 @@ Page({
               self.save().then(function (stu) {
                 console.log('user表注入rollcall成功')
               });
+              app.globalData.signInTag.push({
+                rollcallId: that.data.rollcallId,
+                success: true
+              });
               wx.showModal({
                 title: '签到成功',
                 content: '点击确定返回主页',
@@ -331,6 +342,10 @@ Page({
             })
           } else {
             console.log('签到失败！')
+            app.globalData.signInTag.push({
+              rollcallId: that.data.rollcallId,
+              success: false
+            });
             wx.showModal({
               title: '签到失败！',
               content: '请检查二维码是否正确，或重新扫码',

@@ -13,7 +13,8 @@ App({
   },
   onHide: function () {
   },
-  globalData:{
-    user:null
+  globalData: {
+    user: null,
+    signInTag: []
   }
 })
