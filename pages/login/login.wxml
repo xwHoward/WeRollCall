@@ -1,5 +1,4 @@
 <view class="container">
-    <view class="line-shadow"></view>
     <view class="panel">
         <text class="banner">小点名
         大学生考勤新方式</text>

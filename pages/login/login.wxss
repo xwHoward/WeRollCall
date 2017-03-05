@@ -1,3 +1,7 @@
+.container{
+    background-image: url(https://dn-03kfwto5.qbox.me/3918513f0c79967c102f.PNG);
+    background-size: cover;
+}
 .panel{
     font-size: 14px;
     text-align: center;
@@ -8,7 +12,8 @@
     border-radius: 5%;
     margin: 0 auto;
     position: relative;
-    top: 200rpx;
+    top: 100rpx;
+    opacity: 0.9;
 }
 .banner{
     color: #fff;
@@ -46,6 +51,7 @@ picker{
     border: 2px solid #fff;
     border-radius: 50%;
     background-color: #1AAD16;
+    margin: 50rpx auto 20rpx;
 }
 .wx-login image{
     position: relative;
@@ -60,7 +66,7 @@ picker{
     line-height: 40rpx;
     background-color: #fff;
     border-radius: 10rpx;
-    text-align: left;
+    text-align: center;
     margin: 40rpx auto 40rpx;
     padding: 0 40rpx;
     font-family: 'Microsoft Yahei';

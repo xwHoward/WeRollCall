@@ -1,4 +1,7 @@
-/* pages/user/user.wxss */
+.container{
+    background-image: url(https://dn-03kfwto5.qbox.me/3918513f0c79967c102f.PNG);
+    background-size: cover;
+}
 .panel{
     text-align: center;
     box-sizing: border-box;
@@ -10,6 +13,7 @@
     margin: 0 auto;
     position: relative;
     top: 200rpx;
+    opacity: 0.9;
 }
 .panel .photo{
     position: absolute;

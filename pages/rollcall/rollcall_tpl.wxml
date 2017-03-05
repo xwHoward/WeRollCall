@@ -17,22 +17,22 @@
   </view>
 </template>
 <template name="sign-in">
+  <view class="carousel">
+    <swiper indicator-dots autoplay circular>
+      <swiper-item>
+        <image src="https://dn-03kfwto5.qbox.me/3918513f0c79967c102f.PNG" class="banner"></image>
+      </swiper-item>
+      <swiper-item>
+        <image src="https://dn-03kfwto5.qbox.me/3918513f0c79967c102f.PNG" class="banner"></image>
+      </swiper-item>
+      <swiper-item>
+        <image src="https://dn-03kfwto5.qbox.me/3918513f0c79967c102f.PNG" class="banner"></image>
+      </swiper-item>
+    </swiper>
+  </view>
   <view class="sign-in-btn">
     <button class="pulse-button" bindtap="signIn">
       签到
     </button>
-  </view>
-  <view class="carousel">
-    <swiper indicator-dots autoplay circular>
-      <swiper-item>
-        <image src="https://dn-03kfwto5.qbox.me/17b5d323db4c99070828.gif" class="banner"></image>
-      </swiper-item>
-      <swiper-item>
-        <image src="https://dn-03kfwto5.qbox.me/17b5d323db4c99070828.gif" class="banner"></image>
-      </swiper-item>
-      <swiper-item>
-        <image src="https://dn-03kfwto5.qbox.me/17b5d323db4c99070828.gif" class="banner"></image>
-      </swiper-item>
-    </swiper>
   </view>
 </template>

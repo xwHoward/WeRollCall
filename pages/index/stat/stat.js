@@ -60,26 +60,29 @@ Page({
     courseQuery.include('leaves');
     courseQuery.get(courseId).then(function (crs) {
       console.log("course:", crs)
-      course = crs;
+      course = crs.toJSON();
       var leaves = crs.get('leaves');
-      console.log('leaves of this course:',leaves)
-      var unreadLeaves = [];
+      console.log('leaves of this course:', leaves)
       var unreadLeaveNum = 0;
-      for (let i = 0; i < leaves.length; i++) {
-        if (leaves[i].get('read') == false) {
-          //未读请假条
-          unreadLeaveNum++;
+      var unreadLeaves = leaves.filter(function (lv) {
+        return lv.get('read') === false;
+      });
+      console.log('unreadLeaves:', unreadLeaves)
+      var unreadLeavesObjs = [];
+      var unreadLeavesPrms = unreadLeaves.map(function (el) {
+        unreadLeaveNum++;
+        return new Promise(function (resolve, reject) {
           var leaveQuery = new AV.Query('LEAVE');
           leaveQuery.include('student');
-          leaveQuery.get(leaves[i].id).then(function (lv) {
+          leaveQuery.get(el.id).then(function (lv) {
             //遍历unreadLeave获取student字段，重新拼装unreadLeaves
             var student = lv.get('student');
             var img = lv.get('image');
-            console.log(img)
             var imgSrc = '';
-            if (img){
+            if (img) {
               imgSrc = img.get('url');
             }
+            console.log('imgSrc:', imgSrc)
             var unreadLeave = {
               id: lv.id,
               reason: lv.get('reason'),
@@ -88,22 +91,20 @@ Page({
               date: lv.get('date'),
               imgSrc: imgSrc
             }
-            console.log('unread leave:',unreadLeave)
-            unreadLeaves.push(unreadLeave);
+            unreadLeavesObjs.push(unreadLeave);
+            resolve();
+          }).catch(function (error) {
+            reject(error);
           });
-        }
-      }
-      var intv = setInterval(function () {
-        console.log(unreadLeaves.length,unreadLeaveNum)
-        if (unreadLeaves.length == unreadLeaveNum) {
-          console.log("unreadLeaves:", unreadLeaves)
-          wx.hideToast();
-          clearInterval(intv);
-          that.setData({
-            unreadLeaves: unreadLeaves
-          });
-        }
-      }, 1000);
+        });
+      });
+      Promise.all(unreadLeavesPrms).then(function () {
+        console.log('unreadLeavesObjs:', unreadLeavesObjs)
+        wx.hideToast();
+        that.setData({
+          unreadLeaves: unreadLeavesObjs
+        });
+      });
     }, function (error) {
       // 异常处理
       console.log(error);
@@ -122,14 +123,13 @@ Page({
     courseQuery.include('teacher');
     courseQuery.include('leaves');
     courseQuery.get(courseId).then(function (crs) {
-      console.log("course:", crs)
-      course = crs;
-      var courseName = crs.get('courseName');
-      var rollcalls = crs.get('rollcalls');
-      teacher = crs.get('teacher');
+      course = crs.toJSON();
+      var courseName = course.courseName;
+      var rollcalls = course.rollcalls;
+      teacher = course.teacher;
       var targetRollcallStr = '';
       for (var i = 0; i < rollcalls.length; i++) {
-        targetRollcallStr += rollcalls[i].id;
+        targetRollcallStr += rollcalls[i].objectId;
       }
       var attend = 0;
       console.log("myRollcalls:", myRollcalls)
@@ -139,38 +139,41 @@ Page({
           attend++;
         }
       }
-      console.log(targetRollcallStr, attend)
       //请假次数
       //1.获取用户请假记录
       var myLeaves = app.globalData.user.leaves;
+      console.log("myLeaves:", myLeaves)
+      var myAdoptedLeaves = myLeaves.filter(function (lv) {
+        return lv.adopted;
+      });
+      console.log("myAdoptedLeaves:", myAdoptedLeaves)
       //2.获取指定课程请假记录
-      var leaves = crs.get('leaves');
+      var leaves = course.leaves;
+      console.log("myLeaves, course's leaves", myLeaves, leaves)
       //3.数据合并比较
       var targetLeaveStr = '';
       for (var i = 0; i < leaves.length; i++) {
-        targetLeaveStr += leaves[i].id;
+        targetLeaveStr += leaves[i].objectId;
       }
       var leaveSum = 0;
-      console.log("myLeaves:", myLeaves)
-      for (var i = 0; i < myLeaves.length; i++) {
-        var id = myLeaves[i].objectId;
+      for (var i = 0; i < myAdoptedLeaves.length; i++) {
+        var id = myAdoptedLeaves[i].objectId;
         if (targetLeaveStr.indexOf(id) >= 0) {
           leaveSum++;
         }
       }
-      console.log(targetLeaveStr, leaveSum)
       that.setData({
         total: rollcalls.length,
         courseName: courseName,
-        teacher: teacher.get('userName'),
+        teacher: teacher.userName,
         student: app.globalData.user.userName,
         attend: attend,
         absence: rollcalls.length - attend - leaveSum,
         stuId: app.globalData.user.userId,
         leave: leaveSum,
-        attendRate: (attend/rollcalls.length*100).toFixed(2),
-        absenceRate: ((rollcalls.length - attend - leaveSum)/rollcalls.length*100).toFixed(2),
-        leaveRate: (leaveSum/rollcalls.length*100).toFixed(2)
+        attendRate: (attend / rollcalls.length * 100).toFixed(2),
+        absenceRate: ((rollcalls.length - attend - leaveSum) / rollcalls.length * 100).toFixed(2),
+        leaveRate: (leaveSum / rollcalls.length * 100).toFixed(2)
       });
       wx.hideToast();
     }, function (error) {
@@ -232,12 +235,26 @@ Page({
   //向老师发送假条
   sendMessage: function () {
     var that = this;
+    app.globalData.leaveTag.forEach(function (el, index) {
+      if (el.courseId === that.data.courseId) {
+        //本门课程已经请过假
+        wx.showModal({
+          title: '已经请过假啦',
+          content: '同一门课程不可以多次请假哦！',
+          showCancel: false,
+          confirmText: '知道了',
+          confirmColor: '#3CC51F',
+          success: function (res) {
+            return 0;
+          }
+        });
+      }
+    });
     wx.showToast({
       title: '发送中...',
       icon: 'loading',
       mask: true
     })
-
     //带图片文件
     if (that.data.tempFilePath !== null) {
       console.log("带图片文件")
@@ -247,8 +264,8 @@ Page({
           //新增LEAVE表行数据
           var leave = new LEAVE();
           var studentObj = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
-          var teacherObj = AV.Object.createWithoutData('_User', teacher.id);
-          var courseObj = AV.Object.createWithoutData('COURSE', course.id);
+          var teacherObj = AV.Object.createWithoutData('_User', teacher.objectId);
+          var courseObj = AV.Object.createWithoutData('COURSE', course.objectId);
           var fileObj = AV.Object.createWithoutData('_File', fileId);
           leave.set('student', studentObj);
           leave.set('teacher', teacherObj);
@@ -258,35 +275,42 @@ Page({
           leave.set('image', fileObj);
           leave.set('read', false);
           leave.set('adopted', false);
+          leave.set('agree', false);
           leave.save()
             .then(function (res) {
-              console.log(res)
-              wx.hideToast();
               that.setData({
                 leaveNoteSend: true
               });
-
               //COURSE表leaves字段追加记录
-              var courseClass = AV.Object.createWithoutData('COURSE', course.id);
+              var courseClass = AV.Object.createWithoutData('COURSE', course.objectId);
               var leaveClass = AV.Object.createWithoutData('LEAVE', res.id);
               courseClass.addUnique('leaves', leaveClass);
-              courseClass.save();
-
-              //_USER表leaves字段追加记录
-              var userReg = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
-              var leaveReg = AV.Object.createWithoutData('LEAVE', res.id);
-              userReg.addUnique('leaves', leaveReg);
-              userReg.save();
+              courseClass.save().then(function () {
+                //_USER表leaves字段追加记录
+                var userReg = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
+                var leaveReg = AV.Object.createWithoutData('LEAVE', res.id);
+                userReg.addUnique('leaves', leaveReg);
+                userReg.save().then(function () {
+                  wx.hideToast();
+                });
+              });
             })
-            .catch(console.error);
+            .catch(function (error) {
+              //请假记录入库失败
+              var file = AV.File.createWithoutData(fileId);
+              file.destroy().then(function (success) {
+                console.log("文件删除成功")
+              }, function (error) {
+              });
+            });
         });
     } else {
       //没有图片信息
       console.log("没有图片信息")
       var leave = new LEAVE();
       var studentObj = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
-      var teacherObj = AV.Object.createWithoutData('_User', teacher.id);
-      var courseObj = AV.Object.createWithoutData('COURSE', course.id);
+      var teacherObj = AV.Object.createWithoutData('_User', teacher.objectId);
+      var courseObj = AV.Object.createWithoutData('COURSE', course.objectId);
       leave.set('student', studentObj);
       leave.set('teacher', teacherObj);
       leave.set('date', date);
@@ -301,18 +325,24 @@ Page({
           that.setData({
             leaveNoteSend: true
           });
-
           //COURSE表leaves字段追加记录
-          var courseClass = AV.Object.createWithoutData('COURSE', course.id);
+          var courseClass = AV.Object.createWithoutData('COURSE', course.objectId);
           var leaveClass = AV.Object.createWithoutData('LEAVE', res.id);
           courseClass.addUnique('leaves', leaveClass);
-          courseClass.save();
-
-          //_USER表leaves字段追加记录
-          var userReg = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
-          var leaveReg = AV.Object.createWithoutData('LEAVE', res.id);
-          userReg.addUnique('leaves', leaveReg);
-          userReg.save();
+          courseClass.save().then(function () {
+            //_USER表leaves字段追加记录
+            var userReg = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
+            var leaveReg = AV.Object.createWithoutData('LEAVE', res.id);
+            userReg.addUnique('leaves', leaveReg);
+            userReg.save().then(function () {
+              wx.hideToast();
+              //做标记防止重复请假
+              app.globalData.leaveTag.push({
+                courseId: that.data.courseId,
+                success: true
+              });
+            });
+          });
         })
         .catch(console.error);
     }
@@ -341,18 +371,17 @@ Page({
     leave.set('agree', false);
     leave.save().then(function (lv) {
       that.initLeaveNotes(that.data.courseId);
-      console.log('modify success')
+      console.log('tag success')
     });
   },
   pass: function (e) {
     var that = this;
-    console.log(e.target.dataset)
     var leave = AV.Object.createWithoutData('LEAVE', e.target.dataset.leaveId);
     leave.set('read', true);
     leave.set('agree', true);
     leave.save().then(function (lv) {
       that.initLeaveNotes(that.data.courseId);
-      console.log('modify success')
+      console.log('tag success')
     });
   },
   onReady: function () {

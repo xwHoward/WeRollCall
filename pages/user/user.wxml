@@ -1,5 +1,4 @@
 <view class="container">
-    <view class="line-shadow"></view>
     <view class="panel">
         <image src="{{userInfo.avatarUrl}}" class="photo"></image>
         <text class="userType">{{userInfo.userType}}</text>

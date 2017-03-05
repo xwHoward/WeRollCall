@@ -8,14 +8,14 @@ Page({
     imagePath: '',
     timeout: 2,
     bgc: '#09BB07',
-    countdownEnd: false,
+    countdownEnd: true,//
     manuAdd: false,
     template: '',
     timeLeft: '0:0',
-    signedInStudents: [],
-    onLeaveStudents: [],
-    signedInStudentsNum: 0,
-    studentSum: 0
+    signedInStudents: [{ userName: '啊翻山倒双方各回复订货会是个海', userId: '2013102079' }, { userName: '中度过', userId: '876767' }, { userName: '是个', userId: '3248754' }, { userName: '啊翻山倒海', userId: '347453' }, { userName: '是告诉高速', userId: '35735' }, { userName: '是更多的是申达股份', userId: '2013102079' }, { userName: '通天河', userId: '786766' }, { userName: '东方红', userId: '4535543' }],
+    onLeaveStudents: [{ userName: '啊翻山倒海', userId: '3248754' }, { userName: '中度过', userId: '876767' }, { userName: '是个', userId: '3248754' }, { userName: '啊翻山倒海', userId: '347453' }, { userName: '是告诉高速', userId: '35735' }, { userName: '是更多的是申达股份', userId: '453456' }, { userName: '通天河', userId: '786766' }, { userName: '东方红', userId: '4535543' }],//
+    signedInStudentsNum: 46,//
+    studentSum: 56
   },
   onLoad: function (options) {
     console.log('页面初始化 options为页面跳转所带来的参数:', options)
@@ -29,7 +29,8 @@ Page({
     } else {
       //教师身份，对应创建点名
       this.setData({
-        template: 'create',
+        // template: 'create',
+        template: 'countdown',
         courseId: options.courseId
       });
       var res = wx.getSystemInfoSync();
@@ -123,10 +124,10 @@ Page({
         });
         that.startCountdown(that.data.timeout - 1, 59).then(function () {
           //倒计时结束
-          that.getLeaveStudents();
         });
       })
       .catch(console.error);
+    that.getLeaveStudents();
     var intv = setInterval(function () {
       if (!that.data.countdownEnd) {
         that.updateStatus();
@@ -149,17 +150,21 @@ Page({
       .then(function (lvs) {
         console.log('今日请假记录：', lvs)
         var onLeaveStudents = [];
-        for (var i = 0; i < lvs.length; i++) {
-          var lv = AV.Object.createWithoutData('LEAVE', lvs[i].id);
-          lv.set('adopted', true);
-          lv.save().then(function () {
-            console.log('leave[' + i + '] adopted')
+        var onLeaveStudentsPrms = lvs.map(function (el) {
+          return new Promise(function (resolve, reject) {
+            var lv = AV.Object.createWithoutData('LEAVE', el.id);
+            lv.set('adopted', true);
+            lv.save().then(function () {
+              onLeaveStudents.push(el.get('student'));
+              resolve();
+            });
           });
-          onLeaveStudents.push(lvs[i].get('student'));
-        }
-        console.log("onLeaveStudents:", onLeaveStudents)
-        that.setData({
-          onLeaveStudents: onLeaveStudents
+        });
+        Promise.all(onLeaveStudentsPrms).then(function () {
+          console.log("onLeaveStudents:", onLeaveStudents)
+          that.setData({
+            onLeaveStudents: onLeaveStudents
+          });
         });
       })
       .catch(console.error);
@@ -323,21 +328,21 @@ Page({
               self.addUnique('rollcalls', rollcall);
               self.save().then(function (stu) {
                 console.log('user表注入rollcall成功')
-              });
-              app.globalData.signInTag.push({
-                rollcallId: that.data.rollcallId,
-                success: true
-              });
-              wx.showModal({
-                title: '签到成功',
-                content: '点击确定返回主页',
-                showCancel: false,
-                confirmText: '返回主页',
-                confirmColor: '#3CC51F',
-                success: function (res) {
-                  console.log('返回主页')
-                  wx.navigateBack();
-                }
+                app.globalData.signInTag.push({
+                  rollcallId: that.data.rollcallId,
+                  success: true
+                });
+                wx.showModal({
+                  title: '签到成功',
+                  content: '点击确定返回主页',
+                  showCancel: false,
+                  confirmText: '返回主页',
+                  confirmColor: '#3CC51F',
+                  success: function (res) {
+                    console.log('返回主页')
+                    wx.navigateBack();
+                  }
+                });
               });
             })
           } else {

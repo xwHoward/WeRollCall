@@ -147,7 +147,6 @@ Page({
       courses: coursesChosen,
       courseNameArr: itemList
     });
-    wx.hideToast();
     // }, function (error) {
     //   // 异常处理
     //   console.log(error)
@@ -169,31 +168,39 @@ Page({
     });
   },
   onLoad: function (options) {
+    var that = this;
     wx.showToast({
       icon: 'loading',
       title: '初始化页面...',
       mask: true
     });
+    var intv = setInterval(function () {
+      if (app.globalData.user !== null) {
+        if (app.globalData.user.userType == '老师') {
+          console.log('teacher')
+          that.setData({
+            tpl: 'rollcall'
+          });
+          that.initTeacherCourseData();
+        } else {
+          console.log('student')
+          that.setData({
+            tpl: 'sign-in'
+          });
+          that.initStudentCourseData();
+        }
+        wx.hideToast();
+        clearInterval(intv);
+      }
+    }, 500)
     // 页面初始化 options为页面跳转所带来的参数
-    if (app.globalData.user.userType == '老师') {
-      console.log('teacher')
-      this.setData({
-        tpl: 'rollcall'
-      });
-      this.initTeacherCourseData();
-    } else {
-      console.log('student')
-      this.setData({
-        tpl: 'sign-in'
-      });
-      this.initStudentCourseData();
-    }
   },
   onReady: function () {
     // 页面渲染完成
   },
   onShow: function () {
     // 页面显示
+    app.globalData.user.userType == '老师' ? this.initTeacherCourseData() : this.initStudentCourseData();
   },
   onHide: function () {
     // 页面隐藏

@@ -1,66 +1,69 @@
 const AV = require('../../lib/leancloud-storage');
-var Promise = require("../../lib/es6-promise.min");
+// var Promise = require("../../lib/es6-promise.min");
 var app = getApp();
-var util = require('../../lib/util')
-var getUserInfoPromisified = util.wxPromisify(wx.getUserInfo)
+// var util = require('../../lib/util')
+// var getUserInfoPromisified = util.wxPromisify(wx.getUserInfo)
 
 Page({
   data: {
     courses: []
   },
   onPullDownRefresh: function () {
-    this.initUserInfo();
-    wx.stopPullDownRefresh();
-  },
-  //注册
-  register: function () {
-    wx.redirectTo({
-      url: '../login/login',
-      success: function (res) {
-        console.log("page.login redirected..")
-      },
-      fail: function () {
-        console.log('redirect fail!')
-      },
-      complete: function () {
-        // complete
-      }
-    })
-  },
-
-  //更新、从云端下载用户信息,对app.global.data赋值
-  updateUserInfo: function () {
-    var user = AV.User.current();
-    return new Promise(function (resolve, reject) {
-      // 调用小程序 API，得到用户信息
-      getUserInfoPromisified({})
-        .then(function (res) {
-          // 更新当前用户的信息
-          user.set(res.userInfo).save()
-            .then(function (user) {
-              // 成功，此时可在控制台中看到更新后的用户信息
-              var userQuery = new AV.Query('_User');
-
-              userQuery.include('leaves');//是否要在初始化时加载请假数据？？？
-              userQuery.include('coursesChosen');//是否要在初始化时加载选课数据？？？
-              userQuery.include('courses');//是否要在初始化时加载选课数据？？？
-
-              userQuery.get(user.id).then(function (user) {
-                app.globalData.user = user.toJSON();
-                console.log("Update userinfo on leanCloud success, app.globalData.user:", app.globalData.user)
-                resolve();
-              });
-            })
-            .catch(function (err) {
-              reject(err);
-            });
-        })
-        .catch(function () {
-          app.globalData.user = user.toJSON();
-          resolve();
-        });
+    var that = this;
+    app.updateUserInfo().then(function () {
+      that.initData();
+      wx.stopPullDownRefresh();
     });
   },
+  //注册
+  // register: function () {
+  //   wx.redirectTo({
+  //     url: '../login/login',
+  //     success: function (res) {
+  //       console.log("page.login redirected..")
+  //     },
+  //     fail: function () {
+  //       console.log('redirect fail!')
+  //     },
+  //     complete: function () {
+  //       // complete
+  //     }
+  //   })
+  // },
+
+  //更新、从云端下载用户信息,对app.global.data赋值
+  // updateUserInfo: function () {
+  //   var user = AV.User.current();
+  //   return new Promise(function (resolve, reject) {
+  //     // 调用小程序 API，得到用户信息
+  //     getUserInfoPromisified({})
+  //       .then(function (res) {
+  //         // 更新当前用户的信息
+  //         user.set(res.userInfo).save()
+  //           .then(function (user) {
+  //             // 成功，此时可在控制台中看到更新后的用户信息
+  //             var userQuery = new AV.Query('_User');
+
+  //             userQuery.include('leaves');//是否要在初始化时加载请假数据？？？
+  //             userQuery.include('coursesChosen');//是否要在初始化时加载选课数据？？？
+  //             userQuery.include('courses');//是否要在初始化时加载选课数据？？？
+
+  //             userQuery.get(user.id).then(function (user) {
+  //               app.globalData.user = user.toJSON();
+  //               console.log("Update userinfo on leanCloud success, app.globalData.user:", app.globalData.user)
+  //               resolve();
+  //             });
+  //           })
+  //           .catch(function (err) {
+  //             reject(err);
+  //           });
+  //       })
+  //       .catch(function () {
+  //         app.globalData.user = user.toJSON();
+  //         resolve();
+  //       });
+  //   });
+  // },
 
   //添加新课程
   addCourse: function () {
@@ -136,37 +139,37 @@ Page({
 
   //初始化用户信息
   //返回用户类型：'教师'/'学生'
-  initUserInfo: function () {
-    var that = this;
-    AV.User.loginWithWeapp()
-      .then(function () {
-        var user = AV.User.current();
-        if (user.get('register') != true) {
-          // 首次登陆需要初始化身份数据
-          that.register();
-        } else {
-          //用户已经注册过
-          wx.showToast({
-            icon: 'loading',
-            title: '初始化数据...',
-            mask: true
-          });
-          that.updateUserInfo()
-            .then(function () {
-              //app.global.data赋值成功
-              that.initData();
-              wx.hideToast();
-              // that.initData().then(function () {
-              //   wx.hideToast();
-              // }).catch(function (err) {
-              //   wx.hideToast();
-              // });
-            })
-            .catch(console.error);
-        }
-      })
-      .catch(console.error);
-  },
+  // initUserInfo: function () {
+  //   var that = this;
+  //   AV.User.loginWithWeapp()
+  //     .then(function () {
+  //       var user = AV.User.current();
+  //       if (user.get('register') != true) {
+  //         // 首次登陆需要初始化身份数据
+  //         that.register();
+  //       } else {
+  //         //用户已经注册过
+  //         wx.showToast({
+  //           icon: 'loading',
+  //           title: '初始化数据...',
+  //           mask: true
+  //         });
+  //         that.updateUserInfo()
+  //           .then(function () {
+  //             //app.global.data赋值成功
+  //             that.initData();
+  //             wx.hideToast();
+  //             // that.initData().then(function () {
+  //             //   wx.hideToast();
+  //             // }).catch(function (err) {
+  //             //   wx.hideToast();
+  //             // });
+  //           })
+  //           .catch(console.error);
+  //       }
+  //     })
+  //     .catch(console.error);
+  // },
 
   goToStat: function (e) {
     wx.navigateTo({
@@ -183,7 +186,19 @@ Page({
     })
   },
   onLoad: function () {
-    this.initUserInfo();
+    var that = this;
+    wx.showToast({
+      icon: 'loading',
+      title: '获取数据中...',
+      mask: true
+    });
+    var intv = setInterval(function () {
+      if (app.globalData.user !== null) {
+        that.initData();
+        wx.hideToast();
+        clearInterval(intv);
+      }
+    }, 500)
   }
 })
 
