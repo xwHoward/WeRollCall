@@ -2,17 +2,19 @@
 
   <!--发布点名-->
   <block wx:if="{{template == 'create'}}">
-    <view class="line-shadow"></view>
+
+    <!--<view class="line-shadow"></view>-->
     <view class="tips clearfix">
-      <icon type="info_circle" size="20" color="#fff" />
+      <icon type="info_circle" size="20" color="#3e4a51" />
       <text class="tip">长按二维码保存到本地，每门课程对应唯一的二维码。</text>
-      <icon type="info_circle" size="20" color="#fff" />
+      <icon type="info_circle" size="20" color="#3e4a51" />
       <text class="tip">您可以提前将二维码作为课件保存，发布点名后再展示给学生。</text>
     </view>
     <canvas bindlongtap="previewImg" class="qrcode" canvas-id="qrcode" />
-    <text class="label">设置本次点名持续时间：
-      <text class="timeout">{{timeout}}</text>min</text>
-    <slider bindchange="timeoutChange" min="1" max="5" value="{{timeout}}" step="1" selected-color="#3e4a51" show-value/>
+    <text class="label">设置本次点名持续时间： <text class="timeout">{{timeout}}</text> min</text>
+    <view class="slider-wrapper">
+      <slider bindchange="timeoutChange" min="1" max="5" value="{{timeout}}" step="1" selected-color="#c5c8ca" show-value/>
+    </view>
     <button bindtap="createRollcall" class="add-course" hover-class="add-course-hover">发布点名</button>
   </block>
 
@@ -22,13 +24,11 @@
       <view class="cd-top">{{timeLeft}}</view>
       <view class="cd-bottom">剩余时间</view>
     </view>
-
-    <!--<button bindtap="updateStatus" class="add-course" hover-class="add-course-hover">刷新签到情况</button>-->
     <view class="progress clearfix">
       <progress percent="{{signedInStudentsNum/studentSum*100}}" color="	#09BB07" active stroke-width="20" class="percent" />
       <view class="detail">{{signedInStudentsNum}}/{{studentSum}}</view>
     </view>
-    <view class="scroll-view-title">签到学生名单：</view>
+    <view class="scroll-view-title">签到学生名单</view>
     <view class="table">
       <view class="row head clearfix">
         <view class="cell">序号</view>
@@ -36,29 +36,17 @@
         <view class="cell">学号</view>
       </view>
     </view>
-    <scroll-view scroll-y="true" style="height: 200px">
+    <scroll-view scroll-y="true" style="height: 600rpx">
       <view class="table">
-
-        <!--<view class="row head clearfix">
-          <view class="cell">序号</view>
-          <view class="cell">姓名</view>
-          <view class="cell">学号</view>
-        </view>-->
         <view class="row clearfix" wx:for="{{signedInStudents}}">
           <view class="cell">{{index+1}}</view>
           <view class="cell">{{item.userName}}</view>
           <view class="cell">{{item.userId}}</view>
         </view>
-
-        <!--<view class="row tail clearfix">
-          <view class="cell">总计</view>
-          <view class="cell">100%</view>
-          <view class="cell">{{total}}</view>
-        </view>-->
       </view>
     </scroll-view>
-    <view class="scroll-view-title">请假学生名单：</view>
-    <scroll-view scroll-y="true" style="height: 50px;background-color:#3e4a51">
+    <view class="scroll-view-title">请假学生名单</view>
+    <scroll-view scroll-y="true" style="height: 200rpx;background-color:#3e4a51">
       <view class="table">
         <view class="row clearfix" wx:for="{{onLeaveStudents}}">
           <view class="cell">{{index+1}}</view>
@@ -78,13 +66,13 @@
 
   <!--学生签到-->
   <block wx:if="{{template == 'signin'}}">
-    <view class="line-shadow"></view>
-    <view class="countdown" style="background-color:{{bgc}}">
-      <view class="cd-top">{{timeLeft}}</view>
-      <view class="cd-bottom">剩余时间</view>
+    <view class="sign-in-view">
+      <view class="countdown" style="background-color:{{bgc}}">
+        <view class="cd-top">{{timeLeft}}</view>
+        <view class="cd-bottom">剩余时间</view>
+      </view>
+      <button bindtap="qrcodeSignIn" disabled="{{!countdownEnd}}" class="scanCode">
+        <image src="/images/Scan.png" class="btn-icon"></image> 扫描二维码签到</button>
     </view>
-    <image src="https://dn-03kfwto5.qbox.me/17b5d323db4c99070828.gif" class="animation"></image>
-    <button bindtap="qrcodeSignIn" disabled="{{!countdownEnd}}" class="scanCode">
-      <image src="/images/Scan.png" class="btn-icon"></image> 扫描二维码签到</button>
   </block>
 </view>

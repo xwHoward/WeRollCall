@@ -1,51 +1,82 @@
-.location {
-  width: 700rpx;
-  margin: 0 auto 40rpx;
+view {
+  box-sizing: border-box;
 }
 
-.page-body-text-location {
-  float: left;
-  width: 492rpx;
-  height: 92rpx;
-  font-size: 16px;
-  line-height: 92rpx;
-  border: 4rpx #ccc solid;
+.container {
+  color: #3e4a51;
+  position: relative;
 }
 
-.page-body-text-location text {
+.panel {
+  height: 60%;
+  overflow: hidden;
+}
+
+.panel-wrapper {
+  height: 80%;
+  width: 100%;
+  margin-top: 6%;
+}
+
+.panel-wrapper .box {
   float: left;
+  height: 50%;
+  width: 45%;
+  padding-left: 20rpx;
+}
+
+.panel-wrapper .box:nth-child(1) {
+  border-right: #ccc 1px solid;
+  border-bottom: #ccc 1px solid;
+  margin-left: 5%;
+}
+
+.panel-wrapper .box:nth-child(2) {
+  border-bottom: #ccc 1px solid;
+}
+
+.panel-wrapper .box:nth-child(3) {
+  border-right: #ccc 1px solid;
+  margin-left: 5%;
+}
+
+/*.panel-wrapper .box:nth-child(4){
+  border-right: #ccc 1px solid;
+}*/
+
+.panel-wrapper .box .row {
+  height: 50%;
+  /*overflow: hidden;*/
+}
+
+.row .icon {
+  display: block;
+  height: 50%;
+  margin: 5% 0;
+  width: 80rpx;
+}
+
+.row .desc {
+  display: block;
+  height: 40%;
+  width: 80rpx;
+  font-size: 12px;
+  line-height: 20px;
   text-align: center;
 }
 
-.page-body-text-small {
-  font-size: 24rpx;
-  line-height: 50rpx;
-  width: 100rpx;
-  margin: 0 10rpx;
-}
-
-.c-gray {
-  color: #ccc;
-}
-
-.loc-data {
-  width: 372rpx;
-}
-
-.page-body-button {
-  float: left;
-  background-color: #3e4a51;
-  color: #fff;
-  width: 150rpx;
-  margin-left: 50rpx;
-  font-size: 32rpx;
-  line-height: 48rpx;
+.row .loc {
+  height: 50%;
+  width: 100%;
+  overflow: hidden;
+  line-height: 40px;
+  font-weight: bold;
 }
 
 .accuracy {
-  text-align: center;
-  height: 50rpx;
-  line-height: 50rpx;
+  height: 40%;
+  width: 100%;
+  overflow: hidden;
   font-size: 12px;
   color: #ccc;
   animation: pulse 3s ease-in-out infinite;
@@ -73,27 +104,59 @@
   }
 }
 
-.slider-section {
-  width: 700rpx;
-  margin: 40rpx auto;
+.define-location-button {
+  background-color: #3e4a51;
+  color: #fff;
 }
 
-.slider-section .slider-title {
-  margin: 20rpx auto;
+slider {
+  height: 50%;
+  width: 90%;
+  margin: 0;
+}
+
+.pop-up {
+  height: 14%;
+  background-color: #3e4a51;
+  overflow: hidden;
+}
+
+.default-btn {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+.countdown-panel {
+  position: absolute;
+  color: #c5c8ca;
+  height: 100%;
+  top: 100%;
+  background-color: #3e4a51;
+}
+
+.add-course {
+  width: 80%;
+  height: 80rpx;
+  font-size: 18px;
+  line-height: 80rpx;
+  margin: 60rpx auto;
+  background-color: #c5c8ca;
+  color: #fff;
 }
 
 .countdown {
   width: 500rpx;
-  margin: 100rpx auto;
+  margin: 0 auto 100rpx;
   border-radius: 20rpx;
   text-align: center;
   padding-bottom: 10rpx;
 }
 
 .cd-top {
-  background-color: #3e4a51;
+  background-color: #c5c8ca;
   border-radius: 20rpx;
-  color: #fff;
+  color: #3e4a51;
   font-size: 40px;
   padding: 10rpx 0 0 40rpx;
   letter-spacing: 15px;
@@ -123,46 +186,51 @@
 }
 
 .scroll-view-title {
-  margin: 10rpx 50rpx;
+  font-size: 36rpx;
+  height: 100rpx;
+  line-height: 100rpx;
+  padding-left: 50rpx;
+  color: #3e4a51;
+  background-color: #c5c8ca;
 }
 
-.namelist {
-  width: 700rpx;
-  margin: 0 auto;
-  border-top: 2rpx #3e4a51 solid;
-  border-left: 2rpx #3e4a51 solid;
+.table {
+  width: 100%;
 }
 
-.nl-item {
-  background-color: #fff;
+.table .row {
+  width: 100%;
+  border-bottom: #49545b 1px solid;
+}
+
+.table .head {
+  background-color: #49545b;
+}
+
+.table .row .cell {
+  height: 100rpx;
+  letter-spacing: 2px;
+  line-height: 100rpx;
+  overflow: hidden;
+  float: left;
+  width: 400rpx;
+  padding: 0 20rpx;
+  font-size: 32rpx;
   text-align: center;
 }
 
-.nl-item view {
-  float: left;
-  background-color: #fff;
-  border-right: 2rpx #3e4a51 solid;
-  border-bottom: 2rpx #3e4a51 solid;
+.table .head .cell, .table .tail .cell {
+  font-weight: bold;
 }
 
-.bg-blue {
-  background-color: #bedbff;
-}
-
-.bg-blue view {
-  background-color: #bedbff;
-}
-
-.nli-index {
+.table .row .cell:first-child {
+  /*text-align: left;*/
   width: 100rpx;
 }
 
-.nli-name {
-  width: 350rpx;
-}
-
-.nli-id {
-  width: 244rpx;
+.table .row .cell:last-child {
+  width: 250rpx;
+  /*text-align: right;*/
 }
 
 .add {
@@ -183,6 +251,11 @@
   width: 200rpx;
   height: 80rpx;
   line-height: 80rpx;
-  background-color: #3e4a51;
+  background-color: #c5c8ca;
   color: #fff;
+  /*background-color: #fff;*/
+}
+
+.sign-in-view {
+  margin-top: 30%;
 }

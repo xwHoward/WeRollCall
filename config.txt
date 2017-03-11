@@ -1,4 +1,5 @@
 AppID wx81c851706b848f56
 AppSecret 27acc1158ebbccbe45d1fe839cb499ab
 27acc1158ebbccbe45d1fe839cb499ab
-#3e4a51
+#3e4a51 darker
+#49545b lighter

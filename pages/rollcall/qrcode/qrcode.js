@@ -8,14 +8,14 @@ Page({
     imagePath: '',
     timeout: 2,
     bgc: '#09BB07',
-    countdownEnd: true,//
+    countdownEnd: false,
     manuAdd: false,
     template: '',
     timeLeft: '0:0',
-    signedInStudents: [{ userName: '啊翻山倒双方各回复订货会是个海', userId: '2013102079' }, { userName: '中度过', userId: '876767' }, { userName: '是个', userId: '3248754' }, { userName: '啊翻山倒海', userId: '347453' }, { userName: '是告诉高速', userId: '35735' }, { userName: '是更多的是申达股份', userId: '2013102079' }, { userName: '通天河', userId: '786766' }, { userName: '东方红', userId: '4535543' }],
-    onLeaveStudents: [{ userName: '啊翻山倒海', userId: '3248754' }, { userName: '中度过', userId: '876767' }, { userName: '是个', userId: '3248754' }, { userName: '啊翻山倒海', userId: '347453' }, { userName: '是告诉高速', userId: '35735' }, { userName: '是更多的是申达股份', userId: '453456' }, { userName: '通天河', userId: '786766' }, { userName: '东方红', userId: '4535543' }],//
-    signedInStudentsNum: 46,//
-    studentSum: 56
+    signedInStudents: [],
+    onLeaveStudents: [],
+    signedInStudentsNum: 0,
+    studentSum: 0
   },
   onLoad: function (options) {
     console.log('页面初始化 options为页面跳转所带来的参数:', options)
@@ -29,8 +29,7 @@ Page({
     } else {
       //教师身份，对应创建点名
       this.setData({
-        // template: 'create',
-        template: 'countdown',
+        template: 'create',
         courseId: options.courseId
       });
       var res = wx.getSystemInfoSync();

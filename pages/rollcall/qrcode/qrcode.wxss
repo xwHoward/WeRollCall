@@ -11,7 +11,7 @@ view {
 .tips {
   width: 600rpx;
   margin: 40rpx auto;
-  background-color: #3e4a51;
+  background-color: #fff;
   padding: 20rpx 40rpx 0;
 }
 
@@ -23,8 +23,9 @@ icon {
   float: left;
   margin-left: 20rpx;
   margin-bottom: 20rpx;
-  width: 520rpx;
-  color: #fff;
+  width: 460rpx;
+  color: #3e4a51;
+  /*color: #fff;*/
   font-size: 14px;
   line-height: 20px;
 }
@@ -44,9 +45,11 @@ icon {
 .timeout {
   font-weight: bold;
   margin: 0 4rpx;
-  color: #2a3162;
+  color: #fff;
 }
-
+.slider-wrapper{
+  margin-left: 50rpx;
+}
 .add-course {
   width: 80%;
   height: 80rpx;
@@ -59,7 +62,7 @@ icon {
 
 .countdown {
   width: 500rpx;
-  margin: 100rpx auto;
+  margin: 0 auto 100rpx;
   border-radius: 20rpx;
   text-align: center;
   padding-bottom: 10rpx;
@@ -98,7 +101,12 @@ icon {
 }
 
 .scroll-view-title {
-  margin: 10rpx 50rpx;
+  font-size: 36rpx;
+  height: 100rpx;
+  line-height: 100rpx;
+  padding-left: 50rpx;
+  color: #3e4a51;
+  background-color: #c5c8ca;
 }
 
 .table {
@@ -162,11 +170,8 @@ icon {
   color: #fff;
   /*background-color: #fff;*/
 }
-
-.animation {
-  /*display: block;*/
-  width: 100%;
-  /*margin: 0 auto;*/
+.sign-in-view{
+  margin-top: 30%;
 }
 
 .scanCode {
@@ -175,7 +180,7 @@ icon {
   font-size: 14px;
   width: 200px;
   height: 50px;
-  margin-top: 100rpx;
+  margin-top: 200rpx;
   line-height: 50px;
   border-radius: 25px;
 }
