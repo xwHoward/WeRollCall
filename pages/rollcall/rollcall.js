@@ -1,5 +1,6 @@
 const AV = require('../../lib/leancloud-storage');
 var app = getApp();
+var debug = app.globalData.debug;
 Page({
   data: {
     tpl: "sign-in",
@@ -17,7 +18,7 @@ Page({
         })
       },
       fail: function (res) {
-        console.log(res.errMsg)
+        debug && console.log(res.errMsg)
       }
     });
   },
@@ -56,23 +57,34 @@ Page({
                   confirmText: '知道了',
                   confirmColor: '#3CC51F',
                   success: function (res) {
-                    return 0;
+                    wx.switchTab({
+                      url: '/pages/rollcall/rollcall',
+                      success: function(res){
+                        // success
+                      },
+                      fail: function() {
+                        // fail
+                      },
+                      complete: function() {
+                        // complete
+                      }
+                    })
                   }
                 });
               }
             });
             if (rollcall.type == 'qrcode') {
-              console.log('qrcode fast sign in!')
+              debug && console.log('qrcode fast sign in!')
               wx.navigateTo({
                 url: 'qrcode/qrcode?userType=student&rollcallId=' + rollcall.objectId
               });
             } else if (rollcall.type == 'location') {
-              console.log('location sign in!')
+              debug && console.log('location sign in!')
               wx.navigateTo({
                 url: 'location/location?userType=student&rollcallId=' + rollcall.objectId
               });
             } else if (rollcall.type == 'compass') {
-              console.log('compass sign in!')
+              debug && console.log('compass sign in!')
               wx.navigateTo({
                 url: 'compass/compass?userType=student&rollcallId=' + rollcall.objectId
               });
@@ -81,7 +93,7 @@ Page({
         });
       },
       fail: function (res) {
-        console.log(res.errMsg)
+        debug && console.log(res.errMsg)
       }
     });
   },
@@ -96,7 +108,7 @@ Page({
         })
       },
       fail: function (res) {
-        console.log(res.errMsg)
+        debug && console.log(res.errMsg)
       }
     });
   },
@@ -104,7 +116,7 @@ Page({
   initTeacherCourseData: function () {
     var that = this;
     var courses = app.globalData.user.courses;
-    console.log('教师已建课程：', courses)
+    debug && console.log('教师已建课程：', courses)
     var itemList = [];
     for (let i = 0; i < courses.length; i++) {
       itemList.push(courses[i].courseName);
@@ -128,7 +140,7 @@ Page({
     //   wx.hideToast();
     // }, function (error) {
     //   // 异常处理
-    //   console.log(error)
+    //   debug && console.log(error)
     // });
   },
   //初始化学生所选课程信息
@@ -138,7 +150,7 @@ Page({
     // courseQuery.include("coursesChosen");
     // courseQuery.get(app.globalData.user.objectId).then(function (student) {
     var coursesChosen = app.globalData.user.coursesChosen;
-    console.log('学生已选课程：', coursesChosen)
+    debug && console.log('学生已选课程：', coursesChosen)
     var itemList = [];
     for (let i = 0; i < coursesChosen.length; i++) {
       itemList.push(coursesChosen[i].courseName);
@@ -149,7 +161,7 @@ Page({
     });
     // }, function (error) {
     //   // 异常处理
-    //   console.log(error)
+    //   debug && console.log(error)
     // });
   },
   //罗盘点名
@@ -163,7 +175,7 @@ Page({
         })
       },
       fail: function (res) {
-        console.log(res.errMsg)
+        debug && console.log(res.errMsg)
       }
     });
   },
@@ -177,13 +189,13 @@ Page({
     var intv = setInterval(function () {
       if (app.globalData.user !== null) {
         if (app.globalData.user.userType == '老师') {
-          console.log('teacher')
+          debug && console.log('teacher')
           that.setData({
             tpl: 'rollcall'
           });
           that.initTeacherCourseData();
         } else {
-          console.log('student')
+          debug && console.log('student')
           that.setData({
             tpl: 'sign-in'
           });

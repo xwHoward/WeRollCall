@@ -3,7 +3,7 @@ const AV = require('../../lib/leancloud-storage');
 var app = getApp();
 // var util = require('../../lib/util')
 // var getUserInfoPromisified = util.wxPromisify(wx.getUserInfo)
-
+var debug = app.globalData.debug;
 Page({
   data: {
     courses: []
@@ -20,10 +20,10 @@ Page({
   //   wx.redirectTo({
   //     url: '../login/login',
   //     success: function (res) {
-  //       console.log("page.login redirected..")
+  //       debug && console.log("page.login redirected..")
   //     },
   //     fail: function () {
-  //       console.log('redirect fail!')
+  //       debug && console.log('redirect fail!')
   //     },
   //     complete: function () {
   //       // complete
@@ -50,7 +50,7 @@ Page({
 
   //             userQuery.get(user.id).then(function (user) {
   //               app.globalData.user = user.toJSON();
-  //               console.log("Update userinfo on leanCloud success, app.globalData.user:", app.globalData.user)
+  //               debug && console.log("Update userinfo on leanCloud success, app.globalData.user:", app.globalData.user)
   //               resolve();
   //             });
   //           })
@@ -70,10 +70,10 @@ Page({
     wx.navigateTo({
       url: '../addCourse/addCourse',
       success: function (res) {
-        // console.log("page.addCourse redirected..")
+        // debug && console.log("page.addCourse redirected..")
       },
       fail: function () {
-        // console.log('redirect fail!')
+        // debug && console.log('redirect fail!')
       },
       complete: function () {
         // complete
@@ -103,7 +103,7 @@ Page({
     var that = this;
     // return new Promise(function (resolve, reject) {
     if (app.globalData.user.userType === "老师") {
-      console.log("usertype:teacher")
+      debug && console.log("usertype:teacher")
       //以教师身份登录，初始化教师所授课程
       that.setData({
         courses: app.globalData.user.courses
@@ -112,11 +112,11 @@ Page({
       // var teacher = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
       // queryCourse.equalTo('teacher', teacher);
       // queryCourse.find().then(function (results) {
-      //   console.log("teacher's courses:", results)
+      //   debug && console.log("teacher's courses:", results)
       //   that.setData({
       //     courses: results.toJSON()
       //   });
-      //   console.log("teacher's courses:", results.toJSON())
+      //   debug && console.log("teacher's courses:", results.toJSON())
       //   resolve();
       // }, function (error) {
       //   reject(error);
@@ -124,7 +124,7 @@ Page({
     } else {
       //以学生身份登录
       //初始化学生所选课程
-      console.log("usertype:student")
+      debug && console.log("usertype:student")
       that.setData({
         courses: app.globalData.user.coursesChosen
       });

@@ -6,6 +6,7 @@ var LEAVE = AV.Object.extend('LEAVE');
 var teacher = {};
 var course = {};
 var date = (new Date()).toLocaleDateString();
+var debug = app.globalData.debug;
 Page({
   data: {
     attend: 0,
@@ -34,14 +35,15 @@ Page({
     this.setData({
       courseId: options.courseId
     });
-    if (app.globalData.user.userType == '学生') {
-      console.log("student")
+    debug && console.log(app.globalData.user.userType)
+    if (app.globalData.user.userType === '学生') {
+      debug && console.log("student")
       this.setData({
         template: 'student'
       });
       this.getCourseInfo(options.courseId);
     } else {
-      console.log("teacher")
+      debug && console.log("teacher")
       this.setData({
         template: 'teacher'
       });
@@ -59,15 +61,15 @@ Page({
     var courseQuery = new AV.Query('COURSE');
     courseQuery.include('leaves');
     courseQuery.get(courseId).then(function (crs) {
-      console.log("course:", crs)
+      debug && console.log("course:", crs)
       course = crs.toJSON();
       var leaves = crs.get('leaves');
-      console.log('leaves of this course:', leaves)
+      debug && console.log('leaves of this course:', leaves)
       var unreadLeaveNum = 0;
       var unreadLeaves = leaves.filter(function (lv) {
         return lv.get('read') === false;
       });
-      console.log('unreadLeaves:', unreadLeaves)
+      debug && console.log('unreadLeaves:', unreadLeaves)
       var unreadLeavesObjs = [];
       var unreadLeavesPrms = unreadLeaves.map(function (el) {
         unreadLeaveNum++;
@@ -82,7 +84,7 @@ Page({
             if (img) {
               imgSrc = img.get('url');
             }
-            console.log('imgSrc:', imgSrc)
+            debug && console.log('imgSrc:', imgSrc)
             var unreadLeave = {
               id: lv.id,
               reason: lv.get('reason'),
@@ -99,7 +101,7 @@ Page({
         });
       });
       Promise.all(unreadLeavesPrms).then(function () {
-        console.log('unreadLeavesObjs:', unreadLeavesObjs)
+        debug && console.log('unreadLeavesObjs:', unreadLeavesObjs)
         wx.hideToast();
         that.setData({
           unreadLeaves: unreadLeavesObjs
@@ -107,7 +109,7 @@ Page({
       });
     }, function (error) {
       // 异常处理
-      console.log(error);
+      debug && console.log(error);
     });
   },
   //初始化点名总数、出勤次数及课程信息
@@ -132,7 +134,7 @@ Page({
         targetRollcallStr += rollcalls[i].objectId;
       }
       var attend = 0;
-      console.log("myRollcalls:", myRollcalls)
+      debug && console.log("myRollcalls:", myRollcalls)
       for (var i = 0; i < myRollcalls.length; i++) {
         var id = myRollcalls[i].objectId
         if (targetRollcallStr.indexOf(id) >= 0) {
@@ -142,14 +144,14 @@ Page({
       //请假次数
       //1.获取用户请假记录
       var myLeaves = app.globalData.user.leaves;
-      console.log("myLeaves:", myLeaves)
+      debug && console.log("myLeaves:", myLeaves)
       var myAdoptedLeaves = myLeaves.filter(function (lv) {
         return lv.adopted;
       });
-      console.log("myAdoptedLeaves:", myAdoptedLeaves)
+      debug && console.log("myAdoptedLeaves:", myAdoptedLeaves)
       //2.获取指定课程请假记录
       var leaves = course.leaves;
-      console.log("myLeaves, course's leaves", myLeaves, leaves)
+      debug && console.log("myLeaves, course's leaves", myLeaves, leaves)
       //3.数据合并比较
       var targetLeaveStr = '';
       for (var i = 0; i < leaves.length; i++) {
@@ -178,7 +180,7 @@ Page({
       wx.hideToast();
     }, function (error) {
       // 异常处理
-      console.log(error);
+      debug && console.log(error);
     });
   },
   //选择图片
@@ -191,7 +193,7 @@ Page({
       success: function (res) {
         // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
         var tempFilePath = res.tempFilePaths[0]
-        console.log("tempFilePath:", tempFilePath);
+        debug && console.log("tempFilePath:", tempFilePath);
         that.setData({
           tempFilePath: tempFilePath
         });
@@ -224,7 +226,7 @@ Page({
         },
       }).save().then(function (file) {
         // 文件保存成功
-        console.log("file id:", file.id);
+        debug && console.log("file id:", file.id);
         resolve(file.id);
 
       }).catch(function (error) {
@@ -257,10 +259,10 @@ Page({
     })
     //带图片文件
     if (that.data.tempFilePath !== null) {
-      console.log("带图片文件")
+      debug && console.log("带图片文件")
       that.uploadFile()
         .then(function (fileId) {
-          console.log(fileId);
+          debug && console.log(fileId);
           //新增LEAVE表行数据
           var leave = new LEAVE();
           var studentObj = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
@@ -299,14 +301,14 @@ Page({
               //请假记录入库失败
               var file = AV.File.createWithoutData(fileId);
               file.destroy().then(function (success) {
-                console.log("文件删除成功")
+                debug && console.log("文件删除成功")
               }, function (error) {
               });
             });
         });
     } else {
       //没有图片信息
-      console.log("没有图片信息")
+      debug && console.log("没有图片信息")
       var leave = new LEAVE();
       var studentObj = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
       var teacherObj = AV.Object.createWithoutData('_User', teacher.objectId);
@@ -320,7 +322,7 @@ Page({
       leave.set('course', courseObj);
       leave.save()
         .then(function (res) {
-          console.log(res)
+          debug && console.log(res)
           wx.hideToast();
           that.setData({
             leaveNoteSend: true
@@ -371,7 +373,7 @@ Page({
     leave.set('agree', false);
     leave.save().then(function (lv) {
       that.initLeaveNotes(that.data.courseId);
-      console.log('tag success')
+      debug && console.log('tag success')
     });
   },
   pass: function (e) {
@@ -381,7 +383,7 @@ Page({
     leave.set('agree', true);
     leave.save().then(function (lv) {
       that.initLeaveNotes(that.data.courseId);
-      console.log('tag success')
+      debug && console.log('tag success')
     });
   },
   onReady: function () {

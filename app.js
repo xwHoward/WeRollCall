@@ -7,7 +7,7 @@ AV.init({
 
 var Promise = require("lib/es6-promise.min");
 var util = require('lib/util')
-var getUserInfoPromisified = util.wxPromisify(wx.getUserInfo)
+var getUserInfoPromisified = util.wxPromisify(wx.getUserInfo);
 
 App({
   onLaunch: function () {
@@ -57,7 +57,7 @@ App({
 
               userQuery.get(user.id).then(function (user) {
                 that.globalData.user = user.toJSON();
-                console.log("Update userinfo on leanCloud success, that.globalData.user:", that.globalData.user)
+                that.globalData.debug && console.log("Update userinfo on leanCloud success, that.globalData.user:", that.globalData.user)
                 resolve();
               });
             })
@@ -78,10 +78,10 @@ App({
     wx.redirectTo({
       url: 'pages/login/login',
       success: function (res) {
-        console.log("page.login redirected..")
+        that.globalData.debug && console.log("page.login redirected..")
       },
       fail: function () {
-        console.log('redirect fail!')
+        that.globalData.debug && console.log('redirect fail!')
       },
       complete: function () {
         // complete
@@ -91,6 +91,7 @@ App({
   globalData: {
     user: null,
     signInTag: [],
-    leaveTag: []
+    leaveTag: [],
+    debug: false
   }
 })

@@ -1,6 +1,7 @@
 const AV = require('../../lib/leancloud-storage');
 var COURSE = AV.Object.extend('COURSE');
 var app = getApp();
+var debug = app.globalData.debug;
 Page({
   data: {
     template: 'add-course',
@@ -51,7 +52,7 @@ Page({
           confirmColor: '#3CC51F',
           success: function (res) {
             if (res.confirm) {//返回主页
-              console.log('返回主页')
+              debug && console.log('返回主页')
               wx.navigateBack();
             } else if (res.cancel) {
               wx.hideToast();
@@ -66,20 +67,20 @@ Page({
   },
   chooseCourse: function (e) {
     //学生身份对应选课
-    console.log(e.target.dataset)
+    debug && console.log(e.target.dataset)
     var course = AV.Object.createWithoutData('COURSE', e.target.dataset.courseId);
     var student = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
     student.addUnique('coursesChosen', course);
     student.save()
       .then(function (stu) {
-        console.log('choose course success!', stu)
+        debug && console.log('choose course success!', stu)
         var course = AV.Object.createWithoutData('COURSE', e.target.dataset.courseId);
         var student = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
         course.addUnique('students', student);
         course.save().then(function (c) {
-          console.log(c)
+          debug && console.log(c)
         }, function (error) {
-          console.log(error)
+          debug && console.log(error)
         });
         wx.showModal({
           title: '添加课程成功',
@@ -90,14 +91,14 @@ Page({
           confirmColor: '#3CC51F',
           success: function (res) {
             if (res.confirm) {//返回主页
-              console.log('返回主页')
+              debug && console.log('返回主页')
               wx.navigateBack();
             } else if (res.cancel) {
               wx.hideToast();
             }
           },
           fail: function (res) {
-            console.log(res)
+            debug && console.log(res)
           }
         });
         // });
@@ -126,7 +127,7 @@ Page({
       });
       wx.hideNavigationBarLoading();
     }, function (error) {
-      console.log(error)
+      debug && console.log(error)
     });
   },
   onLoad: function () {

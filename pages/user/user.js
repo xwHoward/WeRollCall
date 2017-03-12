@@ -1,5 +1,6 @@
 const AV = require('../../lib/leancloud-storage');
 var app = getApp();
+var debug = app.globalData.debug;
 Page({
   data: {
     userInfo: {}

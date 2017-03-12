@@ -2,8 +2,11 @@ const AV = require('../../../lib/leancloud-storage');
 var Promise = require("../../../lib/es6-promise.min");
 var ROLLCALL = AV.Object.extend('ROLLCALL');
 var app = getApp();
+var debug = app.globalData.debug;
 Page({
     data: {
+        markers: [],
+        circles: [],
         animation: {},
         template: 'signIn',
         location: {
@@ -35,7 +38,7 @@ Page({
         wx.getLocation({
             type: 'gcj02',
             success: function (res) {
-                console.log(res)
+                debug && console.log(res)
                 that.setData({
                     'location.longitude': res.longitude,
                     'location.latitude': res.latitude,
@@ -73,7 +76,7 @@ Page({
         var course = AV.Object.createWithoutData('COURSE', that.data.courseId);
         rollcall.set('course', course);
         var point = new AV.GeoPoint(this.data.location.latitude, this.data.location.longitude);
-        console.log(point)
+        debug && console.log(point)
         rollcall.set('whereCreated', point);
         rollcall.set('radius', this.data.radius);
         rollcall.set('done', false);
@@ -84,17 +87,17 @@ Page({
         rollcall.set('timeout', this.data.timeout);
         rollcall.save()
             .then(function (rc) {
-                console.log('新增rollcall行成功，rollcall行注入course成功');
+                debug && console.log('新增rollcall行成功，rollcall行注入course成功');
                 var course = AV.Object.createWithoutData('COURSE', that.data.courseId);
                 var rollcall = AV.Object.createWithoutData('ROLLCALL', rc.id);
                 course.addUnique('rollcalls', rollcall);
                 course.save().then(function (c) {
-                    console.log('course行注入rollcall成功');
+                    debug && console.log('course行注入rollcall成功');
                 });
                 var teacher = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
                 teacher.addUnique('rollcalls', rollcall);
                 teacher.save().then(function (t) {
-                    console.log('user行注入rollcall成功');
+                    debug && console.log('user行注入rollcall成功');
                 });
                 var animation = wx.createAnimation({
                     transformOrigin: "50% 50%",
@@ -134,17 +137,17 @@ Page({
     //     leaveQuery.include('student');
     //     leaveQuery.find()
     //         .then(function (lvs) {
-    //             console.log('今日请假记录：', lvs)
+    //             debug && console.log('今日请假记录：', lvs)
     //             var onLeaveStudents = [];
     //             for (var i = 0; i < lvs.length; i++) {
     //                 var lv = AV.Object.createWithoutData('LEAVE', lvs[i].id);
     //                 lv.set('adopted', true);
     //                 lv.save().then(function () {
-    //                     console.log('leave[' + i + '] adopted')
+    //                     debug && console.log('leave[' + i + '] adopted')
     //                 });
     //                 onLeaveStudents.push(lvs[i].get('student'));
     //             }
-    //             console.log("onLeaveStudents:", onLeaveStudents)
+    //             debug && console.log("onLeaveStudents:", onLeaveStudents)
     //             that.setData({
     //                 onLeaveStudents: onLeaveStudents
     //             });
@@ -162,7 +165,7 @@ Page({
         leaveQuery.include('student');
         leaveQuery.find()
             .then(function (lvs) {
-                console.log('今日请假记录：', lvs)
+                debug && console.log('今日请假记录：', lvs)
                 var onLeaveStudents = [];
                 var onLeaveStudentsPrms = lvs.map(function (el) {
                     return new Promise(function (resolve, reject) {
@@ -175,7 +178,7 @@ Page({
                     });
                 });
                 Promise.all(onLeaveStudentsPrms).then(function () {
-                    console.log("onLeaveStudents:", onLeaveStudents)
+                    debug && console.log("onLeaveStudents:", onLeaveStudents)
                     that.setData({
                         onLeaveStudents: onLeaveStudents
                     });
@@ -215,9 +218,9 @@ Page({
             var studentLoc = new AV.GeoPoint(this.data.location.latitude, this.data.location.longitude);
             rollcallQuery.withinKilometers('whereCreated', studentLoc, radiuskilom);
             rollcallQuery.find().then(function (rcs) {
-                console.log("rollcalls finded:", rcs)
+                debug && console.log("rollcalls finded:", rcs)
                 if (rcs.length < 1) {
-                    console.log('签到失败！')
+                    debug && console.log('签到失败！')
                     app.globalData.signInTag.push({
                         rollcallId: that.data.rollcallId,
                         success: false
@@ -240,12 +243,12 @@ Page({
                             var student = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
                             rollcall.addUnique('students', student);
                             rollcall.save().then(function (rc) {
-                                console.log('rollcall表注入签到学生成功')
+                                debug && console.log('rollcall表注入签到学生成功')
                                 var rollcall = AV.Object.createWithoutData('ROLLCALL', rc.id);
                                 var self = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
                                 self.addUnique('rollcalls', rollcall);
                                 self.save().then(function (stu) {
-                                    console.log('user表注入rollcall成功')
+                                    debug && console.log('user表注入rollcall成功')
                                 });
                                 wx.showModal({
                                     title: '签到成功',
@@ -254,7 +257,7 @@ Page({
                                     confirmText: '返回主页',
                                     confirmColor: '#3CC51F',
                                     success: function (res) {
-                                        console.log('返回主页')
+                                        debug && console.log('返回主页')
                                         app.globalData.signInTag.push({
                                             rollcallId: that.data.rollcallId,
                                             success: true
@@ -266,6 +269,20 @@ Page({
                             break;
                         }
                     }
+                    app.globalData.signInTag.push({
+                        rollcallId: that.data.rollcallId,
+                        success: false
+                    });
+                    wx.showModal({
+                        title: '签到失败！',
+                        content: '你的位置距离老师过远，请重新报告地理位置',
+                        showCancel: false,
+                        confirmText: '重试',
+                        confirmColor: '#3CC51F',
+                        success: function (res) {
+
+                        }
+                    });
                 }
             });
         }
@@ -338,7 +355,7 @@ Page({
     },
     manuAdd: function () {
         var that = this;
-        console.log(this.data.stuId)
+        debug && console.log(this.data.stuId)
         //搜索学号对应的学生用户
         var studentQuery = new AV.Query('_User');
         studentQuery.equalTo('userId', this.data.stuId);
@@ -369,7 +386,7 @@ Page({
                     });
                 }
             }, function (error) {
-                console.log(error)
+                debug && console.log(error)
             });
     },
     //初始化学生签到界面
@@ -377,10 +394,12 @@ Page({
         var that = this;
         var rollcallQuery = new AV.Query('ROLLCALL');
         rollcallQuery.get(rcId).then(function (rc) {
-            console.log('rollcall:', rc)
+            debug && console.log('rollcall:', rc)
             var radius = rc.get('radius');
             var timeStart = rc.get('createdAt');
             var timeout = rc.get('timeout');
+            var teacherLoc = rc.get('whereCreated');
+            debug && console.log("teacherLoc:",teacherLoc)
             var now = new Date();
             var timeLeft = timeStart - now + timeout * 60000;
             if (timeLeft <= 0) {
@@ -397,7 +416,22 @@ Page({
             } else {
                 //点名正在进行中
                 that.setData({
-                    radius: radius
+                    radius: radius,
+                    markers: [{
+                        iconPath: "/images/Marker.png",
+                        id: 0,
+                        latitude: teacherLoc.latitude,
+                        longitude: teacherLoc.longitude,
+                        width: 50,
+                        height: 50
+                    }],
+                    circles: [{
+                        latitude: teacherLoc.latitude,
+                        longitude: teacherLoc.longitude,
+                        radius: radius,
+                        fillColor: '#1AAD16aa',
+                        strokeWidth: 3
+                    }]
                 });
                 var min = (new Date(timeLeft)).getMinutes();
                 var sec = (new Date(timeLeft)).getSeconds();
@@ -407,7 +441,7 @@ Page({
     },
     onLoad: function (options) {
         // 生命周期函数--监听页面加载
-        console.log(options)
+        debug && console.log(options)
         if (options.userType == 'student') {
             //学生身份，对应签到界面
             this.setData({

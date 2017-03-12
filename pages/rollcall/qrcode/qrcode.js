@@ -3,6 +3,7 @@ var Promise = require("../../../lib/es6-promise.min");
 var QR = require("../../../lib/qrcode.js");
 var ROLLCALL = AV.Object.extend('ROLLCALL');
 var app = getApp();
+var debug = app.globalData.debug;
 Page({
   data: {
     imagePath: '',
@@ -18,7 +19,7 @@ Page({
     studentSum: 0
   },
   onLoad: function (options) {
-    console.log('页面初始化 options为页面跳转所带来的参数:', options)
+    debug && console.log('页面初始化 options为页面跳转所带来的参数:', options)
     if (options.userType == 'student') {
       //学生身份，对应签到界面
       this.setData({
@@ -105,17 +106,17 @@ Page({
     rollcall.set('timeout', this.data.timeout);
     rollcall.save()
       .then(function (rc) {
-        console.log('新增rollcall行成功，rollcall行注入course成功');
+        debug && console.log('新增rollcall行成功，rollcall行注入course成功');
         var course = AV.Object.createWithoutData('COURSE', that.data.courseId);
         var rollcall = AV.Object.createWithoutData('ROLLCALL', rc.id);
         course.addUnique('rollcalls', rollcall);
         course.save().then(function (c) {
-          console.log('course行注入rollcall成功');
+          debug && console.log('course行注入rollcall成功');
         });
         var teacher = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
         teacher.addUnique('rollcalls', rollcall);
         teacher.save().then(function (t) {
-          console.log('user行注入rollcall成功');
+          debug && console.log('user行注入rollcall成功');
         });
         that.setData({
           template: 'countdown',
@@ -147,7 +148,7 @@ Page({
     leaveQuery.include('student');
     leaveQuery.find()
       .then(function (lvs) {
-        console.log('今日请假记录：', lvs)
+        debug && console.log('今日请假记录：', lvs)
         var onLeaveStudents = [];
         var onLeaveStudentsPrms = lvs.map(function (el) {
           return new Promise(function (resolve, reject) {
@@ -160,7 +161,7 @@ Page({
           });
         });
         Promise.all(onLeaveStudentsPrms).then(function () {
-          console.log("onLeaveStudents:", onLeaveStudents)
+          debug && console.log("onLeaveStudents:", onLeaveStudents)
           that.setData({
             onLeaveStudents: onLeaveStudents
           });
@@ -236,7 +237,7 @@ Page({
   },
   manuAdd: function () {
     var that = this;
-    console.log(this.data.stuId)
+    debug && console.log(this.data.stuId)
     //搜索学号对应的学生用户
     var studentQuery = new AV.Query('_User');
     studentQuery.equalTo('userId', this.data.stuId);
@@ -267,7 +268,7 @@ Page({
           });
         }
       }, function (error) {
-        console.log(error)
+        debug && console.log(error)
       });
   },
   //初始化学生签到界面
@@ -275,11 +276,11 @@ Page({
     var that = this;
     var rollcallQuery = new AV.Query('ROLLCALL');
     rollcallQuery.get(rcId).then(function (rc) {
-      console.log('rollcall:', rc)
+      debug && console.log('rollcall:', rc)
       var timeStart = rc.get('createdAt');
       var timeout = rc.get('timeout');
       var now = new Date();
-      console.log(timeStart - now + timeout * 60000)
+      debug && console.log(timeStart - now + timeout * 60000)
       var timeLeft = timeStart - now + timeout * 60000;
       if (timeLeft <= 0) {
         //点名已结束
@@ -311,22 +312,22 @@ Page({
       success: (res) => {
         var str = res.result;
         var courseId = str.slice(str.lastIndexOf('/') + 1);
-        console.log('courseId:', courseId);
+        debug && console.log('courseId:', courseId);
         var rollcallQuery = new AV.Query('ROLLCALL');
         rollcallQuery.get(that.data.rollcallId).then(function (rc) {
-          console.log("rollcall's course id, scanned id:", rc.attributes.course.id, courseId)
+          debug && console.log("rollcall's course id, scanned id:", rc.attributes.course.id, courseId)
           if (rc.attributes.course.id == courseId) {
             //签到成功
             var rollcall = AV.Object.createWithoutData('ROLLCALL', that.data.rollcallId);
             var student = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
             rollcall.addUnique('students', student);
             rollcall.save().then(function (rc) {
-              console.log('rollcall表注入签到学生成功')
+              debug && console.log('rollcall表注入签到学生成功')
               var rollcall = AV.Object.createWithoutData('ROLLCALL', rc.id);
               var self = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
               self.addUnique('rollcalls', rollcall);
               self.save().then(function (stu) {
-                console.log('user表注入rollcall成功')
+                debug && console.log('user表注入rollcall成功')
                 app.globalData.signInTag.push({
                   rollcallId: that.data.rollcallId,
                   success: true
@@ -338,14 +339,14 @@ Page({
                   confirmText: '返回主页',
                   confirmColor: '#3CC51F',
                   success: function (res) {
-                    console.log('返回主页')
+                    debug && console.log('返回主页')
                     wx.navigateBack();
                   }
                 });
               });
             })
           } else {
-            console.log('签到失败！')
+            debug && console.log('签到失败！')
             app.globalData.signInTag.push({
               rollcallId: that.data.rollcallId,
               success: false

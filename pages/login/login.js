@@ -1,5 +1,6 @@
 var app = getApp();
 const AV = require('../../lib/leancloud-storage');
+var debug = app.globalData.debug;
 Page({
   data: {
     userType: ['学生', '老师'],
@@ -28,7 +29,7 @@ Page({
   },
   onLoad: function (options) {
     // 页面初始化 options为页面跳转所带来的参数
-    console.log('Enter login page...');
+    debug && console.log('Enter login page...');
 
   },
   onReady: function () {
@@ -53,14 +54,14 @@ Page({
       user.set('register', true);
       user.save().then(user => {
         app.globalData.user = user.toJSON();
-        console.log('AV.User.loginWithWeapp() returned user:', user)
+        debug && console.log('AV.User.loginWithWeapp() returned user:', user)
         wx.switchTab({
           url: '../index/index',
           success: function (res) {
-            console.log("redirected to index page..")
+            debug && console.log("redirected to index page..")
           },
           fail: function () {
-            console.log('redirect fail!')
+            debug && console.log('redirect fail!')
           },
           complete: function () {
             // complete

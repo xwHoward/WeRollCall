@@ -1,9 +1,16 @@
+.container{
+    background-color: #3e4a51;
+    color: #c5c8ca;
+}
+view{
+    box-sizing: border-box;
+}
 .compass {
   width: 700rpx;
   height: 700rpx;
   margin: 50rpx auto;
   border-radius: 50%;
-  box-shadow: #bbb 0 0 50rpx 0;
+  box-shadow: #000 0 0 50rpx;
   position: relative;
   overflow: hidden;
 }
@@ -23,7 +30,7 @@
 .degree{
     text-align: center;
     font-size: 100rpx;
-    color: #666;
+    color: #51c7bc;
 }
 .add-course{
   width: 80%;
@@ -31,93 +38,124 @@
   font-size: 18px;
   line-height: 80rpx;
   margin: 20rpx auto;
-  background-color: #49545b;
+  background-color: #51c7bc;
   color: #fff;
 }
-.countdown{
-    width: 500rpx;
-    margin: 100rpx auto;
-    border-radius: 20rpx;
-    text-align: center;
-    padding-bottom: 10rpx;
+.countdown-panel {
+  position: absolute;
+  color: #c5c8ca;
+  height: 100%;
+  top: 100%;
+  background-color: #3e4a51;
 }
-.cd-top{
-    background-color: #3e4a51;
-    border-radius: 20rpx;
-    color: #fff;
-    font-size: 40px;
-    padding: 10rpx 0 0 40rpx;
-    letter-spacing: 15px;
-    margin: 20rpx 0;
+.countdown {
+  width: 500rpx;
+  margin: 0 auto 100rpx;
+  border-radius: 20rpx;
+  text-align: center;
+  padding-bottom: 10rpx;
 }
-.cd-bottom{
-    color: #fff;
+
+.cd-top {
+  background-color: #c5c8ca;
+  border-radius: 20rpx;
+  color: #3e4a51;
+  font-size: 40px;
+  padding: 10rpx 0 0 40rpx;
+  letter-spacing: 15px;
+  margin: 20rpx 0;
 }
-.progress{
-    width: 700rpx;
-    margin: 40rpx auto;
+
+.cd-bottom {
+  color: #fff;
 }
-.percent{
-    float: left;
-    width: 550rpx;
+
+.progress {
+  width: 700rpx;
+  margin: 40rpx auto;
 }
-.detail{
-    float: right;
-    width: 150rpx;
-    height: 40rpx;
-    line-height: 40rpx;
-    text-align: center;
+
+.percent {
+  float: left;
+  width: 550rpx;
 }
-.scroll-view-title{
-    margin: 10rpx 50rpx;
+
+.detail {
+  float: right;
+  width: 150rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+  text-align: center;
 }
-.namelist{
-    width: 700rpx;
-    margin: 0 auto;
-    border-top: 2rpx #3e4a51 solid;
-    border-left: 2rpx #3e4a51 solid;
+
+.scroll-view-title {
+  font-size: 36rpx;
+  height: 100rpx;
+  line-height: 100rpx;
+  padding-left: 50rpx;
+  color: #3e4a51;
+  background-color: #c5c8ca;
 }
-.nl-item{
-    background-color: #fff;
-    text-align: center;
+
+.table {
+  width: 100%;
 }
-.nl-item view{
-    float: left;
-    background-color: #fff;
-    border-right: 2rpx #3e4a51 solid;
-    border-bottom: 2rpx #3e4a51 solid;
+
+.table .row {
+  width: 100%;
+  border-bottom: #49545b 1px solid;
 }
-.bg-blue{
-    background-color: #bedbff;
+
+.table .head {
+  background-color: #49545b;
 }
-.bg-blue view{
-    background-color: #bedbff;
+
+.table .row .cell {
+  height: 100rpx;
+  letter-spacing: 2px;
+  line-height: 100rpx;
+  overflow: hidden;
+  float: left;
+  width: 400rpx;
+  padding: 0 20rpx;
+  font-size: 32rpx;
+  text-align: center;
 }
-.nli-index{
-    width: 100rpx;
+
+.table .head .cell, .table .tail .cell {
+  font-weight: bold;
 }
-.nli-name{
-    width: 350rpx;
+
+.table .row .cell:first-child {
+  /*text-align: left;*/
+  width: 100rpx;
 }
-.nli-id{
-    width: 244rpx;
+
+.table .row .cell:last-child {
+  width: 250rpx;
+  /*text-align: right;*/
 }
-.add{
-    width: 700rpx;
-    margin: 0 auto 100rpx;
+
+.add {
+  width: 700rpx;
+  margin: 0 auto 100rpx;
 }
-.add-input{
-    float: left;
-    width: 400rpx;
-    padding-left: 20rpx;
-    background-color: #fff;
-    height: 80rpx;
+
+.add-input {
+  float: left;
+  width: 400rpx;
+  padding-left: 20rpx;
+  background-color: #fff;
+  height: 80rpx;
 }
-.add-btn{
-    float: right;
-    width: 200rpx;
-    height: 80rpx;
-    line-height: 80rpx;
-    background-color: #3e4a51;
-    color: #fff;
+
+.add-btn {
+  float: right;
+  width: 200rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  background-color: #c5c8ca;
+  color: #fff;
+  /*background-color: #fff;*/
 }
+
