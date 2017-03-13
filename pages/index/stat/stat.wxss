@@ -12,6 +12,9 @@ view{
     margin: 0 auto;
     font-size: 40rpx;
 }
+/*.canvas{
+    background-color: #fff;
+}
 .graph{
     width: 600rpx;
     height: 100rpx;
@@ -25,7 +28,7 @@ view{
     float: right;
     overflow: hidden;
     box-shadow: #000 0 0 50rpx;
-}
+}*/
 .gray{
     background-color: #c5c8ca;
 }

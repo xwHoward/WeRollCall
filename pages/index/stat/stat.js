@@ -1,20 +1,22 @@
 // pages/index/stat/stat.js
 const AV = require('../../../lib/leancloud-storage');
 var Promise = require("../../../lib/es6-promise.min");
+var wxCharts = require('../../../lib/wxcharts.js');
 var app = getApp();
 var LEAVE = AV.Object.extend('LEAVE');
 var teacher = {};
 var course = {};
 var date = (new Date()).toLocaleDateString();
 var debug = app.globalData.debug;
+var pieChart = null;
 Page({
   data: {
     attend: 0,
     leave: 0,
     absence: 0,
-    attendRate: 0,
-    leaveRate: 0,
-    absenceRate: 0,
+    // attendRate: 0,
+    // leaveRate: 0,
+    // absenceRate: 0,
     total: 0,
     teacher: '',
     student: '',
@@ -26,7 +28,7 @@ Page({
     leaveNoteShow: false,
     leaveNoteSend: false,
     template: '',
-    unreadLeaves: []
+    unreadLeaves: [],
   },
   refresh: function () {
     this.initLeaveNotes(this.data.courseId);
@@ -164,9 +166,42 @@ Page({
           leaveSum++;
         }
       }
+
+      var windowWidth = 320;
+      try {
+        var res = wx.getSystemInfoSync();
+        windowWidth = res.windowWidth;
+        console.log(windowWidth)
+      } catch (e) {
+        console.error('getSystemInfoSync failed!');
+      }
+
+      pieChart = new wxCharts({
+        animation: true,
+        canvasId: 'pieCanvas',
+        type: 'pie',
+        series: [{
+          name: '出勤',
+          data: attend,
+          color: '#0bad62'
+        }, {
+          name: '请假',
+          data: leaveSum,
+          color: '#3892b8'
+        }, {
+          name: '缺勤',
+          data: rollcalls.length - attend - leaveSum,
+          color: '#c55e4b'
+        }],
+        width: windowWidth,
+        height: 300,
+        dataLabel: true,
+        legend: false
+      });
       that.setData({
         total: rollcalls.length,
         courseName: courseName,
+        windowWidth: windowWidth,
         teacher: teacher.userName,
         student: app.globalData.user.userName,
         attend: attend,

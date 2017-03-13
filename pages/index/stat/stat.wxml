@@ -1,11 +1,12 @@
 <view class="container-fluid">
   <block wx:if="{{template == 'student'}}">
     <view class="title">{{courseName}}</view>
-    <view class="graph">
+    <canvas canvas-id="pieCanvas" class="canvas" style="height:300px;width:{{windowWidth}}px" bindtouchstart="touchHandler"></canvas>
+    <!--<view class="graph">
       <view class="red" style="width:{{absenceRate}}%;"></view>
       <view class="blue" style="width:{{leaveRate}}%;"></view>
       <view class="green" style="width:{{attendRate}}%;"></view>
-    </view>
+    </view>-->
     <view class="detail clearfix">
       <view class="green"></view>
       <text>出勤</text>
