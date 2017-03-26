@@ -23,7 +23,7 @@ App({
     AV.User.loginWithWeapp()
       .then(function () {
         var user = AV.User.current();
-        if (user.get('register') != true) {
+        if (user.get('register') !== true) {
           // 首次登陆需要初始化身份数据
           that.register();
         } else {
@@ -92,6 +92,6 @@ App({
     user: null,
     signInTag: [],
     leaveTag: [],
-    debug: false
+    debug: true
   }
 })

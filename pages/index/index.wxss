@@ -1,4 +1,4 @@
-.placeholder{
+.placeholder {
   height: 200rpx;
   width: 500rpx;
   margin: 0 auto;
@@ -6,64 +6,72 @@
   text-align: center;
   color: #aaa;
 }
-.course-per-weekday{
-  width: 94%;
+
+.course-per-weekday {
+  width: 700rpx;
   margin: 40rpx auto;
 }
-.course-per-weekday .weekday{
+
+.weekday {
+  height: 20px;
+  line-height: 20px;
   color: #c1c1c1;
-  letter-spacing: 6rpx;
-  font-size:16px;
+  letter-spacing: 10rpx;
+  font-size: 16px;
 }
-.course-per-weekday .course{
-  box-sizing: border-box;
-  height: 160rpx;
+
+.course {
+  display: flex;
+  justify-content: space-between;
+  height: 180rpx;
   background-color: #fff;
   margin: 20rpx 0;
   box-shadow: 4rpx 4rpx 4rpx #d4d4d4;
-  position: relative;
   padding: 40rpx 20rpx;
 }
-.course .course-name{
-  display: block;
+
+.course-info {
+  height: 100rpx;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.course-name {
+  flex: 1 1 auto;
   font-size: 16px;
-  line-height:46rpx;
+  vertical-align: middle;
   letter-spacing: 4rpx;
+  max-width: 360rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.course .course-classroom{
+
+.course-classroom {
+  height: 30rpx;
+  line-height: 30rpx;
   color: #aaa;
-  line-height: 28rpx;
 }
-.course .course-time{
-  height: 80rpx;
+
+.course-time {
+  height: 100rpx;
   width: 300rpx;
-  position: absolute;
-  right: 20rpx;
-  top: 40rpx;
+  display: flex;
 }
-.course-time text{
+
+.course-time view {
+  height: 100rpx;
+  line-height: 100rpx;
   color: #fff;
-  float: left;
   text-align: center;
-  height: 80rpx;
-  line-height: 80rpx;
   width: 150rpx;
 }
-.course-time .time-start{
+
+.course-time .time-start {
   background-color: #49545b;
 }
-.course-time .time-end{
-  background-color: #3e4a51;
-}
-.add-course{
-  width: 80%;
-  height: 80rpx;
-  font-size: 18px;
-  line-height: 80rpx;
-  margin: 0 auto;
-  background-color: #49545b;
-  color: #fff;
-}
-.add-course-hover{
+
+.course-time .time-end {
   background-color: #3e4a51;
 }

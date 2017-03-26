@@ -3,9 +3,13 @@ var app = getApp();
 var debug = app.globalData.debug;
 Page({
   data: {
-    tpl: "sign-in",
+    template: "",
     courses: [],
-    courseNameArr: []
+    courseNameArr: [],
+    banners: [
+      'https://dn-03kfwto5.qbox.me/3918513f0c79967c102f.PNG',
+      'https://dn-03kfwto5.qbox.me/3918513f0c79967c102f.PNG'
+    ]
   },
   // 地理位置点名
   location: function () {
@@ -28,69 +32,75 @@ Page({
     wx.showActionSheet({
       itemList: that.data.courseNameArr,
       success: function (res) {
-        var rollcallQuery = new AV.Query('ROLLCALL');
-        var course = AV.Object.createWithoutData('COURSE', that.data.courses[res.tapIndex].objectId);
-        rollcallQuery.equalTo('course', course);
-        rollcallQuery.equalTo('done', false);//此处应该判断点名是否未结束
-        rollcallQuery.descending('createdAt');
-        rollcallQuery.limit(2);
-        rollcallQuery.find().then(function (rcs) {
-          if (rcs.length < 1) {
+        //获取当前点名
+        var paramsJson = {
+          courseId: that.data.courses[res.tapIndex].objectId
+        };
+        AV.Cloud.run('getCurrentRollcall', paramsJson)
+          .then(function (data) {
+            console.log('getCurrentRollcall:', data)
+            if (data === 0) {
+              wx.showModal({
+                title: '当前无点名',
+                content: '老师发布点名之后才可以签到哦！',
+                showCancel: false,
+                confirmText: '知道了',
+                confirmColor: '#3CC51F',
+                success: function (res) {
+                }
+              });
+            } else {
+              app.globalData.signInTag.forEach(function (el, index) {
+                if (el.rollcallId === data.objectId) {
+                  //已经签过到
+                  wx.showModal({
+                    title: '已经签过到啦',
+                    content: '不可以重复签到哦！',
+                    showCancel: false,
+                    confirmText: '知道了',
+                    confirmColor: '#3CC51F',
+                    success: function (res) {
+                      wx.switchTab({
+                        url: '/pages/rollcall/rollcall',
+                        success: function (res) {
+                        },
+                        fail: function () {
+                        },
+                        complete: function () {
+                        }
+                      })
+                    }
+                  });
+                }
+              });
+              if (data.type === 'qrcode') {
+                debug && console.log('qrcode fast sign in!')
+                wx.navigateTo({
+                  url: 'qrcode/qrcode?userType=student&rollcallId=' + data.objectId
+                });
+              } else if (data.type === 'location') {
+                debug && console.log('location sign in!')
+                wx.navigateTo({
+                  url: 'location/location?userType=student&rollcallId=' + data.objectId
+                });
+              } else if (data.type === 'compass') {
+                debug && console.log('compass sign in!')
+                wx.navigateTo({
+                  url: 'compass/compass?userType=student&rollcallId=' + data.objectId
+                });
+              }
+            }
+          }, function (err) {
             wx.showModal({
-              title: '当前无点名',
-              content: '老师发布点名之后才可以签到哦！',
+              title: '出了点问题',
+              content: '同学，重试一下吧！',
               showCancel: false,
               confirmText: '知道了',
               confirmColor: '#3CC51F',
               success: function (res) {
               }
             });
-          } else {
-            var rollcall = rcs[0].toJSON();
-            app.globalData.signInTag.forEach(function (el, index) {
-              if (el.rollcallId == rollcall.objectId) {
-                //已经签过到
-                wx.showModal({
-                  title: '已经签过到啦',
-                  content: '不可以重复签到哦！',
-                  showCancel: false,
-                  confirmText: '知道了',
-                  confirmColor: '#3CC51F',
-                  success: function (res) {
-                    wx.switchTab({
-                      url: '/pages/rollcall/rollcall',
-                      success: function(res){
-                        // success
-                      },
-                      fail: function() {
-                        // fail
-                      },
-                      complete: function() {
-                        // complete
-                      }
-                    })
-                  }
-                });
-              }
-            });
-            if (rollcall.type == 'qrcode') {
-              debug && console.log('qrcode fast sign in!')
-              wx.navigateTo({
-                url: 'qrcode/qrcode?userType=student&rollcallId=' + rollcall.objectId
-              });
-            } else if (rollcall.type == 'location') {
-              debug && console.log('location sign in!')
-              wx.navigateTo({
-                url: 'location/location?userType=student&rollcallId=' + rollcall.objectId
-              });
-            } else if (rollcall.type == 'compass') {
-              debug && console.log('compass sign in!')
-              wx.navigateTo({
-                url: 'compass/compass?userType=student&rollcallId=' + rollcall.objectId
-              });
-            }
-          }
-        });
+          });
       },
       fail: function (res) {
         debug && console.log(res.errMsg)
@@ -125,30 +135,10 @@ Page({
       courses: courses,
       courseNameArr: itemList
     });
-    // var courseQuery = new AV.Query('COURSE');
-    // var teacher = AV.Object.createWithoutData('_User', app.globalData.user.objectId);
-    // courseQuery.equalTo('teacher', teacher);
-    // courseQuery.find().then(function (courses) {
-    //   var itemList = [];
-    //   for (let i = 0; i < courses.length; i++) {
-    //     itemList.push(courses[i].get('courseName'));
-    //   }
-    //   that.setData({
-    //     courses: courses,
-    //     courseNameArr: itemList
-    //   });
-    //   wx.hideToast();
-    // }, function (error) {
-    //   // 异常处理
-    //   debug && console.log(error)
-    // });
   },
   //初始化学生所选课程信息
   initStudentCourseData: function () {
     var that = this;
-    // var courseQuery = new AV.Query('_User');
-    // courseQuery.include("coursesChosen");
-    // courseQuery.get(app.globalData.user.objectId).then(function (student) {
     var coursesChosen = app.globalData.user.coursesChosen;
     debug && console.log('学生已选课程：', coursesChosen)
     var itemList = [];
@@ -159,10 +149,6 @@ Page({
       courses: coursesChosen,
       courseNameArr: itemList
     });
-    // }, function (error) {
-    //   // 异常处理
-    //   debug && console.log(error)
-    // });
   },
   //罗盘点名
   compass: function () {
@@ -188,36 +174,31 @@ Page({
     });
     var intv = setInterval(function () {
       if (app.globalData.user !== null) {
-        if (app.globalData.user.userType == '老师') {
+        if (app.globalData.user.userType === 'teacher') {
           debug && console.log('teacher')
           that.setData({
-            tpl: 'rollcall'
+            template: 'rollcall'
           });
           that.initTeacherCourseData();
         } else {
           debug && console.log('student')
           that.setData({
-            tpl: 'sign-in'
+            template: 'sign-in'
           });
           that.initStudentCourseData();
         }
         wx.hideToast();
         clearInterval(intv);
       }
-    }, 500)
-    // 页面初始化 options为页面跳转所带来的参数
+    }, 500);
   },
   onReady: function () {
-    // 页面渲染完成
   },
   onShow: function () {
-    // 页面显示
-    app.globalData.user.userType == '老师' ? this.initTeacherCourseData() : this.initStudentCourseData();
+    app.globalData.user.userType === 'teacher' ? this.initTeacherCourseData() : this.initStudentCourseData();
   },
   onHide: function () {
-    // 页面隐藏
   },
   onUnload: function () {
-    // 页面关闭
   }
 })

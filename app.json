@@ -5,6 +5,7 @@
     "pages/rollcall/rollcall",
     "pages/user/user",
     "pages/login/login",
+    "pages/table/table",
     "pages/addCourse/addCourse",
     "pages/rollcall/location/location",
     "pages/rollcall/compass/compass",
@@ -14,14 +15,14 @@
     "navigationBarBackgroundColor": "#3e4a51",
     "navigationBarTextStyle":"white",
     "navigationBarTitleText": "小点名",
-    "backgroundTextStyle":"light",
-    "backgroundColor": "#000",
+    "backgroundTextStyle":"dark",
+    "backgroundColor": "#000000",
     "enablePullDownRefresh": false
   },
   "tabBar": {
     "backgroundColor": "#3e4a51",
     "color": "#ccc",
-    "selectedColor": "#fff",
+    "selectedColor": "#ffffff",
     "borderStyle": "white",
     "list": [{
       "pagePath": "pages/index/index",

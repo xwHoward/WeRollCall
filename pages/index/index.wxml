@@ -2,15 +2,17 @@
   <view class="line-shadow"></view>
   <view class="placeholder" wx:if="{{courses.length == 0}}">还没有课程信息哦，下拉刷新或添加新课程~</view>
   <view class="course-per-weekday" wx:for="{{courses}}">
-    <text class="weekday">{{item.weekdays}}</text>
+    <view class="weekday">{{item.weekdays}}</view>
     <view class="course">
-      <text class="course-name" bindtap="goToStat" data-course-id="{{item.objectId}}">{{item.courseName}}</text>
-      <text class="course-classroom">教室：{{item.courseAddr}}</text>
+      <view class="course-info">
+        <view class="course-name" bindtap="goToStat" data-course-id="{{item.objectId}}">{{item.courseName}}</view>
+        <view class="course-classroom">教室：{{item.courseAddr}}</view>
+      </view>
       <view class="course-time">
-        <text class="time-start">{{item.courseTimeStart}}</text>
-        <text class="time-end">{{item.courseTimeEnd}}</text>
+        <view class="time-start">{{item.courseTimeStart}}</view>
+        <view class="time-end">{{item.courseTimeEnd}}</view>
       </view>
     </view>
   </view>
-  <button class="add-course" hover-class="add-course-hover" bindtap="addCourse">+ 添加课程</button>
+  <button class="default-btn" hover-class="default-btn-hover" bindtap="addCourse">+ 添加课程</button>
 </view>

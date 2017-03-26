@@ -3,45 +3,45 @@ view {
 }
 
 .container {
+  display: flex;
+  flex-direction: column;
   background-color: #3e4a51;
-  /*color: #c5c8ca;*/
+  justify-content: space-around;
+  align-items: center;
 }
 
 .rollcall-button {
-  height: 30%;
+  flex: 0 0 30%;
   width: 700rpx;
-  margin: 2% auto;
   color: #fff;
   border-radius: 10rpx;
+  display: flex;
+  flex-direction: column;
 }
 
-/*.rollcall-button .rc-img {
-  height: 100%;
-  width: 100%;
-}*/
-
 .rollcall-button .rc-name {
-  height: 80%;
-  padding-top: 10%;
+  flex: 1 1 auto;
   text-align: center;
   font-size: 80rpx;
   font-weight: bold;
   text-shadow: #3e4a51 0 0 10px;
   letter-spacing: 20rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .rollcall-button .rc-desc {
-  height: 20%;
+  flex: 0 0 80rpx;
+  line-height: 80rpx;
   font-size: 12px;
   text-align: center;
-  /*line-height: 50%;*/
   overflow: hidden;
 }
 
 .sign-in-btn {
-  position: absolute;
   width: 100%;
-  top: 100rpx;
+  padding: 140rpx 0;
 }
 
 .pulse-button {
@@ -52,15 +52,10 @@ view {
   margin: 0 auto;
   color: #fff;
   border-radius: 150rpx;
-  background-color: #3e4a51;
+  background-color: #51c7bc;
   border: none;
-  box-shadow: 0 0 0 0 rgba(62, 74, 81, 0.5);
+  box-shadow: 0 0 0 0 rgba(81, 199, 188, 0.5);
   animation: pulse 1.5s infinite;
-}
-
-.pulse-button image {
-  width: 50%;
-  height: 50%;
 }
 
 .pulse-button:hover {
@@ -83,6 +78,14 @@ view {
   }
 }
 
+swiper {
+  flex: 1 1 auto;
+  width: 100%;
+}
+.banner{
+  width: 100%;
+  height: 100%;
+}
 .qr-code {
   background: #3e4a51 url(https://dn-03kfwto5.qbox.me/5419a9ec2f854f429bb5.jpg) no-repeat;
   background-size: 100% 100%;
@@ -103,17 +106,4 @@ view {
   /*text-shadow: #3e4a51 0 0 10px;*/
 }
 
-.carousel {
-  width: 100%;
-  height: 100%;
-}
 
-.carousel swiper {
-  width: 100%;
-  height: 100%;
-}
-
-.banner {
-  height: 100%;
-  width: 100%;
-}

@@ -1,8 +1,10 @@
-/**app.wxss**/
-
 page {
   height: 100%;
   font-size: 14px;
+}
+
+view {
+  box-sizing: border-box;
 }
 
 .container {
@@ -14,8 +16,8 @@ page {
 .line-shadow {
   height: 2rpx;
   width: 100%;
-  background-color: #d4d4d4;
-  box-shadow: 0 0 10rpx 10rpx #d4d4d4;
+  background-color: #3e4a51;
+  box-shadow: 0 0 20rpx 10rpx #d4d4d4;
 }
 
 text, view, input, button, picker {
@@ -40,8 +42,22 @@ slider {
   width: 80%;
   height: 80rpx;
   font-size: 18px;
+  letter-spacing: 20rpx;
   line-height: 80rpx;
-  margin: 0 auto;
+  margin: 40rpx auto;
   background-color: #49545b;
+  color: #fff;
+}
+.default-btn-hover {
+  background-color: #3e4a51;
+}
+.light-btn {
+  width: 80%;
+  height: 80rpx;
+  font-size: 18px;
+  letter-spacing: 20rpx;
+  line-height: 80rpx;
+  margin: 40rpx auto;
+  background-color: #51c7bc;
   color: #fff;
 }

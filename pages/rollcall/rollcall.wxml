@@ -1,4 +1,29 @@
-<import src="rollcall_tpl.wxml"/>
+<import src="rollcall_tpl.wxml" />
 <view class="container">
-  <template is="{{tpl}}" data=""/>
+  <block wx:if="{{template === 'sign-in'}}">
+    <view class="sign-in-btn">
+      <button class="pulse-button" bindtap="signIn">
+        签到
+      </button>
+    </view>
+    <swiper autoplay circular>
+      <swiper-item wx:for="{{banners}}">
+        <image src="{{item}}" mode="aspectFit" class="banner"></image>
+      </swiper-item>
+    </swiper>
+  </block>
+  <block wx:if="{{template === 'rollcall'}}">
+    <view class="rollcall-button qr-code" bindtap="qrcode">
+      <view class="rc-name">扫码点名</view>
+      <view class="rc-desc">扫描二维码即可签到 · 快速 · 高效</view>
+    </view>
+    <view class="rollcall-button location" bindtap="location">
+      <view class="rc-name">地理位置点名</view>
+      <view class="rc-desc">中度过的复合肥的哈哈的时代光华放任和</view>
+    </view>
+    <view class="rollcall-button compass" bindtap="compass">
+      <view class="rc-name">罗盘点名</view>
+      <view class="rc-desc">爱的故事的功能惊世毒妃交付给</view>
+    </view>
+  </block>
 </view>

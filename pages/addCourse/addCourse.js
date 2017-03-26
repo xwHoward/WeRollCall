@@ -131,7 +131,7 @@ Page({
     });
   },
   onLoad: function () {
-    if (app.globalData.user.userType == "老师") {
+    if (app.globalData.user.userType == "teacher") {
       this.setData({
         'template': 'add-course',
         'tplData.courseTeacher': app.globalData.user.userName

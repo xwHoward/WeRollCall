@@ -3,7 +3,7 @@ const AV = require('../../lib/leancloud-storage');
 var debug = app.globalData.debug;
 Page({
   data: {
-    userType: ['学生', '老师'],
+    userType: ['student', 'teacher'],
     index: 0,
     invalid: true
   },
@@ -62,14 +62,9 @@ Page({
           },
           fail: function () {
             debug && console.log('redirect fail!')
-          },
-          complete: function () {
-            // complete
           }
         });
       });
-
     }).catch(console.error);
-
   }
 })

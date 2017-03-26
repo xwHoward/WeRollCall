@@ -1,4 +1,3 @@
-// pages/index/stat/stat.js
 const AV = require('../../../lib/leancloud-storage');
 var Promise = require("../../../lib/es6-promise.min");
 var wxCharts = require('../../../lib/wxcharts.js');
@@ -14,9 +13,6 @@ Page({
     attend: 0,
     leave: 0,
     absence: 0,
-    // attendRate: 0,
-    // leaveRate: 0,
-    // absenceRate: 0,
     total: 0,
     teacher: '',
     student: '',
@@ -28,29 +24,34 @@ Page({
     leaveNoteShow: false,
     leaveNoteSend: false,
     template: '',
-    unreadLeaves: [],
+    unreadLeaves: []
   },
   refresh: function () {
     this.initLeaveNotes(this.data.courseId);
   },
   onLoad: function (options) {
+    var that = this;
     this.setData({
       courseId: options.courseId
     });
-    debug && console.log(app.globalData.user.userType)
-    if (app.globalData.user.userType === '学生') {
-      debug && console.log("student")
-      this.setData({
-        template: 'student'
-      });
-      this.getCourseInfo(options.courseId);
-    } else {
-      debug && console.log("teacher")
-      this.setData({
-        template: 'teacher'
-      });
-      this.initLeaveNotes(options.courseId);
-    }
+    var intv = setInterval(function () {
+      if (app.globalData.user !== null) {
+        clearInterval(intv);
+        if (app.globalData.user.userType === 'student') {
+          debug && console.log("student")
+          that.setData({
+            template: 'student'
+          });
+          that.getCourseInfo(options.courseId);
+        } else {
+          debug && console.log("teacher")
+          that.setData({
+            template: 'teacher'
+          });
+          that.initLeaveNotes(options.courseId);
+        }
+      }
+    }, 500);
   },
   // 加载请假条列表
   initLeaveNotes: function (courseId) {
@@ -65,6 +66,9 @@ Page({
     courseQuery.get(courseId).then(function (crs) {
       debug && console.log("course:", crs)
       course = crs.toJSON();
+      wx.setNavigationBarTitle({
+        title: course.courseName
+      });
       var leaves = crs.get('leaves');
       debug && console.log('leaves of this course:', leaves)
       var unreadLeaveNum = 0;
@@ -128,7 +132,9 @@ Page({
     courseQuery.include('leaves');
     courseQuery.get(courseId).then(function (crs) {
       course = crs.toJSON();
-      var courseName = course.courseName;
+      wx.setNavigationBarTitle({
+        title: course.courseName
+      });
       var rollcalls = course.rollcalls;
       teacher = course.teacher;
       var targetRollcallStr = '';
@@ -198,9 +204,9 @@ Page({
         dataLabel: true,
         legend: false
       });
+      
       that.setData({
         total: rollcalls.length,
-        courseName: courseName,
         windowWidth: windowWidth,
         teacher: teacher.userName,
         student: app.globalData.user.userName,

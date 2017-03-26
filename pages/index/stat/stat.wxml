@@ -1,12 +1,7 @@
+<import src="/pages/table/table.wxml" />
 <view class="container-fluid">
   <block wx:if="{{template == 'student'}}">
-    <view class="title">{{courseName}}</view>
     <canvas canvas-id="pieCanvas" class="canvas" style="height:300px;width:{{windowWidth}}px" bindtouchstart="touchHandler"></canvas>
-    <!--<view class="graph">
-      <view class="red" style="width:{{absenceRate}}%;"></view>
-      <view class="blue" style="width:{{leaveRate}}%;"></view>
-      <view class="green" style="width:{{attendRate}}%;"></view>
-    </view>-->
     <view class="detail clearfix">
       <view class="green"></view>
       <text>出勤</text>
@@ -42,7 +37,7 @@
         <view class="cell">{{total}}</view>
       </view>
     </view>
-    <button class="add-course" bindtap="createMessage" wx:if="{{!leaveNoteShow}}">写假条</button>
+    <button class="light-btn" bindtap="createMessage" wx:if="{{!leaveNoteShow}}">写假条</button>
     <block wx:if="{{leaveNoteShow}}">
       <view class="leave-note">
         <view class="message">
@@ -65,15 +60,17 @@
           </view>
         </view>
         <view class="image">
-          <image src="/images/Camera.png" class="placeholder" bindtap="chooseImage"></image>
-          <image src="{{tempFilePath}}" class="file" wx:if="{{tempFilePath != null}}" bindlongtap="deletePic"></image>
-          <view class="notation">上传证明图片，长按删除已选图片</view>
+          <view class="placeholder" wx:if="{{tempFilePath === null}}">
+            <image src="/images/Camera.png" class="camera" bindtap="chooseImage"></image>
+            <view class="notation">上传证明图片，长按删除已选图片</view>
+          </view>
+          <image src="{{tempFilePath}}" mode="aspectFit" class="file" wx:if="{{tempFilePath !== null}}" bindlongtap="deletePic"></image>
         </view>
       </view>
-      <button class="add-course" bindtap="sendMessage" disabled="{{leaveNoteSend}}">向老师发送假条</button>
+      <button class="light-btn" bindtap="sendMessage" disabled="{{leaveNoteSend}}">向老师发送假条</button>
     </block>
   </block>
-  <block wx:if="{{template == 'teacher'}}">
+  <block wx:if="{{template === 'teacher'}}">
     <view class="leave-note" wx:for="{{unreadLeaves}}">
       <view class="message">
         <view>请假理由：
@@ -89,8 +86,9 @@
           <text class="underline"> {{item.date}} </text>
         </view>
       </view>
-      <view class="image">学生未上传证明文件  
-        <image wx:if="{{item.imgSrc != ''}}" src="{{item.imgSrc}}" data-src="{{item.imgSrc}}" class="file" bindtap="previewPic"></image>
+      <view class="image">
+        <view wx:if="{{item.imgSrc === ''}}">学生未上传证明文件</view>
+        <image wx:if="{{item.imgSrc !== ''}}" mode="aspectFit" src="{{item.imgSrc}}" data-src="{{item.imgSrc}}" class="file" bindtap="previewPic"></image>
       </view>
       <view class="operation clearfix">
         <view class="deny" bindtap="deny" data-leave-id="{{item.id}}">驳回</view>
@@ -101,7 +99,7 @@
       本课程当前没有未读学生假条。您可以
       <text class="underline" bindtap="refresh">点击刷新</text>
     </view>
+
     <!--教师可查看的统计信息-->
-    
   </block>
 </view>
