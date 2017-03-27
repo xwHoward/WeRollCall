@@ -1,6 +1,7 @@
 .container-fluid{
     background-color: #3e4a51;
     color: #c5c8ca;
+    padding: 1px 0;
 }
 view{
     box-sizing: border-box;

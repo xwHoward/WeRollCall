@@ -34,6 +34,7 @@ Page({
     this.setData({
       courseId: options.courseId
     });
+    //这里可以不要定时器
     var intv = setInterval(function () {
       if (app.globalData.user !== null) {
         clearInterval(intv);
@@ -126,103 +127,77 @@ Page({
       mask: true
     });
     var that = this;
-    var myRollcalls = app.globalData.user.rollcalls;
-    var courseQuery = new AV.Query('COURSE');
-    courseQuery.include('teacher');
-    courseQuery.include('leaves');
-    courseQuery.get(courseId).then(function (crs) {
-      course = crs.toJSON();
-      wx.setNavigationBarTitle({
-        title: course.courseName
-      });
-      var rollcalls = course.rollcalls;
-      teacher = course.teacher;
-      var targetRollcallStr = '';
-      for (var i = 0; i < rollcalls.length; i++) {
-        targetRollcallStr += rollcalls[i].objectId;
-      }
-      var attend = 0;
-      debug && console.log("myRollcalls:", myRollcalls)
-      for (var i = 0; i < myRollcalls.length; i++) {
-        var id = myRollcalls[i].objectId
-        if (targetRollcallStr.indexOf(id) >= 0) {
-          attend++;
+    var paramsJson = {
+      userType: app.globalData.user.type,
+      userId: app.globalData.user.objectId,
+      courseId: courseId
+    };
+    AV.Cloud.run('getStatistics', paramsJson)
+      .then(function (data) {
+        console.log('getStatistics():', data)
+        wx.setNavigationBarTitle({
+          title: data.courseName
+        });
+        var windowWidth = 320;
+        try {
+          var res = wx.getSystemInfoSync();
+          windowWidth = res.windowWidth;
+        } catch (e) {
+          console.error('getSystemInfoSync failed!');
         }
-      }
-      //请假次数
-      //1.获取用户请假记录
-      var myLeaves = app.globalData.user.leaves;
-      debug && console.log("myLeaves:", myLeaves)
-      var myAdoptedLeaves = myLeaves.filter(function (lv) {
-        return lv.adopted;
-      });
-      debug && console.log("myAdoptedLeaves:", myAdoptedLeaves)
-      //2.获取指定课程请假记录
-      var leaves = course.leaves;
-      debug && console.log("myLeaves, course's leaves", myLeaves, leaves)
-      //3.数据合并比较
-      var targetLeaveStr = '';
-      for (var i = 0; i < leaves.length; i++) {
-        targetLeaveStr += leaves[i].objectId;
-      }
-      var leaveSum = 0;
-      for (var i = 0; i < myAdoptedLeaves.length; i++) {
-        var id = myAdoptedLeaves[i].objectId;
-        if (targetLeaveStr.indexOf(id) >= 0) {
-          leaveSum++;
-        }
-      }
 
-      var windowWidth = 320;
-      try {
-        var res = wx.getSystemInfoSync();
-        windowWidth = res.windowWidth;
-        console.log(windowWidth)
-      } catch (e) {
-        console.error('getSystemInfoSync failed!');
-      }
+        pieChart = new wxCharts({
+          animation: true,
+          canvasId: 'pieCanvas',
+          type: 'pie',
+          series: [{
+            name: '出勤',
+            data: data.attend,
+            color: '#0bad62'
+          }, {
+            name: '请假',
+            data: data.leave,
+            color: '#3892b8'
+          }, {
+            name: '缺勤',
+            data: data.absence,
+            color: '#c55e4b'
+          }],
+          width: windowWidth,
+          height: 300,
+          dataLabel: true,
+          legend: false
+        });
 
-      pieChart = new wxCharts({
-        animation: true,
-        canvasId: 'pieCanvas',
-        type: 'pie',
-        series: [{
-          name: '出勤',
-          data: attend,
-          color: '#0bad62'
-        }, {
-          name: '请假',
-          data: leaveSum,
-          color: '#3892b8'
-        }, {
-          name: '缺勤',
-          data: rollcalls.length - attend - leaveSum,
-          color: '#c55e4b'
-        }],
-        width: windowWidth,
-        height: 300,
-        dataLabel: true,
-        legend: false
+        that.setData({
+          total: data.total,
+          windowWidth: windowWidth,
+          teacher: data.teacherName,
+          courseName: data.courseName,
+          student: app.globalData.user.userName,
+          stuId: app.globalData.user.userId,
+          attend: data.attend,
+          attendRate: (data.attend / data.total * 100).toFixed(2),
+          absence: data.absence,
+          absenceRate: (data.absence / data.total * 100).toFixed(2),
+          leave: data.leave,
+          leaveRate: (data.leave / data.total * 100).toFixed(2)
+        });
+        wx.hideToast();
+      })
+      .catch(function (error) {
+        // 异常处理
+        debug && console.log(error);
+        wx.showModal({
+          title: '出了点问题',
+          content: '同学，重试一下吧！',
+          showCancel: false,
+          confirmText: '知道了',
+          confirmColor: '#3CC51F',
+          success: function (res) {
+          }
+        });
       });
-      
-      that.setData({
-        total: rollcalls.length,
-        windowWidth: windowWidth,
-        teacher: teacher.userName,
-        student: app.globalData.user.userName,
-        attend: attend,
-        absence: rollcalls.length - attend - leaveSum,
-        stuId: app.globalData.user.userId,
-        leave: leaveSum,
-        attendRate: (attend / rollcalls.length * 100).toFixed(2),
-        absenceRate: ((rollcalls.length - attend - leaveSum) / rollcalls.length * 100).toFixed(2),
-        leaveRate: (leaveSum / rollcalls.length * 100).toFixed(2)
-      });
-      wx.hideToast();
-    }, function (error) {
-      // 异常处理
-      debug && console.log(error);
-    });
   },
   //选择图片
   chooseImage: function () {
@@ -334,6 +309,9 @@ Page({
                 var leaveReg = AV.Object.createWithoutData('LEAVE', res.id);
                 userReg.addUnique('leaves', leaveReg);
                 userReg.save().then(function () {
+                  that.setData({
+                    leaveNoteShow: false
+                  });
                   wx.hideToast();
                 });
               });
@@ -378,6 +356,9 @@ Page({
             var leaveReg = AV.Object.createWithoutData('LEAVE', res.id);
             userReg.addUnique('leaves', leaveReg);
             userReg.save().then(function () {
+              that.setData({
+                leaveNoteShow: false
+              });
               wx.hideToast();
               //做标记防止重复请假
               app.globalData.leaveTag.push({
@@ -440,3 +421,50 @@ Page({
     // 页面关闭
   }
 })
+// var myRollcalls = app.globalData.user.rollcalls;
+// var courseQuery = new AV.Query('COURSE');
+// courseQuery.include('teacher');
+// courseQuery.include('leaves');
+// courseQuery.get(courseId).then(function (crs) {
+//   course = crs.toJSON();
+//   wx.setNavigationBarTitle({
+//     title: course.courseName
+//   });
+//   var rollcalls = course.rollcalls;
+//   teacher = course.teacher;
+//   var targetRollcallStr = '';
+//   for (var i = 0; i < rollcalls.length; i++) {
+//     targetRollcallStr += rollcalls[i].objectId;
+//   }
+//   var attend = 0;
+//   debug && console.log("myRollcalls:", myRollcalls)
+//   for (var i = 0; i < myRollcalls.length; i++) {
+//     var id = myRollcalls[i].objectId
+//     if (targetRollcallStr.indexOf(id) >= 0) {
+//       attend++;
+//     }
+//   }
+//   //请假次数
+//   //1.获取用户请假记录
+//   var myLeaves = app.globalData.user.leaves;
+//   debug && console.log("myLeaves:", myLeaves)
+//   var myAdoptedLeaves = myLeaves.filter(function (lv) {
+//     return lv.adopted;
+//   });
+//   debug && console.log("myAdoptedLeaves:", myAdoptedLeaves)
+//   //2.获取指定课程请假记录
+//   var leaves = course.leaves;
+//   debug && console.log("myLeaves, course's leaves", myLeaves, leaves)
+//   //3.数据合并比较
+//   var targetLeaveStr = '';
+//   for (var i = 0; i < leaves.length; i++) {
+//     targetLeaveStr += leaves[i].objectId;
+//   }
+//   var leaveSum = 0;
+//   for (var i = 0; i < myAdoptedLeaves.length; i++) {
+//     var id = myAdoptedLeaves[i].objectId;
+//     if (targetLeaveStr.indexOf(id) >= 0) {
+//       leaveSum++;
+//     }
+//   }
+

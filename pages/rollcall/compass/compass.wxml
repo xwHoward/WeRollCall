@@ -1,6 +1,4 @@
 <view class="container">
-
-  <!--<view class="line-shadow"></view>-->
   <block wx:if="{{template == 'compass-panel'}}">
     <view class="compass-panel">
       <view class="compass">
@@ -9,8 +7,10 @@
       </view>
       <view class="degree">{{direction}}°</view>
     </view>
-    <button bindtap="createRollcall" class="add-course" wx:if="{{userType == 'teacher'}}">上传角度 & 发布点名</button>
-    <button bindtap="signIn" class="add-course" wx:if="{{userType == 'student'}}">上传角度 & 签到</button>
+    <view class="button">
+      <button bindtap="createRollcall" class="light-btn" wx:if="{{userType == 'teacher'}}">上传角度</button>
+      <button bindtap="signIn" class="light-btn" wx:if="{{userType == 'student'}}">上传角度&签到</button>
+    </view>
   </block>
 
   <!--签到情况-->
@@ -51,7 +51,7 @@
           </view>
         </view>
       </scroll-view>
-      <button class="add-course" bindtap="addToNamelist" disabled="{{!countdownEnd}}">+ 手动添加</button>
+      <button class="light-btn" bindtap="addToNamelist" disabled="{{!countdownEnd}}">+ 手动添加</button>
       <block wx:if="{{manuAdd}}">
         <view class="add clearfix">
           <input placeholder="请输入完整学号" bindinput="inputStuId" auto-focus class="add-input" />

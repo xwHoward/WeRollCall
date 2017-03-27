@@ -57,6 +57,9 @@ Page({
       }
     })
   },
+  switchIdentity: function (e) {
+    app.globalData.user.userType = app.globalData.user.userType === 'student' ? 'teacher' : 'student';
+  },
   onLoad: function () {
     var that = this;
     wx.showToast({

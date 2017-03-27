@@ -96,8 +96,8 @@
       </view>
     </view>
     <view wx:if="{{unreadLeaves.length == 0}}" class="no-leave-notes">
-      本课程当前没有未读学生假条。您可以
-      <text class="underline" bindtap="refresh">点击刷新</text>
+      本课程当前没有未读学生假条。
+      <text class="underline" bindtap="refresh" style="color:#fff;">点击刷新</text>
     </view>
 
     <!--教师可查看的统计信息-->

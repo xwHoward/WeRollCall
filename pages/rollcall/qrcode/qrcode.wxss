@@ -1,45 +1,44 @@
-.container-fluid {
+.container {
   background-color: #3e4a51;
-  padding: 50rpx 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
   color: #c5c8ca;
 }
 
-view {
-  box-sizing: border-box;
-}
-
 .tips {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   width: 600rpx;
-  margin: 40rpx auto;
+  margin: 0 auto;
   background-color: #fff;
-  padding: 20rpx 40rpx 0;
+  padding: 10rpx;
 }
-
-icon {
-  float: left;
+icon{
+  margin-right: 10rpx;
 }
-
 .tip {
-  float: left;
-  margin-left: 20rpx;
-  margin-bottom: 20rpx;
-  width: 460rpx;
+  flex: 1 1 auto;
+  width: 400rpx;
   color: #3e4a51;
-  /*color: #fff;*/
   font-size: 14px;
   line-height: 20px;
 }
-
 .qrcode {
+  flex: 0 0 initial;
   width: 600rpx;
   height: 600rpx;
   background-color: #fff;
-  margin: 0 auto 40rpx;
+  margin: 0 auto 20rpx;
 }
-
+.slider{
+  flex: 0 0;
+}
 .label {
   padding: 10px 18px;
-  margin: 20rpx 0;
+  margin: 30rpx;
 }
 
 .timeout {
@@ -50,16 +49,15 @@ icon {
 .slider-wrapper{
   margin-left: 50rpx;
 }
-.add-course {
-  width: 80%;
-  height: 80rpx;
-  font-size: 18px;
-  line-height: 80rpx;
-  margin: 60rpx auto;
-  background-color: #c5c8ca;
-  color: #fff;
+.button{
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
+.button > .light-btn{
+  margin: 0;
+}
 .countdown {
   width: 500rpx;
   margin: 0 auto 100rpx;

@@ -1,14 +1,16 @@
-view {
-  box-sizing: border-box;
-}
-
 .container {
   color: #3e4a51;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
-
+#map{
+  width: 100%;
+  flex: 1 1 auto;
+}
 .panel {
-  height: 60%;
+  height: 740rpx;
+  width: 100%;
   overflow: hidden;
 }
 
@@ -40,13 +42,8 @@ view {
   margin-left: 5%;
 }
 
-/*.panel-wrapper .box:nth-child(4){
-  border-right: #ccc 1px solid;
-}*/
-
 .panel-wrapper .box .row {
   height: 50%;
-  /*overflow: hidden;*/
 }
 
 .row .icon {
@@ -117,16 +114,16 @@ slider {
 
 .pop-up {
   height: 14%;
-  background-color: #3e4a51;
+  background-color: #51c7bc;
   overflow: hidden;
 }
-
-.default-btn {
-  width: 100%;
+.pop-up button{
   height: 100%;
-  border-radius: 0;
+  width: 100%;
+  color: #fff;
+  letter-spacing: 20rpx;
+  background-color: #51c7bc;
 }
-
 .countdown-panel {
   position: absolute;
   color: #c5c8ca;
@@ -251,9 +248,8 @@ slider {
   width: 200rpx;
   height: 80rpx;
   line-height: 80rpx;
-  background-color: #c5c8ca;
+  background-color: #51c7bc;
   color: #fff;
-  /*background-color: #fff;*/
 }
 
 .sign-in-view {

@@ -1,25 +1,29 @@
-<view class="container-fluid">
+<view class="container">
 
   <!--发布点名-->
   <block wx:if="{{template == 'create'}}">
-
-    <!--<view class="line-shadow"></view>-->
-    <view class="tips clearfix">
+    <view class="tips">
       <icon type="info_circle" size="20" color="#3e4a51" />
-      <text class="tip">长按二维码保存到本地，每门课程对应唯一的二维码。</text>
+      <view class="tip">长按二维码保存到本地，每门课程对应唯一的二维码。</view>
+    </view>
+    <view class="tips">
       <icon type="info_circle" size="20" color="#3e4a51" />
-      <text class="tip">您可以提前将二维码作为课件保存，发布点名后再展示给学生。</text>
+      <view class="tip">您可以提前将二维码作为课件保存，发布点名后再展示给学生。</view>
     </view>
     <canvas bindlongtap="previewImg" class="qrcode" canvas-id="qrcode" />
-    <text class="label">设置本次点名持续时间： <text class="timeout">{{timeout}}</text> min</text>
-    <view class="slider-wrapper">
-      <slider bindchange="timeoutChange" min="1" max="5" value="{{timeout}}" step="1" selected-color="#c5c8ca" show-value/>
+    <view class="slider">
+      <text class="label">设置本次点名持续时间：<text class="timeout">{{timeout}}</text> min</text>
+      <view class="slider-wrapper">
+        <slider bindchange="timeoutChange" min="1" max="5" value="{{timeout}}" step="1" selected-color="#c5c8ca" show-value/>
+      </view>
     </view>
-    <button bindtap="createRollcall" class="add-course" hover-class="add-course-hover">发布点名</button>
+    <view class="button">
+      <button bindtap="createRollcall" class="light-btn">发布点名</button>
+    </view>
   </block>
 
   <!--签到情况-->
-  <block wx:if="{{template == 'countdown'}}">
+  <block wx:if="{{template === 'countdown'}}">
     <view class="countdown" style="background-color:{{bgc}}">
       <view class="cd-top">{{timeLeft}}</view>
       <view class="cd-bottom">剩余时间</view>

@@ -7,8 +7,9 @@ Page({
     courses: [],
     courseNameArr: [],
     banners: [
-      'https://dn-03kfwto5.qbox.me/3918513f0c79967c102f.PNG',
-      'https://dn-03kfwto5.qbox.me/3918513f0c79967c102f.PNG'
+      'https://dn-03kfwto5.qbox.me/5419a9ec2f854f429bb5.jpg',
+      'https://dn-03kfwto5.qbox.me/5c443b7762670f965222.jpg',
+      'https://dn-03kfwto5.qbox.me/49066bc176ac9fa6d41c.jpg'
     ]
   },
   // 地理位置点名
@@ -195,7 +196,32 @@ Page({
   onReady: function () {
   },
   onShow: function () {
-    app.globalData.user.userType === 'teacher' ? this.initTeacherCourseData() : this.initStudentCourseData();
+    var that = this;
+    wx.showToast({
+      icon: 'loading',
+      title: '初始化页面...',
+      mask: true
+    });
+    var intv = setInterval(function () {
+      if (app.globalData.user !== null) {
+        if (app.globalData.user.userType === 'teacher') {
+          debug && console.log('teacher')
+          that.setData({
+            template: 'rollcall'
+          });
+          that.initTeacherCourseData();
+        } else {
+          debug && console.log('student')
+          that.setData({
+            template: 'sign-in'
+          });
+          that.initStudentCourseData();
+        }
+        wx.hideToast();
+        clearInterval(intv);
+      }
+    }, 500);
+    // app.globalData.user.userType === 'teacher' ? this.initTeacherCourseData() : this.initStudentCourseData();
   },
   onHide: function () {
   },

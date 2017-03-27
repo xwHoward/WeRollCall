@@ -15,4 +15,5 @@
     </view>
   </view>
   <button class="default-btn" hover-class="default-btn-hover" bindtap="addCourse">+ 添加课程</button>
+  <button class="light-btn" bindtap="switchIdentity">切换角色</button>
 </view>

@@ -105,7 +105,6 @@ Page({
                     timingFunction: "ease",
                     delay: 0
                 });
-                // that.animation = animation
                 animation.top(0).step();
                 that.setData({
                     template: 'countdown',
@@ -115,45 +114,17 @@ Page({
                 that.startCountdown(that.data.timeout - 1, 59).then(function () {
                     //倒计时结束
                 });
+                var intv = setInterval(function () {
+                    if (!that.data.countdownEnd) {
+                        that.updateStatus();
+                    } else {
+                        clearInterval(intv);
+                    }
+                }, 5000);
             }).catch(console.error);
         that.getLeaveStudents();
-        var intv = setInterval(function () {
-            if (!that.data.countdownEnd) {
-                that.updateStatus();
-            } else {
-                clearInterval(intv);
-            }
-        }, 5000);
     },
-    //获取今日请假学生
-    // getLeaveStudents: function () {
-    //     var that = this;
-    //     //对本次点名的请假记录做清理
-    //     //向今日有效请假记录插入标记字段
-    //     var today = (new Date()).toLocaleDateString();
-    //     //对符合日期的请假做标记adopted字段
-    //     var leaveQuery = new AV.Query('LEAVE');
-    //     leaveQuery.equalTo('date', today);
-    //     leaveQuery.include('student');
-    //     leaveQuery.find()
-    //         .then(function (lvs) {
-    //             debug && console.log('今日请假记录：', lvs)
-    //             var onLeaveStudents = [];
-    //             for (var i = 0; i < lvs.length; i++) {
-    //                 var lv = AV.Object.createWithoutData('LEAVE', lvs[i].id);
-    //                 lv.set('adopted', true);
-    //                 lv.save().then(function () {
-    //                     debug && console.log('leave[' + i + '] adopted')
-    //                 });
-    //                 onLeaveStudents.push(lvs[i].get('student'));
-    //             }
-    //             debug && console.log("onLeaveStudents:", onLeaveStudents)
-    //             that.setData({
-    //                 onLeaveStudents: onLeaveStudents
-    //             });
-    //         })
-    //         .catch(console.error);
-    // },
+
     getLeaveStudents: function () {
         var that = this;
         //对本次点名的请假记录做清理

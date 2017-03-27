@@ -8,7 +8,7 @@
     </view>
     <swiper autoplay circular>
       <swiper-item wx:for="{{banners}}">
-        <image src="{{item}}" mode="aspectFit" class="banner"></image>
+        <image src="{{item}}" mode="scaleToFill" class="banner"></image>
       </swiper-item>
     </swiper>
   </block>
